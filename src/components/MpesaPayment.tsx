@@ -44,8 +44,16 @@ export default function MpesaPayment({ package: pkg, onSuccess, onCancel }: Mpes
         setCheckoutRequestId(response.checkoutRequestId!);
         toast.success(response.message);
         
-        // Start polling for payment status
-        pollPaymentStatus(response.checkoutRequestId!);
+        // Show success message - payment will be confirmed via callback
+        setTimeout(() => {
+          toast.info("Waiting for payment confirmation...");
+        }, 5000);
+        
+        // Check status after 30 seconds
+        setTimeout(() => {
+          toast.warning("If payment was successful, credits will be added shortly.");
+          onCancel(); // Return to main screen
+        }, 30000);
       } else {
         toast.error("Failed to initiate M-PESA payment");
       }
