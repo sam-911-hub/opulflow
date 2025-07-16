@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(workflows);
   } catch (error) {
     console.error('Error fetching n8n workflows:', error);
-    return NextResponse.json({ error: 'Failed to fetch workflows' }, { status: 500 });
+    // Return empty data instead of error to prevent client-side crashes
+    return NextResponse.json({ data: [] });
   }
 }
 

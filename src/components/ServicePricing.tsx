@@ -1,5 +1,5 @@
 "use client";
-import { SERVICE_PRICING } from "@/types";
+import { SERVICE_PRICING } from "@/types/index";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
