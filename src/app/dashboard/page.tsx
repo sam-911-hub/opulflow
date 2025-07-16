@@ -434,7 +434,7 @@ export default function DashboardPage() {
                       <p className="text-sm text-gray-600">Detailed information about our PAYG pricing</p>
                     </Link>
                     
-                    <Link href="/help#faq" className="block p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                    <Link href="/help/faq" className="block p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                       <h3 className="font-semibold mb-1">FAQ</h3>
                       <p className="text-sm text-gray-600">Answers to commonly asked questions</p>
                     </Link>
