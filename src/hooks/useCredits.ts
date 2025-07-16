@@ -1,0 +1,45 @@
+import { useAuth } from "@/context/AuthContext";
+import { doc, updateDoc, collection, addDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { toast } from "sonner";
+
+export default function useCredits() {
+  const { user } = useAuth();
+
+  const deductCredits = async (service: 'ai' | 'leads' | 'exports', amount: number) => {
+    if (!user) {
+      toast.error("You need to be logged in");
+      return false;
+    }
+
+    const currentBalance = (user as any)?.credits?.[service] || 0;
+    if (currentBalance < amount) {
+      toast.error(`Not enough ${service} credits`);
+      return false;
+    }
+
+    try {
+      // Update balance
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        [`credits.${service}`]: currentBalance - amount
+      });
+
+      // Record transaction
+      await addDoc(collection(db, `users/${user.uid}/transactions`), {
+        type: "consumption",
+        amount: amount,
+        service,
+        createdAt: new Date().toISOString(),
+        remainingBalance: currentBalance - amount
+      });
+
+      return true;
+    } catch (error) {
+      toast.error("Failed to deduct credits");
+      return false;
+    }
+  };
+
+  return { deductCredits };
+}
