@@ -23,21 +23,46 @@ export default function CreditPurchase() {
     try {
       // Update user's credit balance
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
-        [`credits.${packageItem.type}`]: ((user as any)?.credits?.[packageItem.type] || 0) + packageItem.amount
-      });
+      
+      // Handle special case for Power Bundle which includes multiple credit types
+      if (packageItem.includes) {
+        // Update each credit type included in the bundle
+        const updates: Record<string, number> = {};
+        
+        for (const [creditType, amount] of Object.entries(packageItem.includes)) {
+          updates[`credits.${creditType}`] = ((user as any)?.credits?.[creditType] || 0) + amount;
+          
+          // Record transaction for each credit type
+          await addDoc(collection(db, `users/${user.uid}/transactions`), {
+            type: "purchase",
+            amount: amount,
+            service: creditType,
+            createdAt: new Date().toISOString(),
+            remainingBalance: ((user as any)?.credits?.[creditType] || 0) + amount,
+            bundleId: packageItem.id
+          });
+        }
+        
+        await updateDoc(userRef, updates);
+      } else {
+        // Standard single credit type package
+        await updateDoc(userRef, {
+          [`credits.${packageItem.type}`]: ((user as any)?.credits?.[packageItem.type] || 0) + packageItem.amount
+        });
 
-      // Record transaction
-      await addDoc(collection(db, `users/${user.uid}/transactions`), {
-        type: "purchase",
-        amount: packageItem.amount,
-        service: packageItem.type,
-        createdAt: new Date().toISOString(),
-        remainingBalance: ((user as any)?.credits?.[packageItem.type] || 0) + packageItem.amount
-      });
+        // Record transaction
+        await addDoc(collection(db, `users/${user.uid}/transactions`), {
+          type: "purchase",
+          amount: packageItem.amount,
+          service: packageItem.type,
+          createdAt: new Date().toISOString(),
+          remainingBalance: ((user as any)?.credits?.[packageItem.type] || 0) + packageItem.amount
+        });
+      }
 
       toast.success(`Successfully purchased ${packageItem.description}!`);
       setSelectedPackage(null);
+      setPaymentMethod(null);
       window.location.reload();
     } catch (error) {
       console.error('Purchase error:', error);

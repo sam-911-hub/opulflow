@@ -255,7 +255,7 @@ export default function DashboardPage() {
             <div className="space-y-6">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-blue-800 font-medium mb-2">💡 OpulFlow Sales Intelligence Platform</p>
-                <p className="text-blue-700 text-sm">Free tier includes 500 leads/month. Upgrade to Pro for unlimited access or buy PAYG credits.</p>
+                <p className="text-blue-700 text-sm">Free tier includes 500 leads/month, 50 enrichments, and basic AI tools. Upgrade to Pro for unlimited access.</p>
               </div>
               
               <UsageLimits />

@@ -52,6 +52,7 @@ export interface CreditPackage {
   price: number;
   description: string;
   featured?: boolean;
+  includes?: Record<string, number>; // For bundles with multiple credit types
 }
 
 export interface CreditTransaction {
@@ -101,6 +102,7 @@ export const PRICING_TIERS = {
   pro: {
     name: 'Pro',
     price: 29,
+    billingCycle: 'monthly',
     limits: {
       leads: -1, // Unlimited
       enrichment: -1, // Unlimited
@@ -136,20 +138,16 @@ export const creditPackages: CreditPackage[] = [
     featured: true
   },
   {
-    id: 'power-bundle-ai',
+    id: 'power-bundle',
     type: 'ai',
     amount: 5000,
     price: 50,
-    description: 'Power Bundle (AI)',
-    featured: true
-  },
-  {
-    id: 'power-bundle-leads',
-    type: 'leads',
-    amount: 2000,
-    price: 50,
-    description: 'Power Bundle (Leads)',
-    featured: true
+    description: 'Power Bundle',
+    featured: true,
+    includes: {
+      leads: 2000,
+      ai: 5000
+    }
   },
   {
     id: 'enrichment-pack',

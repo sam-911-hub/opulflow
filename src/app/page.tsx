@@ -51,15 +51,15 @@ export default function Home() {
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-xl font-semibold mb-3">Sales Intelligence</h3>
-            <p className="text-gray-600">Access unlimited leads, contact enrichment, and company data</p>
+            <p className="text-gray-600">Access unlimited leads, contact enrichment, and company technographics</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-xl font-semibold mb-3">AI-Powered Tools</h3>
             <p className="text-gray-600">Generate emails, call scripts, and meeting notes with AI</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-3">Automation</h3>
-            <p className="text-gray-600">Automate workflows, email sequences, and CRM sync</p>
+            <h3 className="text-xl font-semibold mb-3">Team Collaboration</h3>
+            <p className="text-gray-600">Work together with shared workspaces and workflow automation</p>
           </div>
         </div>
       </div>

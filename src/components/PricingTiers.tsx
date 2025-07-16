@@ -67,6 +67,7 @@ export default function PricingTiers() {
           <CardTitle className="text-2xl">Pro</CardTitle>
           <div className="text-3xl font-bold">$29<span className="text-sm font-normal">/month</span></div>
           <p className="text-gray-600">For serious sales teams & scaling businesses</p>
+          <p className="text-xs text-blue-600 font-medium">Billed annually only</p>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
@@ -89,6 +90,10 @@ export default function PricingTiers() {
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4 text-green-500" />
               <span className="font-medium">10,000 AI credits/month</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-green-500" />
+              <span className="font-medium">Full company technographics</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4 text-green-500" />
