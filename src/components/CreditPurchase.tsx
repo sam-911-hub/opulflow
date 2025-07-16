@@ -8,12 +8,14 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "./ui/card";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useState } from "react";
+import MpesaPayment from "./MpesaPayment";
 
 const PAYPAL_CLIENT_ID = "AXKMvF2VGyq2UZL8vSwQKDZRpQTi_g_YlqoH7HacsiFlcP8HKSJEJci4i6baXOvY1gQV3CqsmfKL0--S";
 
 export default function CreditPurchase() {
   const { user } = useAuth();
   const [selectedPackage, setSelectedPackage] = useState<CreditPackage | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'mpesa' | null>(null);
 
   const handlePaymentSuccess = async (packageItem: CreditPackage) => {
     if (!user) return;
@@ -43,7 +45,20 @@ export default function CreditPurchase() {
     }
   };
 
-  if (selectedPackage) {
+  if (selectedPackage && paymentMethod === 'mpesa') {
+    return (
+      <MpesaPayment
+        package={selectedPackage}
+        onSuccess={() => handlePaymentSuccess(selectedPackage)}
+        onCancel={() => {
+          setSelectedPackage(null);
+          setPaymentMethod(null);
+        }}
+      />
+    );
+  }
+
+  if (selectedPackage && paymentMethod === 'paypal') {
     return (
       <Card>
         <CardHeader>
@@ -87,9 +102,55 @@ export default function CreditPurchase() {
               onCancel={() => {
                 toast.info('Payment cancelled');
                 setSelectedPackage(null);
+                setPaymentMethod(null);
               }}
             />
           </PayPalScriptProvider>
+          
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              setSelectedPackage(null);
+              setPaymentMethod(null);
+            }}
+            className="w-full mt-4"
+          >
+            Cancel
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (selectedPackage && !paymentMethod) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Choose Payment Method</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center mb-6">
+            <h3 className="text-lg font-semibold">{selectedPackage.description}</h3>
+            <p className="text-sm text-gray-600">{selectedPackage.amount} Credits</p>
+            <p className="text-2xl font-bold">${selectedPackage.price}</p>
+          </div>
+          
+          <div className="space-y-3">
+            <Button 
+              onClick={() => setPaymentMethod('paypal')}
+              className="w-full flex items-center justify-center gap-2"
+            >
+              💳 Pay with PayPal
+            </Button>
+            
+            <Button 
+              onClick={() => setPaymentMethod('mpesa')}
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2"
+            >
+              📱 Pay with M-PESA
+            </Button>
+          </div>
           
           <Button 
             variant="outline" 
