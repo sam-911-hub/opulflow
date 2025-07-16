@@ -20,6 +20,7 @@ import AIScriptGenerator from "@/components/AIScriptGenerator";
 import EmailSequences from "@/components/EmailSequences";
 import ServicePricing from "@/components/ServicePricing";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const { user, loading, accountType } = useAuth();
@@ -61,7 +62,8 @@ export default function DashboardPage() {
     { id: 'automation', name: 'Automation', icon: '🤖' },
     { id: 'credits', name: 'Credits', icon: '💳' },
     { id: 'team', name: 'Team', icon: '👨‍💼' },
-    { id: 'settings', name: 'Settings', icon: '⚙️' }
+    { id: 'settings', name: 'Settings', icon: '⚙️' },
+    { id: 'help', name: 'Help & Support', icon: '❓' }
   ];
 
   return (
@@ -138,6 +140,7 @@ export default function DashboardPage() {
                 {activeTab === 'credits' && 'Manage your account credits'}
                 {activeTab === 'team' && 'Collaborate with your team'}
                 {activeTab === 'settings' && 'Configure your account settings'}
+                {activeTab === 'help' && 'Get help and support'}
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -394,6 +397,56 @@ export default function DashboardPage() {
                 </Card>
               </div>
             </ProFeatureGuard>
+          )}
+          
+          {/* Help & Support Tab */}
+          {activeTab === 'help' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Help & Support</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h3 className="font-semibold text-blue-800 mb-2">Need assistance?</h3>
+                    <p className="text-blue-700 mb-4">Our support team is here to help you get the most out of OpulFlow.</p>
+                    <div className="flex items-center gap-3">
+                      <div className="bg-blue-100 p-3 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Email Support</h3>
+                        <a href="mailto:opulflow.inc@gmail.com" className="text-blue-600">opulflow.inc@gmail.com</a>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <Link href="/help" className="block p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                      <h3 className="font-semibold mb-1">User Manual</h3>
+                      <p className="text-sm text-gray-600">Comprehensive guide to all OpulFlow features</p>
+                    </Link>
+                    
+                    <Link href="/help#pricing" className="block p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                      <h3 className="font-semibold mb-1">Pricing Guide</h3>
+                      <p className="text-sm text-gray-600">Detailed information about our PAYG pricing</p>
+                    </Link>
+                    
+                    <Link href="/help#faq" className="block p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                      <h3 className="font-semibold mb-1">FAQ</h3>
+                      <p className="text-sm text-gray-600">Answers to commonly asked questions</p>
+                    </Link>
+                    
+                    <Link href="/help#contact" className="block p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                      <h3 className="font-semibold mb-1">Contact Us</h3>
+                      <p className="text-sm text-gray-600">Get in touch with our support team</p>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
         </main>
       </div>
