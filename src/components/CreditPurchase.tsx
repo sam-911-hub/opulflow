@@ -189,29 +189,104 @@ export default function CreditPurchase() {
     );
   }
 
+  // Group packages by category
+  const corePackages = creditPackages.filter(pkg => 
+    ['lead_lookup', 'company_enrichment', 'email_verification', 'ai_email', 'workflow'].includes(pkg.type) && 
+    !pkg.includes
+  );
+  
+  const bundlePackages = creditPackages.filter(pkg => pkg.includes);
+  
+  const extensionPackages = creditPackages.filter(pkg => 
+    ['extension_access', 'contact_lookup'].includes(pkg.type)
+  );
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Buy Credits</CardTitle>
-      </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {creditPackages.map((packageItem) => (
-          <Card key={packageItem.id}>
-            <CardHeader>
-              <CardTitle>{packageItem.description}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg font-semibold">{packageItem.amount} Credits</p>
-              <p className="text-2xl font-bold">${packageItem.price}</p>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={() => setSelectedPackage(packageItem)}>
-                Buy Now
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </CardContent>
-    </Card>
+    <div className="space-y-8">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
+        <h3 className="text-lg font-semibold text-blue-800 mb-2">Pay-As-You-Go Pricing</h3>
+        <p className="text-blue-700">Only pay for what you use. No subscriptions, no lock-in. Credits expire after 90 days.</p>
+        <p className="text-blue-600 text-sm mt-2">Minimum purchase: $10</p>
+      </div>
+      
+      <div>
+        <h3 className="text-xl font-semibold mb-4 border-b pb-2">Core Services</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {corePackages.map((packageItem) => (
+            <Card key={packageItem.id} className="border-t-4 border-t-blue-500">
+              <CardHeader>
+                <CardTitle>{packageItem.description}</CardTitle>
+                <p className="text-sm text-gray-500">{SERVICE_PRICING[packageItem.type].description}</p>
+              </CardHeader>
+              <CardContent>
+                <p className="text-lg font-semibold">{packageItem.amount} Credits</p>
+                <p className="text-2xl font-bold">${packageItem.price}</p>
+                <p className="text-sm text-gray-500 mt-1">${(packageItem.price / packageItem.amount).toFixed(2)} per credit</p>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={() => setSelectedPackage(packageItem)} className="w-full">
+                  Buy Now
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
+      
+      <div>
+        <h3 className="text-xl font-semibold mb-4 border-b pb-2">Service Bundles</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {bundlePackages.map((packageItem) => (
+            <Card key={packageItem.id} className="border-t-4 border-t-purple-500">
+              <CardHeader>
+                <CardTitle>{packageItem.description}</CardTitle>
+                <div className="flex items-center">
+                  <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">BEST VALUE</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-bold">${packageItem.price}</p>
+                <div className="mt-2 space-y-1">
+                  {packageItem.includes && Object.entries(packageItem.includes).map(([type, amount]) => (
+                    <div key={type} className="flex justify-between text-sm">
+                      <span>{SERVICE_PRICING[type as CreditType].description}:</span>
+                      <span className="font-medium">{amount === 1000 ? 'Unlimited' : amount}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={() => setSelectedPackage(packageItem)} className="w-full bg-purple-600 hover:bg-purple-700">
+                  Buy Bundle
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </div>
+      
+      {extensionPackages.length > 0 && (
+        <div>
+          <h3 className="text-xl font-semibold mb-4 border-b pb-2">Browser Extension</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {extensionPackages.map((packageItem) => (
+              <Card key={packageItem.id} className="border-t-4 border-t-green-500">
+                <CardHeader>
+                  <CardTitle>{packageItem.description}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">${packageItem.price}/month</p>
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={() => setSelectedPackage(packageItem)} className="w-full">
+                    Subscribe
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

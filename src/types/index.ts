@@ -43,7 +43,35 @@ export interface UserProfile {
 }
 
 // Credit System Types
-export type CreditType = 'ai' | 'leads' | 'enrichment' | 'company' | 'email' | 'workflow' | 'crm';
+export type CreditType = 
+  // Core Services
+  'lead_lookup' | 
+  'company_enrichment' | 
+  'email_verification' | 
+  'ai_email' | 
+  'workflow' | 
+  'crm_sync' |
+  // CRM Light
+  'lead_tracking' |
+  'pipeline' |
+  'report' |
+  // Email Automation
+  'email_personalization' |
+  'email_sequence' |
+  'email_tracking' |
+  // Lead Scoring
+  'tech_detection' |
+  'intent_signals' |
+  'lead_ranking' |
+  // Chrome Extension
+  'extension_access' |
+  'contact_lookup' |
+  // AI Coach
+  'script_help' |
+  'call_analysis' |
+  // Analytics
+  'source_tracking' |
+  'roi_report';
 
 export interface CreditPackage {
   id: string;
@@ -65,124 +93,172 @@ export interface CreditTransaction {
   description?: string;
 }
 
-// Service Limits
-export interface ServiceLimits {
-  leads: number; // per month
-  enrichment: number; // per month
-  company: number; // per month
-  emailSequences: number; // templates
-  workflowRuns: number; // per month
-  aiCredits: number; // per month
-  emailWriter: number; // per month
-  callScripts: number; // per month
-  meetingNotes: boolean;
-  userSeats: number;
-  sharedWorkspace: boolean;
+// Credit Expiration
+export interface CreditExpiration {
+  creditId: string;
+  userId: string;
+  expiresAt: string; // ISO date string
+  amount: number;
+  type: CreditType;
+  used: number;
+  remaining: number;
 }
 
-// Pricing Tiers
-export const PRICING_TIERS = {
-  free: {
-    name: 'Free Forever',
-    price: 0,
-    limits: {
-      leads: 500,
-      enrichment: 50,
-      company: 0, // Basic info only
-      emailSequences: 3,
-      workflowRuns: 5,
-      aiCredits: 0,
-      emailWriter: 10,
-      callScripts: 5,
-      meetingNotes: false,
-      userSeats: 1,
-      sharedWorkspace: false
-    } as ServiceLimits
-  },
-  pro: {
-    name: 'Pro',
-    price: 29,
-    billingCycle: 'monthly',
-    limits: {
-      leads: -1, // Unlimited
-      enrichment: -1, // Unlimited
-      company: -1, // Full technographics
-      emailSequences: -1, // Unlimited
-      workflowRuns: -1, // Unlimited
-      aiCredits: 10000,
-      emailWriter: -1, // Unlimited
-      callScripts: -1, // Unlimited
-      meetingNotes: true,
-      userSeats: 1, // +$10 per additional
-      sharedWorkspace: true
-    } as ServiceLimits
-  }
+// Service Pricing
+export const SERVICE_PRICING = {
+  // Core Services
+  lead_lookup: { cost: 0.10, price: 0.25, description: 'Lead Lookup' },
+  company_enrichment: { cost: 0.15, price: 0.35, description: 'Company Enrichment' },
+  email_verification: { cost: 0.008, price: 0.05, description: 'Email Verification' },
+  ai_email: { cost: 0.02, price: 0.10, description: 'AI Email Generation' },
+  workflow: { cost: 0.001, price: 0.05, description: 'Workflow Execution' },
+  crm_sync: { cost: 0, price: 10, description: 'CRM Sync Setup' },
+  
+  // CRM Light
+  lead_tracking: { cost: 0.001, price: 0.05, description: 'Lead Tracking' },
+  pipeline: { cost: 0, price: 10, description: 'Pipeline Management' },
+  report: { cost: 0.01, price: 2, description: 'Basic Reporting' },
+  
+  // Email Automation
+  email_personalization: { cost: 0.03, price: 0.15, description: 'AI Personalization' },
+  email_sequence: { cost: 0.001, price: 0.05, description: 'Sequence Automation' },
+  email_tracking: { cost: 0.002, price: 0.10, description: 'Deliverability Tracking' },
+  
+  // Lead Scoring
+  tech_detection: { cost: 0.05, price: 0.20, description: 'Tech Stack Detection' },
+  intent_signals: { cost: 0.10, price: 0.30, description: 'Intent Signals' },
+  lead_ranking: { cost: 0.02, price: 0.10, description: 'Priority Ranking' },
+  
+  // Chrome Extension
+  extension_access: { cost: 0, price: 10, description: 'Browser Access' },
+  contact_lookup: { cost: 0.05, price: 0.25, description: 'Auto-Lookup Contacts' },
+  
+  // AI Coach
+  script_help: { cost: 0.05, price: 0.25, description: 'Script Help' },
+  call_analysis: { cost: 0.10, price: 0.50, description: 'Call Analysis' },
+  
+  // Analytics
+  source_tracking: { cost: 0.001, price: 0.05, description: 'Source Tracking' },
+  roi_report: { cost: 0, price: 15, description: 'ROI Calculator' }
 };
 
 // PAYG Credit Packages
 export const creditPackages: CreditPackage[] = [
+  // Core Credit Packs
   {
-    id: 'ai-starter',
-    type: 'ai',
-    amount: 100,
+    id: 'starter-pack',
+    type: 'lead_lookup',
+    amount: 40,
     price: 10,
-    description: 'AI Starter',
+    description: 'Starter Pack',
     featured: true
   },
   {
     id: 'lead-explorer',
-    type: 'leads',
-    amount: 500,
-    price: 15,
+    type: 'lead_lookup',
+    amount: 200,
+    price: 45,
     description: 'Lead Explorer',
     featured: true
   },
   {
-    id: 'power-bundle',
-    type: 'ai',
-    amount: 5000,
-    price: 50,
-    description: 'Power Bundle',
+    id: 'enrichment-pack',
+    type: 'company_enrichment',
+    amount: 100,
+    price: 30,
+    description: 'Enrichment Pack'
+  },
+  {
+    id: 'email-verification',
+    type: 'email_verification',
+    amount: 1000,
+    price: 45,
+    description: 'Email Verification'
+  },
+  {
+    id: 'ai-writer',
+    type: 'ai_email',
+    amount: 200,
+    price: 20,
+    description: 'AI Email Writer'
+  },
+  {
+    id: 'workflow-automation',
+    type: 'workflow',
+    amount: 200,
+    price: 10,
+    description: 'Workflow Automation'
+  },
+  
+  // Bundle Packs
+  {
+    id: 'crm-light-bundle',
+    type: 'lead_tracking',
+    amount: 1,
+    price: 20,
+    description: 'CRM Light Bundle',
     featured: true,
     includes: {
-      leads: 2000,
-      ai: 5000
+      lead_tracking: 1000, // Unlimited leads
+      pipeline: 5,         // 5 pipelines
+      report: 10           // 10 reports
     }
   },
   {
-    id: 'enrichment-pack',
-    type: 'enrichment',
-    amount: 100,
-    price: 10,
-    description: 'Contact Enrichment'
+    id: 'email-bundle',
+    type: 'email_personalization',
+    amount: 1,
+    price: 50,
+    description: 'Email Automation Bundle',
+    featured: true,
+    includes: {
+      email_personalization: 500,
+      email_sequence: 500,
+      email_tracking: 500
+    }
   },
   {
-    id: 'company-data',
-    type: 'company',
-    amount: 100,
-    price: 20,
-    description: 'Company Profiles'
-  },
-  {
-    id: 'email-pack',
-    type: 'email',
-    amount: 100,
-    price: 5,
-    description: 'Email Sequences'
-  },
-  {
-    id: 'workflow-pack',
-    type: 'workflow',
-    amount: 100,
+    id: 'lead-scoring-bundle',
+    type: 'tech_detection',
+    amount: 1,
     price: 100,
-    description: 'Workflow Runs'
+    description: 'Lead Scoring Bundle',
+    includes: {
+      tech_detection: 1000,
+      intent_signals: 1000,
+      lead_ranking: 1000
+    }
   },
   {
-    id: 'crm-sync',
-    type: 'crm',
+    id: 'sales-coach-bundle',
+    type: 'script_help',
+    amount: 1,
+    price: 30,
+    description: 'AI Sales Coach Bundle',
+    includes: {
+      script_help: 1000,    // Unlimited queries
+      call_analysis: 60     // 60 minutes
+    }
+  },
+  {
+    id: 'analytics-bundle',
+    type: 'source_tracking',
+    amount: 1,
+    price: 25,
+    description: 'Analytics Bundle',
+    includes: {
+      source_tracking: 1000, // Unlimited tracking
+      roi_report: 5          // 5 reports
+    }
+  },
+  
+  // Extension Access
+  {
+    id: 'chrome-extension',
+    type: 'extension_access',
     amount: 1,
     price: 10,
-    description: 'CRM Integration'
+    description: 'Chrome Extension (Monthly)'
   }
 ];
 

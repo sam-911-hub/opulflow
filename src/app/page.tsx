@@ -29,8 +29,11 @@ export default function Home() {
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
             OpulFlow
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-600 mb-4">
             Next-gen sales intelligence platform for modern teams
+          </p>
+          <p className="text-lg font-medium text-indigo-600 mb-8">
+            Only pay for what you use - No subscriptions, no lock-in
           </p>
           <div className="space-x-4">
             <Link
@@ -49,17 +52,20 @@ export default function Home() {
         </div>
         
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-t-blue-500">
             <h3 className="text-xl font-semibold mb-3">Sales Intelligence</h3>
-            <p className="text-gray-600">Access unlimited leads, contact enrichment, and company technographics</p>
+            <p className="text-gray-600">Lead lookup, company enrichment, and email verification</p>
+            <p className="text-sm text-blue-600 mt-2">From $0.25/lead</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-t-purple-500">
             <h3 className="text-xl font-semibold mb-3">AI-Powered Tools</h3>
-            <p className="text-gray-600">Generate emails, call scripts, and meeting notes with AI</p>
+            <p className="text-gray-600">Email generation, call scripts, and sales coaching</p>
+            <p className="text-sm text-purple-600 mt-2">From $0.10/generation</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-3">Team Collaboration</h3>
-            <p className="text-gray-600">Work together with shared workspaces and workflow automation</p>
+          <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-t-green-500">
+            <h3 className="text-xl font-semibold mb-3">CRM & Automation</h3>
+            <p className="text-gray-600">Mini CRM, workflow automation, and email sequences</p>
+            <p className="text-sm text-green-600 mt-2">Bundles from $20</p>
           </div>
         </div>
       </div>
