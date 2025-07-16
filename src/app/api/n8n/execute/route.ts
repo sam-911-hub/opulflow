@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { n8nService } from '@/lib/n8n';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   try {
     const { workflowId, data } = await request.json();

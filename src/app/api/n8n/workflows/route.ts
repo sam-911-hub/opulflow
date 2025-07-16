@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { n8nService } from '@/lib/n8n';
 
-export async function GET() {
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+export async function GET(request: NextRequest) {
   try {
     const workflows = await n8nService.getWorkflows();
     return NextResponse.json(workflows);
