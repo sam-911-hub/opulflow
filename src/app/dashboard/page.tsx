@@ -11,7 +11,7 @@ import UpgradeButton from "@/components/UpgradeButton";
 import TeamInvite from "@/components/TeamInvite";
 import TeamMembers from "@/components/TeamMembers";
 import ProFeatureGuard from "@/components/ProFeatureGuard";
-import CreditPurchase from "@/components/CreditPurchase";
+import SimpleCreditPurchase from "@/components/SimpleCreditPurchase";
 import TransactionHistory from "@/components/TransactionHistory";
 import UsageLimits from "@/components/UsageLimits";
 import PricingTiers from "@/components/PricingTiers";
@@ -309,7 +309,7 @@ export default function DashboardPage() {
                 </TabsList>
                 
                 <TabsContent value="credits">
-                  <CreditPurchase />
+                  <SimpleCreditPurchase />
                 </TabsContent>
                 
                 <TabsContent value="pricing">
