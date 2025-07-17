@@ -18,7 +18,7 @@ import PricingTiers from "@/components/PricingTiers";
 import WorkflowAutomation from "@/components/WorkflowAutomation";
 import AIScriptGenerator from "@/components/AIScriptGenerator";
 import EmailSequences from "@/components/EmailSequences";
-import ServicePricing from "@/components/ServicePricing";
+import SimplePricing from "@/components/SimplePricing";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 
@@ -28,16 +28,7 @@ export default function DashboardPage() {
   const [forceLoaded, setForceLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Fallback timeout to prevent infinite loading
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (loading) {
-        console.warn('Auth loading timeout, forcing loaded state');
-        setForceLoaded(true);
-      }
-    }, 5000);
-    return () => clearTimeout(timeout);
-  }, [loading]);
+  // Removed duplicate timeout as it's now handled in AuthContext
 
   useEffect(() => {
     if (!loading && !user) {
@@ -322,7 +313,7 @@ export default function DashboardPage() {
                 </TabsContent>
                 
                 <TabsContent value="pricing">
-                  <ServicePricing />
+                  <SimplePricing />
                 </TabsContent>
               </Tabs>
               

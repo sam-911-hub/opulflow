@@ -36,8 +36,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   useEffect(() => {
+    // Set a timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      if (state.loading) {
+        console.warn('Auth loading timeout, forcing loaded state');
+        setState(prev => ({ ...prev, loading: false }));
+      }
+    }, 5000);
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      
       if (user) {
         // Immediately set user to prevent loading loop
         setState(prev => ({ ...prev, user, loading: false }));
@@ -70,7 +77,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
         });
       } else {
-
         setState({
           user: null,
           loading: false,
@@ -80,10 +86,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-
-
     return () => {
       unsubscribe();
+      clearTimeout(loadingTimeout);
     };
   }, []);
 
