@@ -10,7 +10,17 @@ export default function LogoutButton({ className = "" }: { className?: string })
 
   const handleLogout = async () => {
     try {
+      // Sign out from Firebase
       await signOut(auth);
+      
+      // Clear session cookie
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
       toast.success("Logged out successfully");
       router.push("/");
     } catch (error) {

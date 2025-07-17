@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, getIdToken } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -16,7 +16,25 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      // Sign in with Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Get the ID token
+      const idToken = await getIdToken(userCredential.user);
+      
+      // Create session cookie via API
+      const response = await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create session');
+      }
+      
       toast.success("Logged in successfully!");
       router.push("/dashboard");
     } catch (error: any) {

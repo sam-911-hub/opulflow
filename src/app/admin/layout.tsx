@@ -1,13 +1,35 @@
-import { auth } from "@/lib/firebase";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getAdminAuth, isUserAdmin } from "@/lib/admin";
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Note: Admin check disabled for testing
-  // Add your email to ADMIN_EMAIL in .env.local to enable
+  // Get session cookie
+  const sessionCookie = cookies().get('session')?.value;
+  
+  // If no session cookie, redirect to login
+  if (!sessionCookie) {
+    redirect('/login');
+  }
+  
+  try {
+    // Verify session cookie
+    const decodedClaims = await getAdminAuth().verifySessionCookie(sessionCookie);
+    
+    // Check if user is admin
+    const isAdmin = await isUserAdmin(decodedClaims.uid);
+    
+    // If not admin, redirect to home
+    if (!isAdmin) {
+      redirect('/');
+    }
+  } catch (error) {
+    // Invalid session cookie, redirect to login
+    redirect('/login');
+  }
 
   return (
     <div className="flex min-h-screen">
