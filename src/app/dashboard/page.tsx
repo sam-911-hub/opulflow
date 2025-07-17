@@ -19,6 +19,7 @@ import WorkflowAutomation from "@/components/WorkflowAutomation";
 import AIScriptGenerator from "@/components/AIScriptGenerator";
 import EmailSequences from "@/components/EmailSequences";
 import SimplePricing from "@/components/SimplePricing";
+import LogoutTab from "./logout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 
@@ -54,7 +55,8 @@ export default function DashboardPage() {
     { id: 'credits', name: 'Credits', icon: '💳' },
     { id: 'team', name: 'Team', icon: '👨‍💼' },
     { id: 'settings', name: 'Settings', icon: '⚙️' },
-    { id: 'help', name: 'Help & Support', icon: '❓' }
+    { id: 'help', name: 'Help & Support', icon: '❓' },
+    { id: 'logout', name: 'Logout', icon: '🚪' }
   ];
 
   return (
@@ -132,6 +134,7 @@ export default function DashboardPage() {
                 {activeTab === 'team' && 'Collaborate with your team'}
                 {activeTab === 'settings' && 'Configure your account settings'}
                 {activeTab === 'help' && 'Get help and support'}
+                {activeTab === 'logout' && 'Sign out of your account'}
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -439,6 +442,9 @@ export default function DashboardPage() {
               </Card>
             </div>
           )}
+          
+          {/* Logout Tab */}
+          {activeTab === 'logout' && <LogoutTab />}
         </main>
       </div>
     </div>
