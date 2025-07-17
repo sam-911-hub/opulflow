@@ -1,18 +1,39 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
 
+  // Clear any existing timer when component unmounts
   useEffect(() => {
-    if (!loading && user) {
-      router.push("/dashboard");
+    return () => {
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
+      }
+    };
+  }, [redirectTimer]);
+
+  // Handle authenticated user with delay
+  useEffect(() => {
+    if (!loading && user && showWelcome) {
+      // Show welcome page for at least 5 seconds before redirecting
+      const timer = setTimeout(() => {
+        router.push("/dashboard");
+      }, 5000); // 5 second delay
+      
+      setRedirectTimer(timer);
+      
+      return () => {
+        clearTimeout(timer);
+      };
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, showWelcome]);
 
   if (loading) {
     return (
@@ -24,6 +45,28 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {user && (
+        <div className="fixed top-0 left-0 right-0 bg-green-100 p-2 text-center">
+          <p className="text-green-800">
+            You're already logged in! Redirecting to dashboard in a few seconds...
+            <button 
+              onClick={() => router.push('/dashboard')} 
+              className="ml-2 underline text-blue-600 hover:text-blue-800"
+            >
+              Go now
+            </button>
+            <button 
+              onClick={() => {
+                setShowWelcome(false);
+                if (redirectTimer) clearTimeout(redirectTimer);
+              }} 
+              className="ml-2 underline text-gray-600 hover:text-gray-800"
+            >
+              Stay on this page
+            </button>
+          </p>
+        </div>
+      )}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
