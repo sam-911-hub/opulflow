@@ -111,7 +111,16 @@ export default function SimpleCreditPurchase() {
             service: creditType,
             createdAt: new Date().toISOString(),
             remainingBalance: ((user as any)?.credits?.[creditType] || 0) + amount,
-            bundleId: packageItem.id
+            bundleId: packageItem.id,
+            // Enhanced payment details
+            paymentDetails: {
+              packageName: packageItem.description,
+              serviceType: (details as any).description,
+              unitPrice: packageItem.price / Object.keys(packageItem.includes).length,
+              totalPrice: packageItem.price,
+              paymentMethod: paymentMethod,
+              purchaseDate: new Date().toISOString()
+            }
           });
         }
         
@@ -122,13 +131,22 @@ export default function SimpleCreditPurchase() {
           [`credits.${packageItem.type}`]: ((user as any)?.credits?.[packageItem.type] || 0) + packageItem.amount
         });
 
-        // Record transaction
+        // Record transaction with enhanced payment details
         await addDoc(collection(db, `users/${user.uid}/transactions`), {
           type: "purchase",
           amount: packageItem.amount,
           service: packageItem.type,
           createdAt: new Date().toISOString(),
-          remainingBalance: ((user as any)?.credits?.[packageItem.type] || 0) + packageItem.amount
+          remainingBalance: ((user as any)?.credits?.[packageItem.type] || 0) + packageItem.amount,
+          // Enhanced payment details
+          paymentDetails: {
+            packageName: packageItem.description,
+            serviceType: packageItem.serviceDescription,
+            unitPrice: packageItem.price / packageItem.amount,
+            totalPrice: packageItem.price,
+            paymentMethod: paymentMethod,
+            purchaseDate: new Date().toISOString()
+          }
         });
       }
 

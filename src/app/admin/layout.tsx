@@ -17,6 +17,9 @@ export default async function AdminLayout({
           <a href="/admin/users" className="block p-2 hover:bg-gray-100 rounded">
             Users
           </a>
+          <a href="/admin/transactions" className="block p-2 hover:bg-gray-100 rounded">
+            Transactions
+          </a>
           <a href="/admin/analytics" className="block p-2 hover:bg-gray-100 rounded">
             Analytics
           </a>
