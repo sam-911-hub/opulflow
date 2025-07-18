@@ -34,9 +34,10 @@ export default function LoginPage() {
         body: JSON.stringify({ idToken }),
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create session');
+        throw new Error(data.error || 'Failed to create session');
       }
       
       toast.success("Logged in successfully!");
