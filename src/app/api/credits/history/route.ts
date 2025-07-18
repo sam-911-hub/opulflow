@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore, verifySessionCookie } from '@/lib/admin';
+import { mockTransactions } from '@/lib/mock-data';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,14 +10,29 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // Verify session
-    const decodedClaims = await verifySessionCookie(sessionCookie);
-    const uid = decodedClaims.uid;
-    
     // Get limit and offset from query params
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '10');
     const offset = parseInt(url.searchParams.get('offset') || '0');
+    
+    // Apply pagination to mock data
+    const paginatedTransactions = mockTransactions.slice(offset, offset + limit);
+    
+    return NextResponse.json({ 
+      transactions: paginatedTransactions,
+      pagination: {
+        limit,
+        offset,
+        total: mockTransactions.length,
+        hasMore: offset + paginatedTransactions.length < mockTransactions.length,
+      }
+    });
+    
+    // NOTE: In production, you would use the Firestore code below
+    /*
+    // Verify session
+    const decodedClaims = await verifySessionCookie(sessionCookie);
+    const uid = decodedClaims.uid;
     
     // Get credit transactions from Firestore
     const db = getAdminFirestore();
@@ -43,11 +58,12 @@ export async function GET(request: NextRequest) {
         hasMore: transactions.length === limit,
       }
     });
+    */
   } catch (error) {
     console.error('Get credit history error:', error);
     return NextResponse.json(
       { error: 'Failed to get credit history' },
-      { status: 401 }
+      { status: 500 }
     );
   }
 }

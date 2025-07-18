@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore, verifySessionCookie } from '@/lib/admin';
+import { mockDashboardStats } from '@/lib/mock-data';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,13 +10,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // Verify session
-    const decodedClaims = await verifySessionCookie(sessionCookie);
-    const uid = decodedClaims.uid;
-    
     // Get time period from query params
     const url = new URL(request.url);
     const period = url.searchParams.get('period') || '30d'; // Default to last 30 days
+    
+    // For testing, return mock data
+    return NextResponse.json({
+      ...mockDashboardStats,
+      period
+    });
+    
+    // NOTE: In production, you would use the Firestore code below
+    /*
+    // Verify session
+    const decodedClaims = await verifySessionCookie(sessionCookie);
+    const uid = decodedClaims.uid;
     
     // Calculate date range
     const now = new Date();
@@ -102,6 +110,7 @@ export async function GET(request: NextRequest) {
     };
     
     return NextResponse.json(stats);
+    */
   } catch (error) {
     console.error('Dashboard stats error:', error);
     return NextResponse.json(

@@ -1,32 +1,35 @@
-// This is a simplified version of admin.ts for Edge Runtime compatibility
-// It doesn't use firebase-admin which causes issues in Edge Runtime
+// This file is used for Edge runtime (middleware)
+import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 
-export async function verifySessionCookie(sessionCookie: string) {
-  // In Edge Runtime, we'll use a different approach
-  // For now, we'll just validate that the cookie exists
-  if (!sessionCookie) {
-    throw new Error('No session cookie provided');
+// Initialize Firebase Admin for Edge runtime
+function initAdmin() {
+  const apps = getApps();
+  if (apps.length > 0) {
+    return apps[0];
   }
-  
-  // In a real implementation, you would validate this with an API call
-  // to a serverless function that uses firebase-admin
-  return { uid: 'placeholder-uid' };
+
+  try {
+    return initializeApp({
+      credential: cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
+    });
+  } catch (error) {
+    console.error('Error initializing Firebase Admin for Edge:', error);
+    throw error;
+  }
 }
 
-export async function isUserAdmin(uid: string): Promise<boolean> {
-  // In Edge Runtime, we'll use a different approach
-  // This would typically call an API endpoint
-  return false;
-}
-
+// Get Firebase Admin Auth
 export function getAdminAuth() {
-  // Return a minimal compatible interface
-  return {
-    verifySessionCookie: verifySessionCookie
-  };
-}
-
-export function getAdminFirestore() {
-  // Return a minimal compatible interface
-  return {};
+  try {
+    const app = initAdmin();
+    return getAuth(app);
+  } catch (error) {
+    console.error('Error getting admin auth:', error);
+    throw error;
+  }
 }

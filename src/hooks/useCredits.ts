@@ -13,7 +13,7 @@ export default function useCredits() {
       return false;
     }
 
-    const currentBalance = (user as any)?.credits?.[service] || 0;
+    const currentBalance = (user as any)?.credits?.[service] ?? 0;
     if (currentBalance < amount) {
       toast.error(`Not enough ${service} credits`);
       return false;
@@ -37,7 +37,8 @@ export default function useCredits() {
 
       return true;
     } catch (error) {
-      toast.error("Failed to deduct credits");
+      console.error('Error deducting credits:', error);
+      toast.error("Failed to deduct credits. Please try again.");
       return false;
     }
   };
@@ -49,7 +50,7 @@ export default function useCredits() {
     }
 
     try {
-      const currentBalance = (user as any)?.credits?.[service] || 0;
+      const currentBalance = (user as any)?.credits?.[service] ?? 0;
       
       // Update balance
       const userRef = doc(db, "users", user.uid);
@@ -66,9 +67,11 @@ export default function useCredits() {
         remainingBalance: currentBalance + amount
       });
 
+      toast.success(`Added ${amount} ${service} credits`);
       return true;
     } catch (error) {
-      toast.error("Failed to add credits");
+      console.error('Error adding credits:', error);
+      toast.error("Failed to add credits. Please try again.");
       return false;
     }
   };

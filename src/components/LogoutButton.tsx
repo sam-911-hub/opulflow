@@ -14,18 +14,25 @@ export default function LogoutButton({ className = "" }: { className?: string })
       await signOut(auth);
       
       // Clear session cookie
-      await fetch('/api/auth/logout', {
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
       });
       
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to clear session');
+      }
+      
       toast.success("Logged out successfully");
-      router.push("/");
+      
+      // Use window.location for a full page refresh to clear any state
+      window.location.href = "/";
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Failed to log out");
+      toast.error("Failed to log out. Please try again.");
     }
   };
 

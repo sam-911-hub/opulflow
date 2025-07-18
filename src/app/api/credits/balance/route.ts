@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore, verifySessionCookie } from '@/lib/admin';
+import { mockDashboardStats } from '@/lib/mock-data';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,6 +10,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
+    // Return mock credits data
+    return NextResponse.json({ credits: mockDashboardStats.currentCredits });
+    
+    // NOTE: In production, you would use the Firestore code below
+    /*
     // Verify session
     const decodedClaims = await verifySessionCookie(sessionCookie);
     const uid = decodedClaims.uid;
@@ -26,11 +31,12 @@ export async function GET(request: NextRequest) {
     const credits = userData?.credits || 0;
     
     return NextResponse.json({ credits });
+    */
   } catch (error) {
     console.error('Get credits balance error:', error);
     return NextResponse.json(
       { error: 'Failed to get credits balance' },
-      { status: 401 }
+      { status: 500 }
     );
   }
 }

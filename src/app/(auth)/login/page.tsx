@@ -17,13 +17,15 @@ export default function LoginPage() {
     setLoading(true);
     
     try {
+      if (!email || !password) {
+        throw new Error('Email and password are required');
+      }
+      
       // Sign in with Firebase
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
       // Get the ID token
       const idToken = await userCredential.user.getIdToken();
-      
-      console.log("Got ID token, creating session...");
       
       // Create session cookie via API
       const response = await fetch('/api/auth/session', {
@@ -46,7 +48,15 @@ export default function LoginPage() {
       window.location.href = "/dashboard";
     } catch (error: any) {
       console.error("Login error:", error);
-      toast.error(error.message || "Login failed");
+      
+      // Provide more user-friendly error messages
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        toast.error("Invalid email or password");
+      } else if (error.code === 'auth/too-many-requests') {
+        toast.error("Too many failed login attempts. Please try again later.");
+      } else {
+        toast.error(error.message || "Login failed");
+      }
     } finally {
       setLoading(false);
     }

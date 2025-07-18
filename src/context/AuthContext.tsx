@@ -3,11 +3,12 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { CreditType } from "@/types/interfaces";
 
 interface AppUser extends User {
   accountType?: "free" | "pro";
   role?: "owner" | "admin" | "member";
-  credits?: Record<string, number>;
+  credits?: Record<CreditType, number>;
 }
 
 type AuthContextType = {
@@ -51,16 +52,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (userDoc.exists()) {
             const userData = userDoc.data();
+            
+            // Ensure credits object has all required fields
+            const credits = userData.credits || {};
+            const defaultCredits = {
+              ai_email: 0,
+              lead_lookup: 0,
+              company_enrichment: 0,
+              email_verification: 0,
+              workflow: 0,
+              crm_sync: 0
+            };
+            
+            // Merge default credits with user credits
+            const mergedCredits = { ...defaultCredits, ...credits };
+            
             setState({
-              user: { ...user, ...userData } as AppUser,
+              user: { 
+                ...user, 
+                ...userData,
+                credits: mergedCredits 
+              } as AppUser,
               loading: false,
               accountType: userData.accountType || "free",
               role: userData.role || "owner"
             });
           } else {
             // User doc doesn't exist
+            console.warn(`User document not found for uid: ${user.uid}`);
             setState({
-              user: user as AppUser,
+              user: {
+                ...user,
+                credits: {
+                  ai_email: 0,
+                  lead_lookup: 0,
+                  company_enrichment: 0,
+                  email_verification: 0,
+                  workflow: 0,
+                  crm_sync: 0
+                }
+              } as AppUser,
               loading: false,
               accountType: "free",
               role: "owner"
@@ -69,7 +100,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           console.error('Error fetching user data:', error);
           setState({
-            user: user as AppUser,
+            user: {
+              ...user,
+              credits: {
+                ai_email: 0,
+                lead_lookup: 0,
+                company_enrichment: 0,
+                email_verification: 0,
+                workflow: 0,
+                crm_sync: 0
+              }
+            } as AppUser,
             loading: false,
             accountType: "free",
             role: "owner"
@@ -83,6 +124,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: null
         });
       }
+    }, (error) => {
+      // Handle auth state change errors
+      console.error('Auth state change error:', error);
+      setState({
+        user: null,
+        loading: false,
+        accountType: null,
+        role: null
+      });
     });
 
     return () => {

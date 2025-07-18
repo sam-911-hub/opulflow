@@ -1,18 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
-
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { collection, doc, setDoc } from "firebase/firestore";
+import { db } from "./firebase";
 
 // Helper function to initialize schema
 export async function initFirestoreSchema(userId: string) {
@@ -22,13 +9,12 @@ export async function initFirestoreSchema(userId: string) {
       email: "",
       accountType: "free",
       credits: {
-        ai: 0,
-        leads: 0,
-        enrichment: 0,
-        company: 0,
-        email: 0,
+        ai_email: 0,
+        lead_lookup: 0,
+        company_enrichment: 0,
+        email_verification: 0,
         workflow: 0,
-        crm: 0
+        crm_sync: 0
       },
       usage: {
         leads: 0,
@@ -63,4 +49,4 @@ export async function initFirestoreSchema(userId: string) {
   }
 }
 
-export { db };
+// No need to export db as it's already exported from firebase.ts

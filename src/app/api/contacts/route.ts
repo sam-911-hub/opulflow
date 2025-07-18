@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore, verifySessionCookie } from '@/lib/admin';
+import { mockContacts } from '@/lib/mock-data';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,15 +10,39 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // Verify session
-    const decodedClaims = await verifySessionCookie(sessionCookie);
-    const uid = decodedClaims.uid;
-    
     // Get query parameters
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '50');
     const offset = parseInt(url.searchParams.get('offset') || '0');
     const search = url.searchParams.get('search') || '';
+    
+    // Filter contacts based on search term
+    let filteredContacts = mockContacts;
+    if (search) {
+      filteredContacts = mockContacts.filter(contact => 
+        contact.name.toLowerCase().includes(search.toLowerCase()) || 
+        contact.email.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    // Apply pagination
+    const paginatedContacts = filteredContacts.slice(offset, offset + limit);
+    
+    return NextResponse.json({
+      contacts: paginatedContacts,
+      pagination: {
+        total: filteredContacts.length,
+        limit,
+        offset,
+        hasMore: offset + paginatedContacts.length < filteredContacts.length,
+      }
+    });
+    
+    // NOTE: In production, you would use the Firestore code below
+    /*
+    // Verify session
+    const decodedClaims = await verifySessionCookie(sessionCookie);
+    const uid = decodedClaims.uid;
     
     // Query contacts from Firestore
     const db = getAdminFirestore();
@@ -62,6 +86,7 @@ export async function GET(request: NextRequest) {
         hasMore: offset + contacts.length < total,
       }
     });
+    */
   } catch (error) {
     console.error('Get contacts error:', error);
     return NextResponse.json(

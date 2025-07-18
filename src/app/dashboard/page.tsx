@@ -180,11 +180,11 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{(user as any)?.credits?.lead_lookup || 0}</p>
+                <p className="text-sm font-medium text-gray-900">{(user as any)?.credits?.lead_lookup ?? 0}</p>
                 <p className="text-xs text-gray-500">Lead Credits</p>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{(user as any)?.credits?.ai_email || 0}</p>
+                <p className="text-sm font-medium text-gray-900">{(user as any)?.credits?.ai_email ?? 0}</p>
                 <p className="text-xs text-gray-500">AI Credits</p>
               </div>
             </div>
@@ -238,19 +238,19 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-blue-50 rounded-lg">
                         <p className="text-sm text-blue-700">AI Email Credits</p>
-                        <p className="text-2xl font-bold text-blue-600">{(user as any)?.credits?.ai_email || 0}</p>
+                        <p className="text-2xl font-bold text-blue-600">{(user as any)?.credits?.ai_email ?? 0}</p>
                       </div>
                       <div className="p-4 bg-green-50 rounded-lg">
                         <p className="text-sm text-green-700">Lead Lookup Credits</p>
-                        <p className="text-2xl font-bold text-green-600">{(user as any)?.credits?.lead_lookup || 0}</p>
+                        <p className="text-2xl font-bold text-green-600">{(user as any)?.credits?.lead_lookup ?? 0}</p>
                       </div>
                       <div className="p-4 bg-purple-50 rounded-lg">
                         <p className="text-sm text-purple-700">Company Data</p>
-                        <p className="text-2xl font-bold text-purple-600">{(user as any)?.credits?.company_enrichment || 0}</p>
+                        <p className="text-2xl font-bold text-purple-600">{(user as any)?.credits?.company_enrichment ?? 0}</p>
                       </div>
                       <div className="p-4 bg-amber-50 rounded-lg">
                         <p className="text-sm text-amber-700">Email Verification</p>
-                        <p className="text-2xl font-bold text-amber-600">{(user as any)?.credits?.email_verification || 0}</p>
+                        <p className="text-2xl font-bold text-amber-600">{(user as any)?.credits?.email_verification ?? 0}</p>
                       </div>
                     </div>
                     <Button 
@@ -296,19 +296,19 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <p className="text-sm text-blue-700">Lead Lookup</p>
-                        <p className="text-xl font-bold">{(user as any)?.credits?.lead_lookup || 0}</p>
+                        <p className="text-xl font-bold">{(user as any)?.credits?.lead_lookup ?? 0}</p>
                       </div>
                       <div>
                         <p className="text-sm text-blue-700">Company Data</p>
-                        <p className="text-xl font-bold">{(user as any)?.credits?.company_enrichment || 0}</p>
+                        <p className="text-xl font-bold">{(user as any)?.credits?.company_enrichment ?? 0}</p>
                       </div>
                       <div>
                         <p className="text-sm text-blue-700">Email Verify</p>
-                        <p className="text-xl font-bold">{(user as any)?.credits?.email_verification || 0}</p>
+                        <p className="text-xl font-bold">{(user as any)?.credits?.email_verification ?? 0}</p>
                       </div>
                       <div>
                         <p className="text-sm text-blue-700">AI Credits</p>
-                        <p className="text-xl font-bold">{(user as any)?.credits?.ai_email || 0}</p>
+                        <p className="text-xl font-bold">{(user as any)?.credits?.ai_email ?? 0}</p>
                       </div>
                     </div>
                   </CardContent>

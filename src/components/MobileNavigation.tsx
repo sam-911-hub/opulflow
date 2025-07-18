@@ -15,6 +15,7 @@ export default function MobileNavigation({ navigation, activeTab, setActiveTab }
   const [open, setOpen] = useState(false);
   const { isMobile } = useResponsive();
   
+  // Only render on mobile devices
   if (!isMobile) return null;
   
   return (

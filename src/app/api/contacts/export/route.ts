@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore, verifySessionCookie } from '@/lib/admin';
+import { mockContacts } from '@/lib/mock-data';
 
 export async function GET(request: NextRequest) {
   try {

@@ -4,7 +4,8 @@ import { createSessionCookie } from '@/lib/admin';
 export async function POST(request: NextRequest) {
   try {
     // Get ID token from request body
-    const { idToken } = await request.json();
+    const body = await request.json().catch(() => ({}));
+    const { idToken } = body;
     
     if (!idToken) {
       return NextResponse.json({ error: 'ID token is required' }, { status: 400 });
@@ -25,11 +26,26 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
+      sameSite: 'lax', // Protect against CSRF
     });
     
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Session creation error:', error);
+    
+    // Provide more specific error messages
+    if (error.code === 'auth/id-token-expired') {
+      return NextResponse.json(
+        { error: 'ID token has expired. Please login again.' },
+        { status: 401 }
+      );
+    } else if (error.code === 'auth/invalid-id-token') {
+      return NextResponse.json(
+        { error: 'Invalid ID token. Please login again.' },
+        { status: 401 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to create session' },
       { status: 401 }

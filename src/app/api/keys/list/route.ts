@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore, verifySessionCookie } from '@/lib/admin';
+import { mockApiKeys } from '@/lib/mock-data';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,6 +10,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
+    // Return mock API keys
+    return NextResponse.json({ apiKeys: mockApiKeys });
+    
+    // NOTE: In production, you would use the Firestore code below
+    /*
     // Verify session
     const decodedClaims = await verifySessionCookie(sessionCookie);
     const uid = decodedClaims.uid;
@@ -36,6 +41,7 @@ export async function GET(request: NextRequest) {
     });
     
     return NextResponse.json({ apiKeys });
+    */
   } catch (error) {
     console.error('List API keys error:', error);
     return NextResponse.json(

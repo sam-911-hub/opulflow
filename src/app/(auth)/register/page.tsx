@@ -18,6 +18,15 @@ export default function RegisterPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      // Validate inputs
+      if (!email || !password) {
+        throw new Error('Email and password are required');
+      }
+      
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters');
+      }
+      
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
       // Create user document in Firestore
@@ -25,13 +34,12 @@ export default function RegisterPage() {
         email: userCredential.user.email,
         accountType: "free",
         credits: {
-          ai: 0,
-          leads: 0,
-          enrichment: 0,
-          company: 0,
-          email: 0,
+          ai_email: 0,
+          lead_lookup: 0,
+          company_enrichment: 0,
+          email_verification: 0,
           workflow: 0,
-          crm: 0
+          crm_sync: 0
         },
         usage: {
           leads: 0,
@@ -45,12 +53,23 @@ export default function RegisterPage() {
       });
 
       // Initialize team and member relationships
-      await initFirestoreSchema(userCredential.user.uid); // New line
+      await initFirestoreSchema(userCredential.user.uid);
 
       toast.success("Account created successfully!");
       router.push("/dashboard");
     } catch (error: any) {
-      toast.error(error.message);
+      console.error("Registration error:", error);
+      
+      // Provide more user-friendly error messages
+      if (error.code === 'auth/email-already-in-use') {
+        toast.error("Email is already in use. Please use a different email or login.");
+      } else if (error.code === 'auth/invalid-email') {
+        toast.error("Invalid email address.");
+      } else if (error.code === 'auth/weak-password') {
+        toast.error("Password is too weak. Please use a stronger password.");
+      } else {
+        toast.error(error.message || "Failed to create account");
+      }
     } finally {
       setLoading(false);
     }

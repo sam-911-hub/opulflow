@@ -51,6 +51,7 @@ export async function middleware(request: NextRequest) {
         // Verify session cookie
         await getAdminAuth().verifySessionCookie(sessionCookie);
       } catch (error) {
+        console.error('Session verification error:', error);
         // Invalid session cookie
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
@@ -64,13 +65,31 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
     
-    // We'll handle admin authorization in the API route
-    return NextResponse.next();
+    try {
+      // Verify session cookie
+      await getAdminAuth().verifySessionCookie(sessionCookie);
+      // We'll handle admin authorization in the API route
+      return NextResponse.next();
+    } catch (error) {
+      console.error('Admin route session verification error:', error);
+      // Invalid session cookie, redirect to login
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
   }
   
   // For dashboard routes, check if user is logged in
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
     if (!sessionCookie) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+    
+    try {
+      // Verify session cookie
+      await getAdminAuth().verifySessionCookie(sessionCookie);
+      return NextResponse.next();
+    } catch (error) {
+      console.error('Dashboard route session verification error:', error);
+      // Invalid session cookie, redirect to login
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
@@ -79,5 +98,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/api/:path*',
+  ],
 };
