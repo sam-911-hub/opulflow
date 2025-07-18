@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getAdminAuth } from './lib/admin';
+import { getAdminAuth } from './lib/admin-edge';
 
 // In-memory rate limiting (would use Redis in production)
 const rateLimit = {

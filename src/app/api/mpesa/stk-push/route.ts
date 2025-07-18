@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/apiMiddleware';
+import { withAuth } from '@/lib/apiMiddleware-edge';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { convertUSDToLocal } from '@/lib/currency';

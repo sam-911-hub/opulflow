@@ -35,6 +35,8 @@ import useResponsive from "@/hooks/useResponsive";
 import LogoutTab from "./logout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import DashboardStats from "@/components/DashboardStats";
+import ContactManager from "@/components/ContactManager";
 
 export default function DashboardPage() {
   const { user, loading, accountType } = useAuth();
@@ -194,69 +196,9 @@ export default function DashboardPage() {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">AI Email Credits</p>
-                        <p className="text-2xl font-bold text-blue-600">{(user as any)?.credits?.ai_email || 0}</p>
-                      </div>
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <span className="text-blue-600 text-xl">🤖</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Lead Lookup Credits</p>
-                        <p className="text-2xl font-bold text-green-600">{(user as any)?.credits?.lead_lookup || 0}</p>
-                      </div>
-                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <span className="text-green-600 text-xl">👥</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Company Data</p>
-                        <p className="text-2xl font-bold text-purple-600">{(user as any)?.credits?.company_enrichment || 0}</p>
-                      </div>
-                      <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <span className="text-purple-600 text-xl">🏢</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              <DashboardStats />
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <p className="text-sm text-gray-600">Account created</p>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <p className="text-sm text-gray-600">API keys configured</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
                 <Card>
                   <CardHeader>
                     <CardTitle>Quick Actions</CardTitle>
@@ -285,6 +227,39 @@ export default function DashboardPage() {
                         🔍 Browser Extension
                       </Button>
                     </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Credit Balance</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <p className="text-sm text-blue-700">AI Email Credits</p>
+                        <p className="text-2xl font-bold text-blue-600">{(user as any)?.credits?.ai_email || 0}</p>
+                      </div>
+                      <div className="p-4 bg-green-50 rounded-lg">
+                        <p className="text-sm text-green-700">Lead Lookup Credits</p>
+                        <p className="text-2xl font-bold text-green-600">{(user as any)?.credits?.lead_lookup || 0}</p>
+                      </div>
+                      <div className="p-4 bg-purple-50 rounded-lg">
+                        <p className="text-sm text-purple-700">Company Data</p>
+                        <p className="text-2xl font-bold text-purple-600">{(user as any)?.credits?.company_enrichment || 0}</p>
+                      </div>
+                      <div className="p-4 bg-amber-50 rounded-lg">
+                        <p className="text-sm text-amber-700">Email Verification</p>
+                        <p className="text-2xl font-bold text-amber-600">{(user as any)?.credits?.email_verification || 0}</p>
+                      </div>
+                    </div>
+                    <Button 
+                      className="w-full mt-4" 
+                      variant="outline" 
+                      onClick={() => setActiveTab('credits')}
+                    >
+                      Buy More Credits
+                    </Button>
                   </CardContent>
                 </Card>
               </div>
@@ -424,14 +399,7 @@ export default function DashboardPage() {
           {/* Leads Tab */}
           {activeTab === 'leads' && (
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Lead Management</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <LeadsTable />
-                </CardContent>
-              </Card>
+              <ContactManager />
             </div>
           )}
 

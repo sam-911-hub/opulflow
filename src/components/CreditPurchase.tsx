@@ -98,22 +98,51 @@ export default function CreditPurchase() {
           <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD" }}>
             <PayPalButtons
               style={{ layout: "vertical" }}
-              createOrder={(data, actions) => {
-                return actions.order.create({
-                  intent: "CAPTURE",
-                  purchase_units: [{
-                    amount: {
-                      currency_code: "USD",
-                      value: selectedPackage.price.toString()
-                    },
-                    description: selectedPackage.description
-                  }]
-                });
-              }}
-              onApprove={async (data, actions) => {
+              createOrder={async () => {
                 try {
-                  const details = await actions.order!.capture();
-                  console.log('Payment successful:', details);
+                  // Create PayPal order using our API
+                  const response = await fetch('/api/payments/paypal/create', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      amount: selectedPackage.price,
+                      creditPackage: selectedPackage.description,
+                    }),
+                  });
+                  
+                  if (!response.ok) {
+                    throw new Error('Failed to create PayPal order');
+                  }
+                  
+                  const orderData = await response.json();
+                  return orderData.id;
+                } catch (error) {
+                  console.error('Error creating PayPal order:', error);
+                  toast.error('Failed to create PayPal order');
+                  throw error;
+                }
+              }}
+              onApprove={async (data) => {
+                try {
+                  // Verify PayPal payment using our API
+                  const response = await fetch('/api/payments/paypal/verify', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      orderId: data.orderID,
+                    }),
+                  });
+                  
+                  if (!response.ok) {
+                    throw new Error('Failed to verify PayPal payment');
+                  }
+                  
+                  const verificationData = await response.json();
+                  console.log('Payment successful:', verificationData);
                   await handlePaymentSuccess(selectedPackage);
                 } catch (error) {
                   console.error('Payment error:', error);

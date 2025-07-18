@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/apiMiddleware';
+import { withAuth } from '@/lib/apiMiddleware-edge';
 import { n8nService } from '@/lib/n8n';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
