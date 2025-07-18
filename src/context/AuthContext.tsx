@@ -7,6 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 interface AppUser extends User {
   accountType?: "free" | "pro";
   role?: "owner" | "admin" | "member";
+  credits?: Record<string, number>;
 }
 
 type AuthContextType = {
@@ -33,8 +34,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     role: null as "owner" | "admin" | "member" | null
   });
 
-
-
   useEffect(() => {
     // Set a timeout to prevent infinite loading
     const loadingTimeout = setTimeout(() => {
@@ -42,40 +41,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn('Auth loading timeout, forcing loaded state');
         setState(prev => ({ ...prev, loading: false }));
       }
-    }, 5000);
+    }, 10000); // Increased timeout to 10 seconds
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Immediately set user to prevent loading loop
-        setState(prev => ({ ...prev, user, loading: false }));
-        
-        // Then fetch additional data
-        getDoc(doc(db, "users", user.uid)).then((doc) => {
-          if (doc.exists()) {
+        try {
+          // Fetch user data from Firestore
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
             setState({
-              user: { ...user, ...doc.data() },
+              user: { ...user, ...userData } as AppUser,
               loading: false,
-              accountType: doc.data().accountType || "free",
-              role: doc.data().role || "owner"
+              accountType: userData.accountType || "free",
+              role: userData.role || "owner"
             });
           } else {
-            // User doc doesn't exist, create default
+            // User doc doesn't exist
             setState({
-              user,
+              user: user as AppUser,
               loading: false,
               accountType: "free",
               role: "owner"
             });
           }
-        }).catch((error) => {
-          console.error('Error fetching user doc:', error);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
           setState({
-            user,
+            user: user as AppUser,
             loading: false,
             accountType: "free",
             role: "owner"
           });
-        });
+        }
       } else {
         setState({
           user: null,
