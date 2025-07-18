@@ -12,6 +12,8 @@ import TeamInvite from "@/components/TeamInvite";
 import TeamMembers from "@/components/TeamMembers";
 import ProFeatureGuard from "@/components/ProFeatureGuard";
 import SimpleCreditPurchase from "@/components/SimpleCreditPurchase";
+import CustomCreditPurchase from "@/components/CustomCreditPurchase";
+import CustomCreditPurchase from "@/components/CustomCreditPurchase";
 import TransactionHistory from "@/components/TransactionHistory";
 import UsageLimits from "@/components/UsageLimits";
 import PricingTiers from "@/components/PricingTiers";
@@ -308,11 +310,18 @@ export default function DashboardPage() {
               <Tabs defaultValue="credits">
                 <TabsList className="w-full mb-6">
                   <TabsTrigger value="credits" className="flex-1">Buy Credits</TabsTrigger>
+                  <TabsTrigger value="custom" className="flex-1">Custom Credits</TabsTrigger>
                   <TabsTrigger value="pricing" className="flex-1">Service Pricing</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="credits">
                   <SimpleCreditPurchase />
+                </TabsContent>
+                
+                <TabsContent value="custom">
+                  <div className="max-w-md mx-auto">
+                    <CustomCreditPurchase />
+                  </div>
                 </TabsContent>
                 
                 <TabsContent value="pricing">

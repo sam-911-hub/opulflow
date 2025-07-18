@@ -326,3 +326,57 @@ export const defaultEmailTemplates: EmailTemplate[] = [
     variables: ['firstName']
   }
 ];
+
+// Pricing Tiers
+export const PRICING_TIERS = {
+  free: {
+    name: 'Free',
+    price: 0,
+    description: 'For individuals and small teams',
+    limits: {
+      leads: 500,
+      enrichment: 50,
+      workflowRuns: 5,
+      emailWriter: 10,
+      callScripts: 5,
+      emailTemplates: 3,
+      teamMembers: 1
+    }
+  },
+  pro: {
+    name: 'Pro',
+    price: 29,
+    description: 'For growing teams',
+    limits: {
+      leads: -1, // Unlimited
+      enrichment: -1, // Unlimited
+      workflowRuns: -1, // Unlimited
+      emailWriter: 10000,
+      callScripts: -1, // Unlimited
+      emailTemplates: -1, // Unlimited
+      teamMembers: 5
+    }
+  }
+};
+
+// Interface definitions for templates
+interface WorkflowTemplate {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  n8nId: string;
+  creditCost: number;
+  requiredCredits: string;
+  category: string;
+}
+
+interface EmailTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  daysAfter: number;
+  isAIEnhanced: boolean;
+  variables: string[];
+}
