@@ -15,12 +15,15 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
     try {
       // Sign in with Firebase
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
       // Get the ID token
       const idToken = await userCredential.user.getIdToken();
+      
+      console.log("Got ID token, creating session...");
       
       // Create session cookie via API
       const response = await fetch('/api/auth/session', {
@@ -31,14 +34,15 @@ export default function LoginPage() {
         body: JSON.stringify({ idToken }),
       });
       
-      const data = await response.json();
-      
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create session');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create session');
       }
       
       toast.success("Logged in successfully!");
-      router.push("/dashboard");
+      
+      // Force reload to ensure auth state is updated
+      window.location.href = "/dashboard";
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error(error.message || "Login failed");

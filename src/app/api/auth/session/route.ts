@@ -1,19 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from 'firebase-admin/auth';
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { auth as adminAuth } from 'firebase-admin';
+import admin from 'firebase-admin';
 
-// Initialize Firebase Admin
-function initAdmin() {
-  const apps = getApps();
-  if (apps.length > 0) {
-    return apps[0];
-  }
-
-  return initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_ADMIN_PROJECT_ID || '',
+      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL || '',
+      privateKey: (process.env.FIREBASE_ADMIN_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
     }),
   });
 }
@@ -29,26 +24,21 @@ export async function POST(request: NextRequest) {
     // Session expires in 8 hours
     const expiresIn = 60 * 60 * 8 * 1000;
     
-    // Initialize admin and create session cookie
-    const app = initAdmin();
-    const auth = getAuth(app);
-    const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
+    // Create session cookie
+    const sessionCookie = await adminAuth().createSessionCookie(idToken, { expiresIn });
     
-    // Set cookie options
-    const options = {
+    // Create response
+    const response = NextResponse.json({ success: true });
+    
+    // Set cookie
+    response.cookies.set({
       name: 'session',
       value: sessionCookie,
       maxAge: expiresIn / 1000, // Convert to seconds
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
-    };
-    
-    // Create response
-    const response = NextResponse.json({ success: true });
-    
-    // Set cookie
-    response.cookies.set(options);
+    });
     
     return response;
   } catch (error) {
