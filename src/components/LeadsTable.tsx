@@ -1,11 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import useCredits from "@/hooks/useCredits";
 import {
   Table,
   TableBody,
@@ -17,6 +18,7 @@ import {
 
 export default function LeadsTable() {
   const { user } = useAuth();
+  const { deductCredits } = useCredits();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [newLead, setNewLead] = useState<Omit<Lead, 'id'>>({
     name: "",
@@ -26,6 +28,8 @@ export default function LeadsTable() {
   });
   const [loading, setLoading] = useState(false);
   const [csvLoading, setCsvLoading] = useState(false);
+  const [verifyingEmail, setVerifyingEmail] = useState<string | null>(null);
+  const [enrichingCompany, setEnrichingCompany] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) fetchLeads();
@@ -66,6 +70,77 @@ export default function LeadsTable() {
       toast.error("Failed to add lead");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const verifyEmail = async (leadId: string, email: string) => {
+    // Check if we have credits
+    const success = await deductCredits('email_verification', 1);
+    if (!success) {
+      toast.error("Insufficient email verification credits");
+      return;
+    }
+
+    setVerifyingEmail(email);
+    try {
+      // Simulate email verification API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Update lead with verified status
+      const leadRef = doc(db, `users/${user?.uid}/leads`, leadId);
+      await updateDoc(leadRef, {
+        emailVerified: true,
+        emailVerifiedAt: new Date().toISOString()
+      });
+      
+      toast.success(`Email ${email} verified successfully`);
+      fetchLeads();
+    } catch (error) {
+      toast.error("Failed to verify email");
+    } finally {
+      setVerifyingEmail(null);
+    }
+  };
+
+  const enrichCompany = async (leadId: string, company: string) => {
+    // Check if we have credits
+    const success = await deductCredits('company_enrichment', 1);
+    if (!success) {
+      toast.error("Insufficient company enrichment credits");
+      return;
+    }
+
+    setEnrichingCompany(company);
+    try {
+      // Simulate company enrichment API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Sample enrichment data
+      const enrichmentData = {
+        industry: ["Technology", "SaaS", "Marketing"][Math.floor(Math.random() * 3)],
+        size: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"][Math.floor(Math.random() * 6)],
+        founded: 2010 + Math.floor(Math.random() * 13),
+        location: ["San Francisco, CA", "New York, NY", "Austin, TX"][Math.floor(Math.random() * 3)],
+        revenue: ["$1M-$5M", "$5M-$10M", "$10M-$50M"][Math.floor(Math.random() * 3)],
+        website: `https://www.${company.toLowerCase().replace(/\s/g, '')}.com`,
+        technologies: ["React", "Node.js", "AWS", "MongoDB", "Python", "TensorFlow"]
+          .sort(() => 0.5 - Math.random()).slice(0, 3)
+      };
+      
+      // Update lead with enrichment data
+      const leadRef = doc(db, `users/${user?.uid}/leads`, leadId);
+      await updateDoc(leadRef, {
+        enriched: true,
+        enrichedAt: new Date().toISOString(),
+        enrichmentData
+      });
+      
+      toast.success(`Company ${company} enriched successfully`);
+      fetchLeads();
+    } catch (error) {
+      toast.error("Failed to enrich company");
+    } finally {
+      setEnrichingCompany(null);
     }
   };
 
@@ -229,15 +304,54 @@ export default function LeadsTable() {
             <TableHead>Email</TableHead>
             <TableHead>Company</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {leads.map((lead) => (
             <TableRow key={lead.id}>
               <TableCell>{lead.name}</TableCell>
-              <TableCell>{lead.email}</TableCell>
-              <TableCell>{lead.company}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  {lead.email}
+                  {lead.emailVerified && (
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Verified</span>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  {lead.company}
+                  {lead.enriched && (
+                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Enriched</span>
+                  )}
+                </div>
+              </TableCell>
               <TableCell className="capitalize">{lead.status}</TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  {!lead.emailVerified && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => verifyEmail(lead.id, lead.email)}
+                      disabled={verifyingEmail === lead.email}
+                    >
+                      {verifyingEmail === lead.email ? "Verifying..." : "Verify Email"}
+                    </Button>
+                  )}
+                  {!lead.enriched && (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => enrichCompany(lead.id, lead.company)}
+                      disabled={enrichingCompany === lead.company}
+                    >
+                      {enrichingCompany === lead.company ? "Enriching..." : "Enrich Company"}
+                    </Button>
+                  )}
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

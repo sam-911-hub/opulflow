@@ -20,6 +20,9 @@ import WorkflowAutomation from "@/components/WorkflowAutomation";
 import AIScriptGenerator from "@/components/AIScriptGenerator";
 import EmailSequences from "@/components/EmailSequences";
 import SimplePricing from "@/components/SimplePricing";
+import PipelineManagement from "@/components/PipelineManagement";
+import TechStackDetection from "@/components/TechStackDetection";
+import ROICalculator from "@/components/ROICalculator";
 import LogoutTab from "./logout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
@@ -29,8 +32,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const [forceLoaded, setForceLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
-
-  // Removed duplicate timeout as it's now handled in AuthContext
 
   useEffect(() => {
     if (!loading && !user) {
@@ -52,7 +53,9 @@ export default function DashboardPage() {
   const navigation = [
     { id: 'overview', name: 'Overview', icon: '📊' },
     { id: 'leads', name: 'Leads', icon: '👥' },
+    { id: 'pipeline', name: 'Pipeline', icon: '📈' },
     { id: 'automation', name: 'Automation', icon: '🤖' },
+    { id: 'analytics', name: 'Analytics', icon: '📉' },
     { id: 'credits', name: 'Credits', icon: '💳' },
     { id: 'team', name: 'Team', icon: '👨‍💼' },
     { id: 'settings', name: 'Settings', icon: '⚙️' },
@@ -130,7 +133,9 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-500 mt-1">
                 {activeTab === 'overview' && 'Welcome to your OpulFlow dashboard'}
                 {activeTab === 'leads' && 'Manage and track your leads'}
+                {activeTab === 'pipeline' && 'Track your sales pipeline'}
                 {activeTab === 'automation' && 'Automate your sales processes'}
+                {activeTab === 'analytics' && 'Analyze your sales performance'}
                 {activeTab === 'credits' && 'Manage your account credits'}
                 {activeTab === 'team' && 'Collaborate with your team'}
                 {activeTab === 'settings' && 'Configure your account settings'}
@@ -227,6 +232,9 @@ export default function DashboardPage() {
                     <div className="space-y-3">
                       <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('leads')}>
                         👥 Manage Leads
+                      </Button>
+                      <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('pipeline')}>
+                        📈 View Pipeline
                       </Button>
                       <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('automation')}>
                         🤖 Create Automation
@@ -382,7 +390,38 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* Pipeline Tab */}
+          {activeTab === 'pipeline' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pipeline Management</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PipelineManagement />
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
+          {/* Analytics Tab */}
+          {activeTab === 'analytics' && (
+            <div className="space-y-6">
+              <Tabs defaultValue="tech">
+                <TabsList className="grid grid-cols-2 mb-6">
+                  <TabsTrigger value="tech">Tech Stack Detection</TabsTrigger>
+                  <TabsTrigger value="roi">ROI Calculator</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="tech">
+                  <TechStackDetection />
+                </TabsContent>
+                <TabsContent value="roi">
+                  <ROICalculator />
+                </TabsContent>
+              </Tabs>
+            </div>
+          )}
 
           {/* Team Tab */}
           {activeTab === 'team' && (
