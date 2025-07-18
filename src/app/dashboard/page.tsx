@@ -13,7 +13,6 @@ import TeamMembers from "@/components/TeamMembers";
 import ProFeatureGuard from "@/components/ProFeatureGuard";
 import SimpleCreditPurchase from "@/components/SimpleCreditPurchase";
 import CustomCreditPurchase from "@/components/CustomCreditPurchase";
-import CustomCreditPurchase from "@/components/CustomCreditPurchase";
 import TransactionHistory from "@/components/TransactionHistory";
 import UsageLimits from "@/components/UsageLimits";
 import PricingTiers from "@/components/PricingTiers";
