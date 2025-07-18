@@ -29,3 +29,4 @@ try {
 
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
+// End of file
