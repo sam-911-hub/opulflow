@@ -5,8 +5,8 @@ export async function POST(request: NextRequest) {
   try {
     const { idToken } = await request.json();
     
-    // Session expires in 5 days
-    const expiresIn = 60 * 60 * 24 * 5 * 1000;
+    // Session expires in 8 hours
+    const expiresIn = 60 * 60 * 8 * 1000;
     
     // Create session cookie
     const sessionCookie = await createSessionCookie(idToken, expiresIn);

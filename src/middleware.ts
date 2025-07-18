@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getAuth } from 'firebase-admin/auth';
 import { initializeApp, cert } from 'firebase-admin/app';
+import { cookies } from 'next/headers';
 
 // Initialize Firebase Admin if not already initialized
 let app;
@@ -20,6 +21,36 @@ try {
 
 export async function middleware(request: NextRequest) {
   const adminEmails = (process.env.ADMIN_EMAILS || '').split(',');
+  
+  // Get the session cookie
+  const sessionCookie = request.cookies.get('session')?.value;
+  
+  // Check if session exists and verify its expiration
+  if (sessionCookie) {
+    try {
+      // Verify the session cookie
+      const decodedClaims = await getAuth().verifySessionCookie(sessionCookie);
+      
+      // Check if the session was created more than 8 hours ago
+      const sessionCreatedAt = new Date(decodedClaims.iat * 1000);
+      const now = new Date();
+      const sessionAgeHours = (now.getTime() - sessionCreatedAt.getTime()) / (1000 * 60 * 60);
+      
+      // If session is older than 8 hours, redirect to login
+      if (sessionAgeHours > 8) {
+        const response = NextResponse.redirect(new URL('/login', request.url));
+        response.cookies.set({
+          name: 'session',
+          value: '',
+          maxAge: 0,
+          path: '/',
+        });
+        return response;
+      }
+    } catch (error) {
+      // Invalid session cookie, will be handled by specific routes
+    }
+  }
   
   // Only check admin routes
   if (!request.nextUrl.pathname.startsWith('/admin')) {
@@ -53,5 +84,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
