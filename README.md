@@ -29,6 +29,9 @@ OpulFlow is a next-generation sales intelligence platform offering pay-as-you-go
 - Node.js 18+ and npm
 - Firebase account
 - PayPal developer account (for payment processing)
+- OpenAI API key (for AI features)
+- M-PESA developer account (optional, for mobile payments)
+- n8n instance (optional, for workflow automation)
 
 ### Installation
 
@@ -44,14 +47,9 @@ npm install
 ```
 
 3. Set up environment variables:
-Create a `.env.local` file with the following variables:
-```
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
+Copy `.env.example` to `.env.local` and fill in your values:
+```bash
+cp .env.example .env.local
 ```
 
 4. Run the development server:
@@ -63,9 +61,57 @@ npm run dev
 
 ## Documentation
 
-- [Project Documentation](PROJECT_DOCUMENTATION.md)
+- [API Documentation](docs/API_DOCUMENTATION.md)
 - [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md)
 - [User Guide](docs/USER_GUIDE.md)
+
+## API Routes
+
+OpulFlow provides the following API routes:
+
+### Authentication
+- **Create Session**: `POST /api/auth/session`
+- **Logout**: `POST /api/auth/logout`
+- **Admin Check**: `GET /api/auth/admin`
+
+### Sales Intelligence
+- **Lead Lookup**: `POST /api/leads/lookup`
+- **Company Enrichment**: `POST /api/companies/enrich`
+- **Email Verification**: `POST /api/email/verify`
+
+### AI Features
+- **AI Email Generation**: `POST /api/ai/generate`
+
+### Payment Processing
+- **M-PESA STK Push**: `POST /api/mpesa/stk-push`
+- **M-PESA Status Check**: `GET /api/mpesa/status`
+- **M-PESA Callback**: `POST /api/mpesa/callback`
+
+### Workflow Automation
+- **List Workflows**: `GET /api/n8n/workflows`
+- **Create Workflow**: `POST /api/n8n/workflows`
+- **Execute Workflow**: `POST /api/n8n/execute`
+
+See the [API Documentation](docs/API_DOCUMENTATION.md) for more details.
+
+## Core Utilities
+
+- **Authentication**: Firebase Auth with session cookies
+- **Error Handling**: Centralized error handling with retry logic
+- **OpenAI Integration**: AI-powered content generation
+- **Payment Processing**: PayPal and M-PESA integration
+- **File Upload**: Firebase Storage integration
+- **CSV Import/Export**: Data import and export utilities
+- **Currency Conversion**: Multi-currency support
+- **Notifications**: In-app notification system
+
+## Testing
+
+Run tests with:
+
+```bash
+npm test
+```
 
 ## Contributing
 

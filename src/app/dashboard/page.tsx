@@ -23,6 +23,15 @@ import SimplePricing from "@/components/SimplePricing";
 import PipelineManagement from "@/components/PipelineManagement";
 import TechStackDetection from "@/components/TechStackDetection";
 import ROICalculator from "@/components/ROICalculator";
+import EmailDeliveryTracking from "@/components/EmailDeliveryTracking";
+import CRMSyncSetup from "@/components/CRMSyncSetup";
+import IntentSignals from "@/components/IntentSignals";
+import SourceTracking from "@/components/SourceTracking";
+import CallAnalysis from "@/components/CallAnalysis";
+import BrowserExtension from "@/components/BrowserExtension";
+import Onboarding from "@/components/Onboarding";
+import MobileNavigation from "@/components/MobileNavigation";
+import useResponsive from "@/hooks/useResponsive";
 import LogoutTab from "./logout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
@@ -32,6 +41,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [forceLoaded, setForceLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const { isMobile } = useResponsive();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -56,6 +66,13 @@ export default function DashboardPage() {
     { id: 'pipeline', name: 'Pipeline', icon: '📈' },
     { id: 'automation', name: 'Automation', icon: '🤖' },
     { id: 'analytics', name: 'Analytics', icon: '📉' },
+    { id: 'email', name: 'Email', icon: '📧' },
+    { id: 'intent', name: 'Intent', icon: '🎯' },
+    { id: 'crm', name: 'CRM', icon: '🔄' },
+    { id: 'sources', name: 'Sources', icon: '📊' },
+    { id: 'calls', name: 'Calls', icon: '📞' },
+    { id: 'extension', name: 'Extension', icon: '🔍' },
+
     { id: 'credits', name: 'Credits', icon: '💳' },
     { id: 'team', name: 'Team', icon: '👨‍💼' },
     { id: 'settings', name: 'Settings', icon: '⚙️' },
@@ -65,8 +82,10 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg flex flex-col">
+      <Onboarding />
+      {/* Sidebar - hidden on mobile */}
+      {!isMobile && (
+        <div className="w-64 bg-white shadow-lg flex flex-col">
         {/* Logo/Header */}
         <div className="p-6 border-b">
           <h1 className="text-2xl font-bold text-gray-900">OpulFlow</h1>
@@ -87,7 +106,7 @@ export default function DashboardPage() {
         </div>
         
         {/* Navigation */}
-        <nav className="flex-1 p-4">
+        <nav className="flex-1 p-4 overflow-y-auto">
           <ul className="space-y-2">
             {navigation.map((item) => (
               <li key={item.id}>
@@ -120,30 +139,44 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      )}
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b px-6 py-4">
+        <header className="bg-white shadow-sm border-b px-4 md:px-6 py-3 md:py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">
-                {navigation.find(n => n.id === activeTab)?.name}
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {activeTab === 'overview' && 'Welcome to your OpulFlow dashboard'}
-                {activeTab === 'leads' && 'Manage and track your leads'}
-                {activeTab === 'pipeline' && 'Track your sales pipeline'}
-                {activeTab === 'automation' && 'Automate your sales processes'}
-                {activeTab === 'analytics' && 'Analyze your sales performance'}
-                {activeTab === 'credits' && 'Manage your account credits'}
-                {activeTab === 'team' && 'Collaborate with your team'}
-                {activeTab === 'settings' && 'Configure your account settings'}
-                {activeTab === 'help' && 'Get help and support'}
-                {activeTab === 'logout' && 'Sign out of your account'}
-              </p>
+              <div className="flex items-center gap-2">
+                {isMobile && (
+                  <span className="text-xl">{navigation.find(n => n.id === activeTab)?.icon}</span>
+                )}
+                <h2 className="text-xl md:text-2xl font-semibold text-gray-900">
+                  {navigation.find(n => n.id === activeTab)?.name}
+                </h2>
+              </div>
+              {!isMobile && (
+                <p className="text-sm text-gray-500 mt-1">
+                  {activeTab === 'overview' && 'Welcome to your OpulFlow dashboard'}
+                  {activeTab === 'leads' && 'Manage and track your leads'}
+                  {activeTab === 'pipeline' && 'Track your sales pipeline'}
+                  {activeTab === 'automation' && 'Automate your sales processes'}
+                  {activeTab === 'analytics' && 'Analyze your sales performance'}
+                  {activeTab === 'email' && 'Track email deliverability and engagement'}
+                  {activeTab === 'intent' && 'Identify high-intent prospects'}
+                  {activeTab === 'crm' && 'Sync with your CRM system'}
+                  {activeTab === 'sources' && 'Track lead sources and attribution'}
+                  {activeTab === 'calls' && 'Analyze sales calls with AI'}
+                  {activeTab === 'extension' && 'Browser extension for LinkedIn and web'}
+                  {activeTab === 'credits' && 'Manage your account credits'}
+                  {activeTab === 'team' && 'Collaborate with your team'}
+                  {activeTab === 'settings' && 'Configure your account settings'}
+                  {activeTab === 'help' && 'Get help and support'}
+                  {activeTab === 'logout' && 'Sign out of your account'}
+                </p>
+              )}
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4">
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900">{(user as any)?.credits?.lead_lookup || 0}</p>
                 <p className="text-xs text-gray-500">Lead Credits</p>
@@ -157,7 +190,7 @@ export default function DashboardPage() {
         </header>
         
         {/* Content Area */}
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-auto pb-20 md:pb-6"> {/* Add bottom padding for mobile nav */}
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
@@ -238,6 +271,18 @@ export default function DashboardPage() {
                       </Button>
                       <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('automation')}>
                         🤖 Create Automation
+                      </Button>
+                      <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('email')}>
+                        📧 Track Emails
+                      </Button>
+                      <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('intent')}>
+                        🎯 Check Intent Signals
+                      </Button>
+                      <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('calls')}>
+                        📞 Analyze Calls
+                      </Button>
+                      <Button className="w-full justify-start" variant="outline" onClick={() => setActiveTab('extension')}>
+                        🔍 Browser Extension
                       </Button>
                     </div>
                   </CardContent>
@@ -423,6 +468,90 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* Email Tab */}
+          {activeTab === 'email' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Email Delivery Tracking</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <EmailDeliveryTracking />
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Intent Tab */}
+          {activeTab === 'intent' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Intent Signals</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <IntentSignals />
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* CRM Tab */}
+          {activeTab === 'crm' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>CRM Integration</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CRMSyncSetup />
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Sources Tab */}
+          {activeTab === 'sources' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Lead Source Tracking</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SourceTracking />
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Calls Tab */}
+          {activeTab === 'calls' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Call Analysis</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CallAnalysis />
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Extension Tab */}
+          {activeTab === 'extension' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Browser Extension</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <BrowserExtension />
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
           {/* Team Tab */}
           {activeTab === 'team' && (
             <ProFeatureGuard>
@@ -494,6 +623,13 @@ export default function DashboardPage() {
           {activeTab === 'logout' && <LogoutTab />}
         </main>
       </div>
+
+      {/* Mobile Navigation */}
+      <MobileNavigation 
+        navigation={navigation}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
     </div>
   );
 }
