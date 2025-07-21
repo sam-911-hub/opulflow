@@ -53,11 +53,54 @@ function initAdmin() {
     // Clean and format the private key
     let cleanPrivateKey = privateKey;
     
-    // Handle different private key formats
+    console.log('Original private key info:', {
+      length: privateKey.length,
+      hasBackslashN: privateKey.includes('\\n'),
+      hasActualNewlines: privateKey.includes('\n'),
+      firstLine: privateKey.split(/[\n\\n]/)[0],
+      startsWithBegin: privateKey.startsWith('-----BEGIN'),
+      containsBegin: privateKey.includes('-----BEGIN PRIVATE KEY-----')
+    });
+    
+    // Handle different private key formats from different environments
     if (privateKey.includes('\\n')) {
       cleanPrivateKey = privateKey.replace(/\\n/g, '\n');
       console.log('Converted \\n to actual newlines in private key');
     }
+    
+    // If the key doesn't start with BEGIN, it might be base64 encoded or have other issues
+    if (!cleanPrivateKey.trim().startsWith('-----BEGIN PRIVATE KEY-----')) {
+      console.error('Private key does not start with proper header. First 100 chars:', cleanPrivateKey.substring(0, 100));
+      throw new Error('Private key format is invalid - does not start with "-----BEGIN PRIVATE KEY-----"');
+    }
+    
+    // If the key doesn't end with END, it might be truncated
+    if (!cleanPrivateKey.trim().endsWith('-----END PRIVATE KEY-----')) {
+      console.error('Private key does not end with proper footer. Last 100 chars:', cleanPrivateKey.substring(cleanPrivateKey.length - 100));
+      throw new Error('Private key format is invalid - does not end with "-----END PRIVATE KEY-----"');
+    }
+    
+    // Ensure proper line breaks in the key
+    const lines = cleanPrivateKey.split('\n');
+    if (lines.length < 3) {
+      console.error('Private key has too few lines:', lines.length);
+      // Try to fix common formatting issues
+      cleanPrivateKey = cleanPrivateKey
+        .replace(/-----BEGIN PRIVATE KEY-----/g, '-----BEGIN PRIVATE KEY-----\n')
+        .replace(/-----END PRIVATE KEY-----/g, '\n-----END PRIVATE KEY-----')
+        .replace(/([A-Za-z0-9+/=]{64})/g, '$1\n')  // Add newlines every 64 chars
+        .replace(/\n+/g, '\n')  // Remove duplicate newlines
+        .trim();
+    }
+    
+    console.log('Processed private key info:', {
+      length: cleanPrivateKey.length,
+      lineCount: cleanPrivateKey.split('\n').length,
+      firstLine: cleanPrivateKey.split('\n')[0],
+      lastLine: cleanPrivateKey.split('\n').slice(-1)[0],
+      hasProperStart: cleanPrivateKey.trim().startsWith('-----BEGIN PRIVATE KEY-----'),
+      hasProperEnd: cleanPrivateKey.trim().endsWith('-----END PRIVATE KEY-----')
+    });
     
     // Validate private key format
     if (!cleanPrivateKey.includes('-----BEGIN PRIVATE KEY-----')) {
