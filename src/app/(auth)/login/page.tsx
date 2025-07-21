@@ -27,6 +27,8 @@ export default function LoginPage() {
       // Get the ID token
       const idToken = await userCredential.user.getIdToken();
       
+      console.log('Attempting to create session cookie...');
+      
       // Create session cookie via API
       const response = await fetch('/api/auth/session', {
         method: 'POST',
@@ -36,11 +38,26 @@ export default function LoginPage() {
         body: JSON.stringify({ idToken }),
       });
       
-      const data = await response.json();
+      console.log('Session API response status:', response.status);
+      console.log('Session API response headers:', Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create session');
+        const errorText = await response.text();
+        console.error('Session API error response:', errorText);
+        
+        // Try to parse as JSON, fallback to text
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: 'API route returned HTML instead of JSON', details: errorText.substring(0, 200) };
+        }
+        
+        throw new Error(errorData.error || `HTTP ${response.status}: ${errorText.substring(0, 100)}`);
       }
+      
+      const data = await response.json();
+      console.log('Session created successfully:', data);
       
       toast.success("Logged in successfully!");
       

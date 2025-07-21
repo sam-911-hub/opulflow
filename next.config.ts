@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
 
   // Image optimization configuration
   images: {
-    unoptimized: true, // Disable if using Next.js Image Optimization
+    unoptimized: true, // Required for Netlify
     remotePatterns: [
       {
         protocol: 'https',
@@ -21,7 +21,12 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // Webpack configuration (optional)
+  // Experimental features for better Netlify support
+  experimental: {
+    serverComponentsExternalPackages: ['firebase-admin']
+  },
+
+  // Webpack configuration
   webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
