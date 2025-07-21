@@ -14,8 +14,10 @@ export async function middleware(request: NextRequest) {
   
   // Check if this is an API route
   if (request.nextUrl.pathname.startsWith('/api')) {
-    // Rate limiting
-    const ip = request.ip || 'unknown';
+    // Rate limiting - get IP from headers
+    const ip = request.headers.get('x-forwarded-for') || 
+              request.headers.get('x-real-ip') || 
+              'unknown';
     const now = Date.now();
     const windowStart = now - rateLimit.windowMs;
     

@@ -1,76 +1,71 @@
 import { db } from './firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { addDays } from 'date-fns';
-import { CreditType } from '@/types/interfaces';
+import { collection, addDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
 
-// Credit expiration period in days
-const EXPIRATION_DAYS = 90;
+interface CreditExpiration {
+  id: string;
+  userId: string;
+  creditType: string;
+  amount: number;
+  remaining: number;
+  purchaseDate: string;
+  expiresAt: string;
+  reminderSent: boolean;
+}
 
-/**
- * Track credit expiration for purchased credits
- * @param userId User ID
- * @param creditType Type of credit
- * @param amount Amount of credits
- * @returns Promise<string> ID of the expiration record
- */
-export async function trackCreditExpiration(
+// Set up credit expiration for a user
+export async function setupCreditExpiration(
   userId: string,
-  creditType: CreditType,
-  amount: number
+  creditType: string,
+  amount: number,
+  expirationDays: number = 30
 ): Promise<string> {
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + (expirationDays * 24 * 60 * 60 * 1000));
+
   try {
-    // Calculate expiration date (90 days from now)
-    const expiresAt = addDays(new Date(), EXPIRATION_DAYS).toISOString();
-    
-    // Create expiration record
     const expirationRef = await addDoc(collection(db, 'creditExpirations'), {
       userId,
-      type: creditType,
+      creditType,
       amount,
       remaining: amount,
-      purchasedAt: new Date().toISOString(),
-      expiresAt,
+      purchaseDate: now.toISOString(),
+      expiresAt: expiresAt.toISOString(),
+      reminderSent: false,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
     });
-    
+
+    console.log(`Credit expiration set up for user ${userId}, expires at ${expiresAt.toISOString()}`);
     return expirationRef.id;
   } catch (error) {
-    console.error('Error tracking credit expiration:', error);
+    console.error('Error setting up credit expiration:', error);
     throw error;
   }
 }
 
-/**
- * Get credits expiring soon for a user
- * @param userId User ID
- * @param daysThreshold Number of days to consider "soon" (default: 7)
- * @returns Promise<Array> Array of expiration records
- */
-export async function getCreditsExpiringSoon(
-  userId: string,
-  daysThreshold = 7
-): Promise<any[]> {
+// Get credits that are about to expire (within 7 days)
+export async function getExpiringCredits(userId: string, days: number = 7): Promise<CreditExpiration[]> {
   try {
     const now = new Date();
-    const thresholdDate = addDays(now, daysThreshold).toISOString();
-    
-    // Query for credits expiring soon
+    const thresholdDate = new Date(now.getTime() + (days * 24 * 60 * 60 * 1000));
+
     const expirationRef = collection(db, 'creditExpirations');
     const q = query(
       expirationRef,
       where("userId", "==", userId),
-      where("expiresAt", "<=", thresholdDate),
+      where("expiresAt", "<=", thresholdDate.toISOString()),
       where("expiresAt", ">", now.toISOString()),
       where("remaining", ">", 0)
     );
-    
+
     const querySnapshot = await getDocs(q);
-    
-    return querySnapshot.docs.map(doc => ({
+
+    return querySnapshot.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data()
     }));
-  } catch (error) {
-    console.error('Error getting credits expiring soon:', error);
+  } catch (error: any) {
+    console.error('Error getting expiring credits:', error);
     throw error;
   }
 }

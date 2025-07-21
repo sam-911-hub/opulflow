@@ -23,10 +23,10 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:123456789:web:placeholder',
 };
 
-// Initialize Firebase
-let firebaseApp: FirebaseApp | null = null;
-let auth: Auth | null = null;
-let db: Firestore | null = null;
+// Initialize Firebase with error handling
+let firebaseApp: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
 
 try {
   firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
@@ -34,12 +34,32 @@ try {
   db = getFirestore(firebaseApp);
 } catch (error) {
   console.error('Error initializing Firebase:', error);
-  if (!isBuildTime) {
+  if (isBuildTime) {
+    console.warn('Firebase initialization failed during build, creating mock instances');
+    // Create mock instances for build time
+    firebaseApp = {} as FirebaseApp;
+    auth = {} as Auth;
+    db = {} as Firestore;
+  } else {
     throw error;
   }
-  // During build time, create placeholder instances to prevent crashes
-  console.warn('Using placeholder Firebase instances during build');
 }
 
+// Utility functions to ensure Firebase is properly initialized
+export function getFirebaseAuth(): Auth {
+  if (!auth || Object.keys(auth).length === 0) {
+    throw new Error('Firebase Auth is not initialized. Please check your Firebase configuration.');
+  }
+  return auth;
+}
+
+export function getFirebaseFirestore(): Firestore {
+  if (!db || Object.keys(db).length === 0) {
+    throw new Error('Firebase Firestore is not initialized. Please check your Firebase configuration.');
+  }
+  return db;
+}
+
+// Export the instances directly for backward compatibility
 export { auth, db };
 // End of file

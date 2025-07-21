@@ -1,41 +1,42 @@
 import { db } from './firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, updateDoc, doc, query, where, getDocs, writeBatch } from 'firebase/firestore';
 
-export type NotificationType = 'info' | 'warning' | 'success' | 'error';
+export interface Notification {
+  id?: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: 'info' | 'warning' | 'error' | 'success';
+  read: boolean;
+  createdAt: any;
+}
 
-/**
- * Send a notification to a user
- * @param userId User ID
- * @param message Notification message
- * @param type Notification type
- * @returns Promise<string> ID of the notification
- */
-export async function sendNotification(
+// Create a new notification for a user
+export async function createNotification(
   userId: string,
+  title: string,
   message: string,
-  type: NotificationType = 'info'
+  type: 'info' | 'warning' | 'error' | 'success' = 'info'
 ): Promise<string> {
   try {
     const notificationRef = await addDoc(collection(db, `users/${userId}/notifications`), {
+      title,
       message,
       type,
       read: false,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     });
-    
+
+    console.log(`Notification created for user ${userId}: ${title}`);
     return notificationRef.id;
   } catch (error) {
-    console.error('Error sending notification:', error);
+    console.error('Error creating notification:', error);
     throw error;
   }
 }
 
-/**
- * Mark a notification as read
- * @param userId User ID
- * @param notificationId Notification ID
- * @returns Promise<void>
- */
+// Mark a notification as read
 export async function markNotificationAsRead(
   userId: string,
   notificationId: string
@@ -43,35 +44,36 @@ export async function markNotificationAsRead(
   try {
     await updateDoc(doc(db, `users/${userId}/notifications/${notificationId}`), {
       read: true,
-      readAt: serverTimestamp()
+      readAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     });
+
+    console.log(`Notification ${notificationId} marked as read for user ${userId}`);
   } catch (error) {
     console.error('Error marking notification as read:', error);
     throw error;
   }
 }
 
-/**
- * Mark all notifications as read for a user
- * @param userId User ID
- * @returns Promise<void>
- */
+// Mark all notifications as read for a user
 export async function markAllNotificationsAsRead(userId: string): Promise<void> {
   try {
     const notificationsRef = collection(db, `users/${userId}/notifications`);
     const q = query(notificationsRef, where("read", "==", false));
     const querySnapshot = await getDocs(q);
-    
+
     const batch = writeBatch(db);
-    
-    querySnapshot.docs.forEach(doc => {
+
+    querySnapshot.docs.forEach((doc: any) => {
       batch.update(doc.ref, {
         read: true,
-        readAt: serverTimestamp()
+        readAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       });
     });
-    
+
     await batch.commit();
+    console.log(`All notifications marked as read for user ${userId}`);
   } catch (error) {
     console.error('Error marking all notifications as read:', error);
     throw error;

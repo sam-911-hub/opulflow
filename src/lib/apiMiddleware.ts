@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminAuth } from './admin';
+import { getAdminAuth, getAdminFirestore } from './admin';
 
 // Middleware to verify authentication for API routes
 export async function withAuth(

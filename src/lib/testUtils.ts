@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { AuthContext } from '@/context/AuthContext';
+import React from 'react';
 
 // Mock AuthContext for testing components that use useAuth
 export function renderWithAuth(ui: React.ReactNode, authValues = {}) {
@@ -12,9 +13,11 @@ export function renderWithAuth(ui: React.ReactNode, authValues = {}) {
   };
   
   return render(
-    <AuthContext.Provider value={defaultAuthValues as any}>
-      {ui}
-    </AuthContext.Provider>
+    React.createElement(
+      AuthContext.Provider,
+      { value: defaultAuthValues as any },
+      ui
+    )
   );
 }
 
