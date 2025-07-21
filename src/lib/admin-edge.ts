@@ -1,35 +1,43 @@
 // This file is used for Edge runtime (middleware)
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
+// Edge runtime doesn't support firebase-admin directly, so we use a REST API approach
 
-// Initialize Firebase Admin for Edge runtime
-function initAdmin() {
-  const apps = getApps();
-  if (apps.length > 0) {
-    return apps[0];
-  }
+type DecodedToken = {
+  uid: string;
+  email?: string;
+  token?: {
+    admin?: boolean;
+  };
+};
 
+// Function to verify a session cookie via our API endpoint
+export async function verifySessionCookieEdge(sessionCookie: string): Promise<DecodedToken | null> {
+  if (!sessionCookie) return null;
+  
   try {
-    return initializeApp({
-      credential: cert({
-        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
+    // Use our own API endpoint that runs in Node.js environment
+    const response = await fetch(
+      `/api/verify-session`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sessionCookie })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to verify session');
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error('Error initializing Firebase Admin for Edge:', error);
-    throw error;
+    console.error('Error verifying session in Edge runtime:', error);
+    return null;
   }
 }
 
-// Get Firebase Admin Auth
+// Placeholder for getAdminAuth to maintain API compatibility
 export function getAdminAuth() {
-  try {
-    const app = initAdmin();
-    return getAuth(app);
-  } catch (error) {
-    console.error('Error getting admin auth:', error);
-    throw error;
-  }
+  throw new Error('getAdminAuth is not supported in Edge runtime. Use verifySessionCookieEdge instead.');
 }

@@ -1,105 +1,98 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getAdminAuth } from './lib/admin-edge';
+import { verifySessionCookieEdge } from './lib/admin-edge';
 
-// In-memory rate limiting (would use Redis in production)
-const rateLimit = {
-  windowMs: 60 * 1000, // 1 minute
-  max: 100, // 100 requests per minute
-  store: new Map<string, { count: number, resetTime: number }>()
-};
+// Define paths that require authentication
+const AUTH_PATHS = [
+  '/dashboard',
+  '/settings',
+  '/leads',
+  '/companies',
+  '/ai',
+  '/workflows',
+  '/api/leads',
+  '/api/companies',
+  '/api/email',
+  '/api/ai',
+  '/api/n8n',
+];
+
+// Define paths that require admin access
+const ADMIN_PATHS = [
+  '/admin',
+  '/api/admin',
+];
 
 export async function middleware(request: NextRequest) {
-  // Get the session cookie
+  const { pathname } = request.nextUrl;
+  
+  // Skip middleware for static files and public routes
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/static') ||
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname === '/signup' ||
+    pathname === '/pricing' ||
+    pathname === '/about' ||
+    pathname === '/contact'
+  ) {
+    return NextResponse.next();
+  }
+
+  // Check if path requires authentication
+  const requiresAuth = AUTH_PATHS.some(path => pathname.startsWith(path));
+  const requiresAdmin = ADMIN_PATHS.some(path => pathname.startsWith(path));
+  
+  if (!requiresAuth && !requiresAdmin) {
+    return NextResponse.next();
+  }
+
+  // Get session cookie
   const sessionCookie = request.cookies.get('session')?.value;
   
-  // Check if this is an API route
-  if (request.nextUrl.pathname.startsWith('/api')) {
-    // Rate limiting
-    const ip = request.ip || 'unknown';
-    const now = Date.now();
-    const windowStart = now - rateLimit.windowMs;
-    
-    // Clean up old entries
-    for (const [key, value] of rateLimit.store.entries()) {
-      if (value.resetTime < windowStart) {
-        rateLimit.store.delete(key);
-      }
-    }
-    
-    // Get or create rate limit entry
-    let rateEntry = rateLimit.store.get(ip);
-    if (!rateEntry) {
-      rateEntry = { count: 0, resetTime: now + rateLimit.windowMs };
-      rateLimit.store.set(ip, rateEntry);
-    }
-    
-    // Check if rate limit exceeded
-    if (rateEntry.count >= rateLimit.max) {
-      return NextResponse.json(
-        { error: 'Too many requests, please try again later' },
-        { status: 429 }
-      );
-    }
-    
-    // Increment request count
-    rateEntry.count++;
-    
-    // For authenticated API routes, verify session
-    if (sessionCookie && !request.nextUrl.pathname.startsWith('/api/auth')) {
-      try {
-        // Verify session cookie
-        await getAdminAuth().verifySessionCookie(sessionCookie);
-      } catch (error) {
-        console.error('Session verification error:', error);
-        // Invalid session cookie
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-    }
+  if (!sessionCookie) {
+    // Redirect to login if no session cookie
+    return NextResponse.redirect(new URL('/login', request.url));
   }
-  
-  // Check if this is an admin route
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    // For admin routes, redirect to login if no session
-    if (!sessionCookie) {
+
+  try {
+    // Verify session cookie
+    const decodedToken = await verifySessionCookieEdge(sessionCookie);
+    
+    if (!decodedToken) {
+      // Redirect to login if session is invalid
       return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    // Check admin access
+    if (requiresAdmin && !decodedToken.token?.admin) {
+      // Redirect to dashboard if not admin
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+
+    // Add user info to headers for route handlers
+    const response = NextResponse.next();
+    response.headers.set('x-user-id', decodedToken.uid);
+    if (decodedToken.email) {
+      response.headers.set('x-user-email', decodedToken.email);
+    }
+    if (decodedToken.token?.admin) {
+      response.headers.set('x-user-admin', 'true');
     }
     
-    try {
-      // Verify session cookie
-      await getAdminAuth().verifySessionCookie(sessionCookie);
-      // We'll handle admin authorization in the API route
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Admin route session verification error:', error);
-      // Invalid session cookie, redirect to login
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
+    return response;
+  } catch (error) {
+    console.error('Middleware error:', error);
+    // Redirect to login on error
+    return NextResponse.redirect(new URL('/login', request.url));
   }
-  
-  // For dashboard routes, check if user is logged in
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
-    if (!sessionCookie) {
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
-    
-    try {
-      // Verify session cookie
-      await getAdminAuth().verifySessionCookie(sessionCookie);
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Dashboard route session verification error:', error);
-      // Invalid session cookie, redirect to login
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
-  }
-  
-  return NextResponse.next();
 }
 
+// Configure middleware to run on specific paths
 export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico).*)',
-    '/api/:path*',
   ],
 };
