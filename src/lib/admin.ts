@@ -59,13 +59,46 @@ function initAdmin() {
       hasActualNewlines: privateKey.includes('\n'),
       firstLine: privateKey.split(/[\n\\n]/)[0],
       startsWithBegin: privateKey.startsWith('-----BEGIN'),
-      containsBegin: privateKey.includes('-----BEGIN PRIVATE KEY-----')
+      containsBegin: privateKey.includes('-----BEGIN PRIVATE KEY-----'),
+      lineCount: privateKey.split('\n').length
     });
     
     // Handle different private key formats from different environments
     if (privateKey.includes('\\n')) {
       cleanPrivateKey = privateKey.replace(/\\n/g, '\n');
       console.log('Converted \\n to actual newlines in private key');
+    }
+    
+    // CRITICAL FIX: Handle single-line private keys (common in environment variables)
+    if (cleanPrivateKey.split('\n').length === 1) {
+      console.log('Detected single-line private key, reformatting...');
+      
+      // Extract the key content between BEGIN and END
+      const beginMarker = '-----BEGIN PRIVATE KEY-----';
+      const endMarker = '-----END PRIVATE KEY-----';
+      
+      const beginIndex = cleanPrivateKey.indexOf(beginMarker);
+      const endIndex = cleanPrivateKey.indexOf(endMarker);
+      
+      if (beginIndex !== -1 && endIndex !== -1) {
+        const keyContent = cleanPrivateKey
+          .substring(beginIndex + beginMarker.length, endIndex)
+          .trim()
+          .replace(/\s+/g, ''); // Remove all spaces
+        
+        // Format the key with proper line breaks (64 characters per line)
+        const formattedKeyContent = keyContent.match(/.{1,64}/g)?.join('\n') || keyContent;
+        
+        cleanPrivateKey = `${beginMarker}\n${formattedKeyContent}\n${endMarker}`;
+        
+        console.log('Reformatted private key:', {
+          originalKeyLength: keyContent.length,
+          formattedLines: formattedKeyContent.split('\n').length,
+          totalLines: cleanPrivateKey.split('\n').length
+        });
+      } else {
+        throw new Error('Could not find BEGIN/END markers in private key');
+      }
     }
     
     // If the key doesn't start with BEGIN, it might be base64 encoded or have other issues
@@ -80,20 +113,7 @@ function initAdmin() {
       throw new Error('Private key format is invalid - does not end with "-----END PRIVATE KEY-----"');
     }
     
-    // Ensure proper line breaks in the key
-    const lines = cleanPrivateKey.split('\n');
-    if (lines.length < 3) {
-      console.error('Private key has too few lines:', lines.length);
-      // Try to fix common formatting issues
-      cleanPrivateKey = cleanPrivateKey
-        .replace(/-----BEGIN PRIVATE KEY-----/g, '-----BEGIN PRIVATE KEY-----\n')
-        .replace(/-----END PRIVATE KEY-----/g, '\n-----END PRIVATE KEY-----')
-        .replace(/([A-Za-z0-9+/=]{64})/g, '$1\n')  // Add newlines every 64 chars
-        .replace(/\n+/g, '\n')  // Remove duplicate newlines
-        .trim();
-    }
-    
-    console.log('Processed private key info:', {
+    console.log('Final private key info:', {
       length: cleanPrivateKey.length,
       lineCount: cleanPrivateKey.split('\n').length,
       firstLine: cleanPrivateKey.split('\n')[0],
