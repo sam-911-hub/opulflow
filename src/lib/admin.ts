@@ -13,26 +13,50 @@ function initAdmin() {
   }
 
   try {
-    if (!process.env.FIREBASE_ADMIN_PROJECT_ID || 
-        !process.env.FIREBASE_ADMIN_CLIENT_EMAIL || 
-        !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
+    // Check for required environment variables
+    const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+
+    console.log('Firebase Admin initialization check:', {
+      hasProjectId: !!projectId,
+      hasClientEmail: !!clientEmail,
+      hasPrivateKey: !!privateKey,
+      privateKeyLength: privateKey ? privateKey.length : 0,
+      environment: process.env.NODE_ENV,
+      isNetlify: !!process.env.NETLIFY,
+      isBuildTime
+    });
+
+    if (!projectId || !clientEmail || !privateKey) {
+      const missingVars = [];
+      if (!projectId) missingVars.push('FIREBASE_ADMIN_PROJECT_ID');
+      if (!clientEmail) missingVars.push('FIREBASE_ADMIN_CLIENT_EMAIL');
+      if (!privateKey) missingVars.push('FIREBASE_ADMIN_PRIVATE_KEY');
       
       if (isBuildTime) {
         console.warn('Missing Firebase Admin credentials during build, using placeholder');
-        // Return a placeholder to prevent build failures
         return null;
       }
       
-      throw new Error('Missing Firebase Admin credentials in environment variables');
+      throw new Error(`Missing Firebase Admin credentials: ${missingVars.join(', ')}`);
     }
     
-    return initializeApp({
+    // Clean and format the private key
+    const cleanPrivateKey = privateKey.replace(/\\n/g, '\n');
+    
+    console.log('Initializing Firebase Admin with credentials...');
+    
+    const app = initializeApp({
       credential: cert({
-        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        projectId,
+        clientEmail,
+        privateKey: cleanPrivateKey,
       }),
     });
+
+    console.log('Firebase Admin initialized successfully');
+    return app;
   } catch (error) {
     console.error('Error initializing Firebase Admin:', error);
     if (isBuildTime) {
@@ -48,7 +72,7 @@ export function getAdminAuth() {
   try {
     const app = initAdmin();
     if (!app) {
-      throw new Error('Firebase Admin not initialized');
+      throw new Error('Firebase Admin not initialized - missing environment variables');
     }
     return getAuth(app);
   } catch (error) {
@@ -62,7 +86,7 @@ export function getAdminFirestore() {
   try {
     const app = initAdmin();
     if (!app) {
-      throw new Error('Firebase Admin not initialized');
+      throw new Error('Firebase Admin not initialized - missing environment variables');
     }
     return getFirestore(app);
   } catch (error) {
@@ -75,7 +99,7 @@ export function getAdminFirestore() {
 export async function isUserAdmin(uid: string): Promise<boolean> {
   try {
     const user = await getAdminAuth().getUser(uid);
-    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',');
+    const adminEmails = (process.env.ADMIN_EMAIL || process.env.ADMIN_EMAILS || '').split(',');
     return adminEmails.includes(user.email || '');
   } catch (error) {
     console.error('Error checking admin status:', error);
@@ -85,10 +109,12 @@ export async function isUserAdmin(uid: string): Promise<boolean> {
 
 // Create session cookie
 export async function createSessionCookie(idToken: string, expiresIn: number) {
-  return getAdminAuth().createSessionCookie(idToken, { expiresIn });
+  const auth = getAdminAuth();
+  return auth.createSessionCookie(idToken, { expiresIn });
 }
 
 // Verify session cookie
 export async function verifySessionCookie(sessionCookie: string) {
-  return getAdminAuth().verifySessionCookie(sessionCookie);
+  const auth = getAdminAuth();
+  return auth.verifySessionCookie(sessionCookie);
 }
