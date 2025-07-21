@@ -9,9 +9,12 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+[functions]
+  external_node_modules = ["firebase-admin"]
+
 [[redirects]]
-  from = "/_next/static/*"
-  to = "/_next/static/:splat"
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
   status = 200
 
 [[redirects]]
