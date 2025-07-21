@@ -2,6 +2,9 @@ import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 
+// Check if we're in a build environment
+const isBuildTime = process.env.NODE_ENV === 'production' && !process.env.VERCEL && !process.env.NETLIFY;
+
 // Initialize Firebase Admin
 function initAdmin() {
   const apps = getApps();
@@ -13,6 +16,13 @@ function initAdmin() {
     if (!process.env.FIREBASE_ADMIN_PROJECT_ID || 
         !process.env.FIREBASE_ADMIN_CLIENT_EMAIL || 
         !process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
+      
+      if (isBuildTime) {
+        console.warn('Missing Firebase Admin credentials during build, using placeholder');
+        // Return a placeholder to prevent build failures
+        return null;
+      }
+      
       throw new Error('Missing Firebase Admin credentials in environment variables');
     }
     
@@ -25,6 +35,10 @@ function initAdmin() {
     });
   } catch (error) {
     console.error('Error initializing Firebase Admin:', error);
+    if (isBuildTime) {
+      console.warn('Firebase Admin initialization failed during build, using placeholder');
+      return null;
+    }
     throw error;
   }
 }
@@ -33,6 +47,9 @@ function initAdmin() {
 export function getAdminAuth() {
   try {
     const app = initAdmin();
+    if (!app) {
+      throw new Error('Firebase Admin not initialized');
+    }
     return getAuth(app);
   } catch (error) {
     console.error('Error getting admin auth:', error);
@@ -44,6 +61,9 @@ export function getAdminAuth() {
 export function getAdminFirestore() {
   try {
     const app = initAdmin();
+    if (!app) {
+      throw new Error('Firebase Admin not initialized');
+    }
     return getFirestore(app);
   } catch (error) {
     console.error('Error getting admin firestore:', error);

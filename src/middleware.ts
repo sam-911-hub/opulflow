@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getAdminAuth } from './lib/admin-edge';
 
 // In-memory rate limiting (would use Redis in production)
 const rateLimit = {
@@ -45,17 +44,8 @@ export async function middleware(request: NextRequest) {
     // Increment request count
     rateEntry.count++;
     
-    // For authenticated API routes, verify session
-    if (sessionCookie && !request.nextUrl.pathname.startsWith('/api/auth')) {
-      try {
-        // Verify session cookie
-        await getAdminAuth().verifySessionCookie(sessionCookie);
-      } catch (error) {
-        console.error('Session verification error:', error);
-        // Invalid session cookie
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-    }
+    // For authenticated API routes, we'll let the API route handle auth verification
+    // since Firebase Admin SDK cannot run in Edge Runtime
   }
   
   // Check if this is an admin route
@@ -65,16 +55,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
     
-    try {
-      // Verify session cookie
-      await getAdminAuth().verifySessionCookie(sessionCookie);
-      // We'll handle admin authorization in the API route
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Admin route session verification error:', error);
-      // Invalid session cookie, redirect to login
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
+    // We'll handle session verification in the API routes since 
+    // Firebase Admin SDK cannot run in Edge Runtime
+    return NextResponse.next();
   }
   
   // For dashboard routes, check if user is logged in
@@ -83,15 +66,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
     
-    try {
-      // Verify session cookie
-      await getAdminAuth().verifySessionCookie(sessionCookie);
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Dashboard route session verification error:', error);
-      // Invalid session cookie, redirect to login
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
+    // We'll handle session verification in the API routes since 
+    // Firebase Admin SDK cannot run in Edge Runtime
+    return NextResponse.next();
   }
   
   return NextResponse.next();
