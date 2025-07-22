@@ -42,15 +42,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn('Auth loading timeout, forcing loaded state');
         setState(prev => ({ ...prev, loading: false }));
       }
-    }, 10000); // Increased timeout to 10 seconds
+    }, 5000); // Reduced to 5 seconds for better UX
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          // Fetch user data from Firestore
-          const userDoc = await getDoc(doc(db, "users", user.uid));
+          // Fetch user data from Firestore with timeout
+          const userDocPromise = getDoc(doc(db, "users", user.uid));
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Firestore timeout')), 3000)
+          );
           
-          if (userDoc.exists()) {
+          const userDoc = await Promise.race([userDocPromise, timeoutPromise]);
+          
+          if (userDoc && userDoc.exists()) {
             const userData = userDoc.data();
             
             // Ensure credits object has all required fields
@@ -60,6 +65,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               lead_lookup: 0,
               company_enrichment: 0,
               email_verification: 0,
+              email_finder: 0,
+              email_delivery: 0,
+              whatsapp_messages: 0,
+              sms_messages: 0,
               workflow: 0,
               crm_sync: 0
             };
@@ -88,6 +97,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   lead_lookup: 0,
                   company_enrichment: 0,
                   email_verification: 0,
+                  email_finder: 0,
+                  email_delivery: 0,
+                  whatsapp_messages: 0,
+                  sms_messages: 0,
                   workflow: 0,
                   crm_sync: 0
                 }
@@ -107,6 +120,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 lead_lookup: 0,
                 company_enrichment: 0,
                 email_verification: 0,
+                email_finder: 0,
+                email_delivery: 0,
+                whatsapp_messages: 0,
+                sms_messages: 0,
                 workflow: 0,
                 crm_sync: 0
               }

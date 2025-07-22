@@ -5,6 +5,10 @@ export type CreditType =
   'lead_lookup' | 
   'company_enrichment' | 
   'email_verification' | 
+  'email_finder' |
+  'email_delivery' |
+  'whatsapp_messages' |
+  'sms_messages' |
   'ai_email' | 
   'workflow' | 
   'crm_sync' |

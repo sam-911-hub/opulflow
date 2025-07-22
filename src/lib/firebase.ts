@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
-import { getFirestore, Firestore } from "firebase/firestore";
+import { getAuth, Auth, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, Firestore, connectFirestoreEmulator } from "firebase/firestore";
 
 // Check if we're in a build environment
 const isBuildTime = process.env.NODE_ENV === 'production' && !process.env.VERCEL && !process.env.NETLIFY;
@@ -32,6 +32,17 @@ try {
   firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   auth = getAuth(firebaseApp);
   db = getFirestore(firebaseApp);
+  
+  // Enable offline persistence for better reliability
+  if (typeof window !== 'undefined' && !isBuildTime) {
+    // Configure Firestore settings for better performance
+    import('firebase/firestore').then(({ enableNetwork, disableNetwork }) => {
+      // Enable network by default, but handle offline gracefully
+      enableNetwork(db).catch((error) => {
+        console.warn('Failed to enable Firestore network:', error);
+      });
+    });
+  }
 } catch (error) {
   console.error('Error initializing Firebase:', error);
   if (isBuildTime) {

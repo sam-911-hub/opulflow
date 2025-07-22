@@ -62,6 +62,35 @@ service cloud.firestore {
         allow create: if isOwner(userId);
         allow update, delete: if isOwner(userId);
       }
+      
+      // Email deliveries and tracking
+      match /emailDeliveries/{deliveryId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // Email events from Brevo webhooks
+      match /email_events/{eventId} {
+        allow read: if isOwner(userId);
+        allow create: if true; // Allow webhook creation
+        allow update, delete: if isOwner(userId);
+      }
+      
+      // API calls for rate limiting
+      match /api_calls/{callId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // Cost tracking
+      match /cost_tracking/{trackingId} {
+        allow read: if isOwner(userId);
+        allow create: if true; // Allow system creation
+        allow update, delete: if isOwner(userId);
+      }
+      
+      // Communication logs
+      match /communication_logs/{logId} {
+        allow read, write: if isOwner(userId);
+      }
     }
     
     // Team members collection
