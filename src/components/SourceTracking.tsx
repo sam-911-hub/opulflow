@@ -291,7 +291,7 @@ export default function SourceTracking() {
             
             <div>
               <h3 className="font-medium">2. Copy the Tracking Link</h3>
-              <p className="text-sm text-gray-600">Use the "Copy Tracking Link" button to get a URL with UTM parameters.</p>
+              <p className="text-sm text-gray-600">Use the &quot;Copy Tracking Link&quot; button to get a URL with UTM parameters.</p>
             </div>
             
             <div>

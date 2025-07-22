@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifySessionCookie, getAdminFirestore } from '@/lib/admin';
 import { rateLimitMiddleware, trackApiCost } from '@/app/api/middleware-rate-limit';
-import { validateName, sanitizeString } from '@/lib/validation';
+import { sanitizeString } from '@/lib/validation';
 
 const ULTRAMSG_API_URL = 'https://api.ultramsg.com/instance134306';
 const ULTRAMSG_TOKEN = 'vvjtttowv8jvwwcz';
-const INSTANCE_ID = 'instance134306';
+
 
 export async function POST(request: NextRequest) {
   try {

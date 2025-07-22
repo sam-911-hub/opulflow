@@ -57,7 +57,7 @@ export default function UserManualPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold">Script Help</h3>
-                    <p className="text-sm text-gray-600">Generate effective sales scripts tailored to your prospect's industry.</p>
+                    <p className="text-sm text-gray-600">Generate effective sales scripts tailored to your prospect&apos;s industry.</p>
                   </div>
                   <div>
                     <h3 className="font-semibold">Call Analysis</h3>

@@ -26,7 +26,7 @@ export default function TutorialsPage() {
                 <p className="text-gray-500">Video tutorial coming soon</p>
               </div>
               <h3 className="font-semibold">Introduction to OpulFlow</h3>
-              <p className="text-gray-600">Learn the basics of OpulFlow's pay-as-you-go platform and how to navigate the dashboard.</p>
+              <p className="text-gray-600">Learn the basics of OpulFlow&apos;s pay-as-you-go platform and how to navigate the dashboard.</p>
             </CardContent>
           </Card>
           
@@ -52,7 +52,7 @@ export default function TutorialsPage() {
                 <p className="text-gray-500">Video tutorial coming soon</p>
               </div>
               <h3 className="font-semibold">Using AI Email Generation</h3>
-              <p className="text-gray-600">Learn how to create personalized sales emails using OpulFlow's AI tools.</p>
+              <p className="text-gray-600">Learn how to create personalized sales emails using OpulFlow&apos;s AI tools.</p>
             </CardContent>
           </Card>
           

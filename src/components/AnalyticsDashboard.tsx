@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getUserActivity, getCreditUsage } from "@/services/analytics";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -12,18 +12,19 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => {
     if (user) loadData();
-  }, [user]);
+  }, [user, loadData]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
+    if (!user?.uid) return;
     try {
-      const activity = await getUserActivity(user!.uid);
+      const activity = await getUserActivity(user.uid);
       setActivityData(activity);
     } catch (error) {
       toast.error("Failed to load analytics");
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   const creditUsageData = [
     { name: 'AI', value: activityData.filter(a => a.service === 'ai').length },

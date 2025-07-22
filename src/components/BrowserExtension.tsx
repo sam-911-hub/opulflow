@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { collection, getDocs, addDoc, query, where, orderBy, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
@@ -15,11 +15,8 @@ export default function BrowserExtension() {
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState(false);
 
-  useEffect(() => {
-    if (user) fetchSubscription();
-  }, [user]);
-
-  const fetchSubscription = async () => {
+  const fetchSubscription = useCallback(async () => {
+    if (!user?.uid) return;
     try {
       const q = query(
         collection(db, `users/${user?.uid}/subscriptions`),
@@ -44,7 +41,11 @@ export default function BrowserExtension() {
       toast.error("Failed to load extension subscription");
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchSubscription();
+  }, [fetchSubscription]);
 
   const activateExtension = async () => {
     // Check if we have credits

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifySessionCookie, getAdminFirestore } from '@/lib/admin';
 import { rateLimitMiddleware, trackApiCost } from '@/app/api/middleware-rate-limit';
-import { validateEmail, validateName, sanitizeString } from '@/lib/validation';
+import { validateEmail, sanitizeString } from '@/lib/validation';
 
 const BREVO_API_KEY = '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';
 const BREVO_BASE_URL = 'https://api.brevo.com/v3';

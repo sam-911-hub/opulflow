@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, updateDoc, doc, addDoc } from 'firebase/firestore';
-import { subDays } from 'date-fns';
+import { collection, query, where, getDocs, updateDoc, addDoc } from 'firebase/firestore';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -34,7 +33,7 @@ export async function GET(request: NextRequest) {
     for (const doc of querySnapshot.docs) {
       try {
         const expiration = doc.data();
-        const { userId, creditId, type, remaining } = expiration;
+        const { userId, type, remaining } = expiration;
         
         if (remaining > 0) {
           // Update user's credit balance

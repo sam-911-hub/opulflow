@@ -12,7 +12,7 @@ export default function APIDocPage() {
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">API Documentation</h1>
           <p className="text-xl text-gray-600 mb-2">
-            Integrate OpulFlow's services into your applications
+            Integrate OpulFlow&apos;s services into your applications
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export default function APIDocPage() {
                 <ul className="list-disc pl-5 text-gray-600">
                   <li><span className="font-medium">email</span>: Email address to lookup</li>
                   <li><span className="font-medium">domain</span>: Company domain to lookup</li>
-                  <li><span className="font-medium">name</span>: Person's name to lookup</li>
+                  <li><span className="font-medium">name</span>: Person&apos;s name to lookup</li>
                   <li><span className="font-medium">company</span>: Company name to lookup</li>
                 </ul>
               </div>

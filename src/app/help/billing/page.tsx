@@ -12,7 +12,7 @@ export default function BillingPage() {
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Billing & Credits</h1>
           <p className="text-xl text-gray-600 mb-2">
-            Understanding OpulFlow's pay-as-you-go pricing model
+            Understanding OpulFlow&apos;s pay-as-you-go pricing model
           </p>
         </div>
 
@@ -56,7 +56,7 @@ export default function BillingPage() {
               
               <div className="space-y-2">
                 <h3 className="font-semibold">PayPal</h3>
-                <p className="text-gray-600">We accept all major credit cards through PayPal. You don't need a PayPal account to make a purchase.</p>
+                <p className="text-gray-600">We accept all major credit cards through PayPal. You don&apos;t need a PayPal account to make a purchase.</p>
               </div>
               
               <div className="space-y-2">

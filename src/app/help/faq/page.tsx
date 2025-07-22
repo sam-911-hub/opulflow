@@ -12,7 +12,7 @@ export default function FAQPage() {
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
           <p className="text-xl text-gray-600 mb-2">
-            Common questions about OpulFlow's services and pricing
+            Common questions about OpulFlow&apos;s services and pricing
           </p>
         </div>
 
@@ -45,7 +45,7 @@ export default function FAQPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="font-semibold">What's the minimum purchase?</h3>
+                <h3 className="font-semibold">What&apos;s the minimum purchase?</h3>
                 <p className="text-gray-600">The minimum purchase is $10 to avoid micro-transaction fees.</p>
               </div>
               
