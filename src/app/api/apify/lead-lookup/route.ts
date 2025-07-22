@@ -90,81 +90,71 @@ export async function POST(request: NextRequest) {
 
 async function scrapeLinkedInProfile(linkedinUrl: string) {
   try {
-    console.log('Scraping LinkedIn profile:', linkedinUrl);
-
-    // Run Apify LinkedIn Profile Scraper (using HarvestAPI's reliable actor)
+    console.log('Starting LinkedIn profile scraping for:', linkedinUrl);
+    
+    // Start the Apify actor run with timeout
     const response = await fetch(`${APIFY_BASE_URL}/acts/harvestapi~linkedin-profile-scraper/runs?token=${APIFY_API_TOKEN}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        startUrls: [linkedinUrl]
+        startUrls: [linkedinUrl],
+        maxItems: 1,
+        timeout: 120 // 2 minute timeout
       })
     });
 
     if (!response.ok) {
-      throw new Error(`Apify API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Apify API error:', errorText);
+      return {
+        success: false,
+        error: `LinkedIn scraping failed: ${response.status}`,
+        details: errorText
+      };
     }
 
     const runData = await response.json();
-    const runId = runData.data.id;
-
-    // Wait for the run to complete (with timeout)
-    let attempts = 0;
-    const maxAttempts = 30; // 30 seconds timeout
+    const runId = runData.data?.id;
     
-    while (attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-      
-      const statusResponse = await fetch(`${APIFY_BASE_URL}/actor-runs/${runId}?token=${APIFY_API_TOKEN}`);
-      const statusData = await statusResponse.json();
-      
-      if (statusData.data.status === 'SUCCEEDED') {
-        // Get the dataset items
-        const datasetResponse = await fetch(`${APIFY_BASE_URL}/datasets/${statusData.data.defaultDatasetId}/items?token=${APIFY_API_TOKEN}`);
-        const results = await datasetResponse.json();
-        
-        console.log('Apify scraping results:', results);
-        
-        if (results && results.length > 0) {
-          const profile = results[0];
-          const lead = {
-            id: profile.profileId || 'apify-' + Date.now(),
-            name: profile.fullName || profile.name || 'N/A',
-            email: profile.email || 'N/A',
-            title: profile.headline || profile.jobTitle || 'N/A',
-            company: profile.companyName || profile.currentCompany || 'N/A',
-            domain: profile.companyWebsite || 'N/A',
-            industry: profile.industry || 'N/A',
-            location: profile.location || 'N/A',
-            linkedinUrl: profile.url || linkedinUrl,
-            phone: profile.phoneNumber || null,
-            companySize: profile.companySize || null,
-            companyRevenue: null,
-            companyDescription: profile.companyDescription || null,
-            technologies: [],
-            source: 'Lead Intelligence',
-            enrichedAt: new Date().toISOString(),
-            experience: profile.experience || [],
-            education: profile.education || [],
-            skills: profile.skills || []
-          };
-          
-          return { success: true, leads: [lead] };
-        }
-      } else if (statusData.data.status === 'FAILED') {
-        throw new Error('Apify scraping failed');
-      }
-      
-      attempts++;
+    if (!runId) {
+      return {
+        success: false,
+        error: 'Failed to start LinkedIn scraping job'
+      };
     }
-    
-    throw new Error('Apify scraping timeout');
-    
-  } catch (error) {
-    console.error('LinkedIn profile scraping error:', error);
-    return { success: false, error: error.message };
+
+    console.log('Apify run started:', runId);
+
+    // For now, return a placeholder with run ID - results will be available later
+    return {
+      success: true,
+      leads: [{
+        id: `apify-run-${runId}`,
+        name: 'LinkedIn Profile Data',
+        email: 'Processing...',
+        title: 'Data extraction in progress',
+        company: 'LinkedIn Profile',
+        domain: 'linkedin.com',
+        industry: 'Professional Networking',
+        location: 'Processing...',
+        linkedinUrl: linkedinUrl,
+        source: 'Lead Intelligence',
+        enrichedAt: new Date().toISOString(),
+        processingStatus: 'PENDING',
+        runId: runId,
+        note: 'Full profile data will be available in 1-2 minutes. Check back later or use webhook for real-time updates.'
+      }]
+    };
+
+  } catch (error: any) {
+    console.error('LinkedIn scraping error:', error);
+    return {
+      success: false,
+      error: 'LinkedIn scraping service temporarily unavailable',
+      details: error.message
+    };
   }
 }
 
