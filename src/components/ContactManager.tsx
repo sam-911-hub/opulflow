@@ -42,6 +42,7 @@ type LeadSearchForm = {
   name: string;
   company: string;
   domain: string;
+  linkedinUrl?: string;
 };
 
 type EmailFinderForm = {
@@ -77,7 +78,8 @@ export default function ContactManager() {
     email: '',
     name: '',
     company: '',
-    domain: ''
+    domain: '',
+    linkedinUrl: ''
   });
 
   const [emailFinderForm, setEmailFinderForm] = useState<EmailFinderForm>({
@@ -298,14 +300,14 @@ export default function ContactManager() {
 
   // Apollo.io Lead Lookup
   const handleLeadSearch = async () => {
-    if (!leadSearchForm.email && !leadSearchForm.name && !leadSearchForm.company && !leadSearchForm.domain) {
+    if (!leadSearchForm.email && !leadSearchForm.name && !leadSearchForm.company && !leadSearchForm.domain && !leadSearchForm.linkedinUrl) {
       toast.error('Please fill at least one search field');
       return;
     }
 
     setIsSearchingLeads(true);
     try {
-      const response = await fetch('/api/apollo/lead-lookup', {
+      const response = await fetch('/api/apify/lead-lookup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -343,7 +345,7 @@ export default function ContactManager() {
         toast.success(`Found ${data.leads.length} leads! Credits used: ${data.creditsUsed}`);
         
         // Reset form
-        setLeadSearchForm({ email: '', name: '', company: '', domain: '' });
+        setLeadSearchForm({ email: '', name: '', company: '', domain: '', linkedinUrl: '' });
       } else {
         toast.info('No leads found with the given criteria');
       }
@@ -542,54 +544,69 @@ export default function ContactManager() {
           {/* Lead Intelligence Tab */}
           {activeTab === 'lead-search' && (
             <div className="space-y-4">
-              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Lead Intelligence Temporarily Unavailable</h3>
-                <p className="text-yellow-700 text-sm mb-2">This service requires an upgraded plan and is currently unavailable.</p>
-                <p className="text-yellow-700 text-sm">
-                  <strong>Alternative:</strong> Use the <strong>Email Finder</strong> tab for email discovery and verification services, which are fully functional.
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 className="font-semibold text-blue-800 mb-2">🔍 Lead Intelligence & Enrichment</h3>
+                <p className="text-blue-700 text-sm mb-2">Extract comprehensive LinkedIn profile data including contact information and work history.</p>
+                <p className="text-blue-700 text-sm">
+                  <strong>Best Results:</strong> Provide a LinkedIn profile URL for detailed enrichment. Cost: $0.25 per search
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <label className="block text-sm font-medium mb-1">
+                    LinkedIn Profile URL <span className="text-blue-600">(Recommended)</span>
+                  </label>
                   <Input
-                    value={leadSearchForm.email}
-                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, email: e.target.value }))}
-                    placeholder="john@example.com"
+                    value={leadSearchForm.linkedinUrl || ''}
+                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, linkedinUrl: e.target.value }))}
+                    placeholder="https://www.linkedin.com/in/john-doe"
                   />
+                  <p className="text-xs text-gray-500 mt-1">LinkedIn URL provides the most comprehensive data</p>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
-                  <Input
-                    value={leadSearchForm.name}
-                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="John Doe"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Company</label>
-                  <Input
-                    value={leadSearchForm.company}
-                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, company: e.target.value }))}
-                    placeholder="Example Corp"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Domain</label>
-                  <Input
-                    value={leadSearchForm.domain}
-                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, domain: e.target.value }))}
-                    placeholder="example.com"
-                  />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Email</label>
+                    <Input
+                      value={leadSearchForm.email}
+                      onChange={(e) => setLeadSearchForm(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="john@example.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Name</label>
+                    <Input
+                      value={leadSearchForm.name}
+                      onChange={(e) => setLeadSearchForm(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="John Doe"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Company</label>
+                    <Input
+                      value={leadSearchForm.company}
+                      onChange={(e) => setLeadSearchForm(prev => ({ ...prev, company: e.target.value }))}
+                      placeholder="Example Corp"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Domain</label>
+                    <Input
+                      value={leadSearchForm.domain}
+                      onChange={(e) => setLeadSearchForm(prev => ({ ...prev, domain: e.target.value }))}
+                      placeholder="example.com"
+                    />
+                  </div>
                 </div>
               </div>
               
               <Button
-                disabled={true}
-                className="bg-gray-400 cursor-not-allowed"
+                onClick={handleLeadSearch}
+                disabled={isSearchingLeads}
+                className="bg-blue-600 hover:bg-blue-700"
               >
-                Service Temporarily Unavailable
+                {isSearchingLeads ? 'Searching...' : 'Search Leads (1 Credit)'}
               </Button>
             </div>
           )}
