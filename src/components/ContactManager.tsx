@@ -518,8 +518,8 @@ export default function ContactManager() {
           <nav className="flex space-x-8 px-6">
             {[
               { id: 'contacts', name: 'Contacts', icon: '👥' },
-              { id: 'lead-search', name: 'Apollo Lead Search', icon: '🔍' },
-              { id: 'email-finder', name: 'Hunter Email Finder', icon: '📧' },
+              { id: 'lead-search', name: 'Lead Intelligence', icon: '🔍' },
+              { id: 'email-finder', name: 'Email Finder', icon: '📧' },
               { id: 'email-verify', name: 'Email Verification', icon: '✅' }
             ].map((tab) => (
               <button
@@ -539,11 +539,11 @@ export default function ContactManager() {
         </div>
 
         <div className="p-6">
-          {/* Apollo Lead Search Tab */}
+          {/* Lead Intelligence Tab */}
           {activeTab === 'lead-search' && (
             <div className="space-y-4">
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-800 mb-2">Apollo.io Lead Lookup</h3>
+                <h3 className="font-semibold text-blue-800 mb-2">Lead Intelligence & Enrichment</h3>
                 <p className="text-blue-700 text-sm">Search for leads and enrich with contact and company data. Cost: $0.25 per search</p>
               </div>
               
