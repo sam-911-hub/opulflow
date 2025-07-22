@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifySessionCookie, getAdminFirestore } from '@/lib/admin';
-import { doc, updateDoc, collection, addDoc, getDoc } from 'firebase/firestore';
 
 const HUNTER_API_KEY = 'fe9c130cb16875866817161423a1fde5781c89f1';
 const HUNTER_BASE_URL = 'https://api.hunter.io/v2';
@@ -27,8 +26,8 @@ export async function POST(request: NextRequest) {
 
     // Check user credits
     const db = getAdminFirestore();
-    const userRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userRef);
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
     const userData = userDoc.data();
     const emailVerificationCredits = userData?.credits?.email_verification || 0;
 
@@ -138,12 +137,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Deduct credit
-    await updateDoc(userRef, {
+    await userRef.update({
       'credits.email_verification': emailVerificationCredits - 1
     });
 
     // Log transaction
-    await addDoc(collection(db, `users/${userId}/transactions`), {
+    await db.collection(`users/${userId}/transactions`).add({
       type: 'usage',
       service: 'email_verification',
       subService: 'email_finder',
