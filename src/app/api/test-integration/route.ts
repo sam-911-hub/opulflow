@@ -10,15 +10,25 @@ export async function POST(request: NextRequest) {
     const { service, ...params } = await request.json();
 
     if (service === 'apollo-test') {
-      // Test Apollo API
-      const searchParams: any = {};
+      // Test Apollo People Enrichment API (works with free plan)
+      const enrichmentParams: any = {};
 
-      if (params.domain) searchParams.organization_domains = [params.domain];
-      if (params.company) searchParams.organization_names = [params.company];
+      if (params.domain) enrichmentParams.domain = params.domain;
+      if (params.company) enrichmentParams.organization_name = params.company;
+      if (params.email) enrichmentParams.email = params.email;
+      if (params.name) {
+        const nameParts = params.name.split(' ');
+        if (nameParts.length >= 2) {
+          enrichmentParams.first_name = nameParts[0];
+          enrichmentParams.last_name = nameParts.slice(1).join(' ');
+        } else {
+          enrichmentParams.first_name = params.name;
+        }
+      }
 
-      console.log('Testing Apollo API with params:', searchParams);
+      console.log('Testing Apollo Enrichment API with params:', enrichmentParams);
 
-      const apolloResponse = await fetch(`${APOLLO_BASE_URL}/mixed_people/search`, {
+      const apolloResponse = await fetch(`${APOLLO_BASE_URL}/people/match`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,8 +36,9 @@ export async function POST(request: NextRequest) {
           'X-Api-Key': APOLLO_API_KEY
         },
         body: JSON.stringify({
-          per_page: 1,
-          ...searchParams
+          reveal_personal_emails: true,
+          reveal_phone_number: true,
+          ...enrichmentParams
         })
       });
 
@@ -44,13 +55,14 @@ export async function POST(request: NextRequest) {
       
       return NextResponse.json({
         success: true,
-        service: 'Apollo API',
+        service: 'Apollo Enrichment API',
         status: apolloResponse.status,
-        resultCount: apolloData.people?.length || 0,
-        sampleResult: apolloData.people?.[0] ? {
-          name: apolloData.people[0].name,
-          email: apolloData.people[0].email,
-          company: apolloData.people[0].organization?.name
+        found: !!apolloData.person,
+        result: apolloData.person ? {
+          name: apolloData.person.name || `${apolloData.person.first_name || ''} ${apolloData.person.last_name || ''}`.trim(),
+          email: apolloData.person.email || apolloData.person.personal_emails?.[0],
+          company: apolloData.person.organization?.name,
+          title: apolloData.person.title
         } : null
       });
 

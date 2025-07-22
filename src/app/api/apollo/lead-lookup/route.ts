@@ -49,8 +49,26 @@ export async function POST(request: NextRequest) {
 
     console.log('Apollo API request params:', searchParams);
 
-    // Make request to Apollo API
-    const apolloResponse = await fetch(`${APOLLO_BASE_URL}/mixed_people/search`, {
+    // Use People Enrichment API instead of search (works with free plan)
+    const enrichmentParams: any = {};
+    
+    if (email) enrichmentParams.email = email;
+    if (name) {
+      const nameParts = name.split(' ');
+      if (nameParts.length >= 2) {
+        enrichmentParams.first_name = nameParts[0];
+        enrichmentParams.last_name = nameParts.slice(1).join(' ');
+      } else {
+        enrichmentParams.first_name = name;
+      }
+    }
+    if (company) enrichmentParams.organization_name = company;
+    if (domain) enrichmentParams.domain = domain;
+
+    console.log('Apollo enrichment params:', enrichmentParams);
+
+    // Make request to Apollo People Enrichment API
+    const apolloResponse = await fetch(`${APOLLO_BASE_URL}/people/match`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,8 +76,9 @@ export async function POST(request: NextRequest) {
         'X-Api-Key': APOLLO_API_KEY
       },
       body: JSON.stringify({
-        per_page: 10,
-        ...Object.fromEntries(Object.entries(searchParams).filter(([key]) => key !== 'api_key'))
+        reveal_personal_emails: true,
+        reveal_phone_number: true,
+        ...enrichmentParams
       })
     });
 
@@ -75,16 +94,17 @@ export async function POST(request: NextRequest) {
     const apolloData = await apolloResponse.json();
     console.log('Apollo API response:', apolloData);
 
-    // Process and format the results
-    const leads = apolloData.people?.map((person: any) => ({
-      id: person.id,
-      name: person.name || 'N/A',
-      email: person.email || 'N/A',
+    // Process and format the results from People Enrichment API
+    const person = apolloData.person;
+    const leads = person ? [{
+      id: person.id || 'enriched-' + Date.now(),
+      name: person.name || `${person.first_name || ''} ${person.last_name || ''}`.trim() || 'N/A',
+      email: person.email || person.personal_emails?.[0] || 'N/A',
       title: person.title || 'N/A',
       company: person.organization?.name || 'N/A',
-      domain: person.organization?.website_url || 'N/A',
+      domain: person.organization?.website_url || person.organization?.primary_domain || 'N/A',
       industry: person.organization?.industry || 'N/A',
-      location: person.city || person.state || person.country || 'N/A',
+      location: [person.city, person.state, person.country].filter(Boolean).join(', ') || 'N/A',
       linkedinUrl: person.linkedin_url || null,
       phone: person.phone_numbers?.[0]?.sanitized_number || null,
       companySize: person.organization?.estimated_num_employees || null,
@@ -93,7 +113,7 @@ export async function POST(request: NextRequest) {
       technologies: person.organization?.technologies?.map((tech: any) => tech.name) || [],
       source: 'Lead Intelligence',
       enrichedAt: new Date().toISOString()
-    })) || [];
+    }] : [];
 
     // Deduct credit
     await updateDoc(userRef, {
