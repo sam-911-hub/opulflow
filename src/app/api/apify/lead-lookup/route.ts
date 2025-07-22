@@ -100,8 +100,7 @@ async function scrapeLinkedInProfile(linkedinUrl: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        startUrls: [{ url: linkedinUrl }],
-        maxItems: 1
+        profileUrls: [linkedinUrl]
       })
     });
 

@@ -103,8 +103,7 @@ async function scrapeLinkedInCompany(linkedinCompanyUrl: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        startUrls: [{ url: linkedinCompanyUrl }],
-        maxItems: 1
+        companyUrls: [linkedinCompanyUrl]
       })
     });
 
