@@ -15,7 +15,11 @@ const RATE_LIMITS: Record<string, RateLimitConfig> = {
   'company-enrichment': { windowMs: 300000, maxRequests: 3, service: 'company_enrichment' }, // 3 req/5minutes
   'email-sender': { windowMs: 60000, maxRequests: 20, service: 'email_delivery' }, // 20 emails/minute
   'whatsapp-sender': { windowMs: 60000, maxRequests: 15, service: 'whatsapp_messages' }, // 15 WhatsApp/minute
-  'sms-sender': { windowMs: 60000, maxRequests: 10, service: 'sms_messages' } // 10 SMS/minute
+  'sms-sender': { windowMs: 60000, maxRequests: 10, service: 'sms_messages' }, // 10 SMS/minute
+  'text-generation': { windowMs: 60000, maxRequests: 30, service: 'ai_generation' }, // 30 req/minute
+  'image-generation': { windowMs: 60000, maxRequests: 15, service: 'ai_generation' }, // 15 req/minute (more expensive)
+  'crm-integration': { windowMs: 60000, maxRequests: 25, service: 'crm_integration' }, // 25 req/minute
+  'tech-analysis': { windowMs: 300000, maxRequests: 10, service: 'tech_analysis' } // 10 req/5minutes
 };
 
 export async function rateLimitMiddleware(
