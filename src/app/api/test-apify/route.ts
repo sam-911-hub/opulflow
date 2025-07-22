@@ -27,14 +27,14 @@ async function testLinkedInProfileScraper(linkedinUrl: string) {
   try {
     console.log('Testing LinkedIn profile scraper with:', linkedinUrl);
 
-    // Run Apify LinkedIn Profile Scraper
-    const response = await fetch(`${APIFY_BASE_URL}/acts/dev_fusion~linkedin-profile-scraper/runs?token=${APIFY_API_TOKEN}`, {
+    // Run Apify LinkedIn Profile Scraper (using a well-documented actor)
+    const response = await fetch(`${APIFY_BASE_URL}/acts/harvestapi~linkedin-profile-scraper/runs?token=${APIFY_API_TOKEN}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        profileUrls: [linkedinUrl]
+        startUrls: [linkedinUrl]
       })
     });
 
