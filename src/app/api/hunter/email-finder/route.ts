@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifySessionCookie } from '@/lib/admin';
+import { verifySessionCookie, getAdminFirestore } from '@/lib/admin';
 import { doc, updateDoc, collection, addDoc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 const HUNTER_API_KEY = 'fe9c130cb16875866817161423a1fde5781c89f1';
 const HUNTER_BASE_URL = 'https://api.hunter.io/v2';
@@ -27,6 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check user credits
+    const db = getAdminFirestore();
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
     const userData = userDoc.data();
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
         stillOnPage: source.still_on_page
       })) || [],
       verificationStatus: null, // Will be filled by verification
-      provider: 'Hunter.io',
+      provider: 'Email Intelligence',
       foundAt: new Date().toISOString()
     };
 
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
       subService: 'email_finder',
       amount: 1,
       cost: 0.05,
-      provider: 'Hunter.io',
+      provider: 'Email Intelligence',
       searchParams: { domain, firstName, lastName, fullName },
       emailFound: !!result.email,
       confidence: result.confidence,
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       result,
       creditsUsed: 1,
       remainingCredits: emailVerificationCredits - 1,
-      provider: 'Hunter.io'
+      provider: 'Email Intelligence'
     });
 
   } catch (error: any) {
@@ -176,7 +176,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json({
-    service: 'Hunter.io Email Finder',
+    service: 'Professional Email Finder',
     cost: '$0.05 per search',
     description: 'Find email addresses for contacts at specific companies',
     parameters: ['domain', 'firstName', 'lastName', 'fullName'],

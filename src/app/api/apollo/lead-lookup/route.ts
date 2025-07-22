@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifySessionCookie } from '@/lib/admin';
+import { verifySessionCookie, getAdminFirestore } from '@/lib/admin';
 import { doc, updateDoc, collection, addDoc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 const APOLLO_API_KEY = 'Vs4mYR0wGQYl_63yB1kd8A';
 const APOLLO_BASE_URL = 'https://api.apollo.io/v1';
@@ -27,6 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check user credits
+    const db = getAdminFirestore();
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
     const userData = userDoc.data();
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       companyRevenue: person.organization?.estimated_annual_revenue || null,
       companyDescription: person.organization?.description || null,
       technologies: person.organization?.technologies?.map((tech: any) => tech.name) || [],
-      source: 'Apollo.io',
+      source: 'Lead Intelligence',
       enrichedAt: new Date().toISOString()
     })) || [];
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       service: 'lead_lookup',
       amount: 1,
       cost: 0.25,
-      provider: 'Apollo.io',
+      provider: 'Lead Intelligence',
       searchParams: { email, name, company, domain },
       resultsCount: leads.length,
       createdAt: new Date().toISOString(),
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
       leads,
       creditsUsed: 1,
       remainingCredits: leadLookupCredits - 1,
-      provider: 'Apollo.io'
+      provider: 'Lead Intelligence'
     });
 
   } catch (error: any) {
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json({
-    service: 'Apollo.io Lead Lookup',
+    service: 'Lead Intelligence Lookup',
     cost: '$0.25 per search',
     description: 'Search for leads and enrich with contact and company data',
     parameters: ['email', 'name', 'company', 'domain'],

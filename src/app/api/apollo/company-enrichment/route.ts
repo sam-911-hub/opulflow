@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifySessionCookie } from '@/lib/admin';
+import { verifySessionCookie, getAdminFirestore } from '@/lib/admin';
 import { doc, updateDoc, collection, addDoc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 const APOLLO_API_KEY = 'Vs4mYR0wGQYl_63yB1kd8A';
 const APOLLO_BASE_URL = 'https://api.apollo.io/v1';
@@ -27,6 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check user credits
+    const db = getAdminFirestore();
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
     const userData = userDoc.data();
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       },
       marketCap: org.market_cap || null,
       stockSymbol: org.stock_symbol || null,
-      source: 'Apollo.io',
+      source: 'Business Intelligence',
       enrichedAt: new Date().toISOString()
     })) || [];
 
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
       service: 'company_enrichment',
       amount: 1,
       cost: 0.35,
-      provider: 'Apollo.io',
+      provider: 'Business Intelligence',
       searchParams: { domain, companyName, apolloId },
       resultsCount: companies.length,
       createdAt: new Date().toISOString(),
@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
       additionalData,
       creditsUsed: 1,
       remainingCredits: companyEnrichmentCredits - 1,
-      provider: 'Apollo.io'
+      provider: 'Business Intelligence'
     });
 
   } catch (error: any) {
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json({
-    service: 'Apollo.io Company Enrichment',
+    service: 'Company Intelligence & Enrichment',
     cost: '$0.35 per search',
     description: 'Get detailed company information including financials, technologies, and insights',
     parameters: ['domain', 'companyName', 'apolloId'],

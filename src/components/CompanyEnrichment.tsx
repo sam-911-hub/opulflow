@@ -124,9 +124,9 @@ export default function CompanyEnrichment() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Company Enrichment</h2>
+        <h2 className="text-2xl font-bold">Company Intelligence</h2>
         <Badge variant="outline" className="text-sm">
-          Apollo.io Integration
+          Business Intelligence
         </Badge>
       </div>
 

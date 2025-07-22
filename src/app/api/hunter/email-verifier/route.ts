@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifySessionCookie } from '@/lib/admin';
+import { verifySessionCookie, getAdminFirestore } from '@/lib/admin';
 import { doc, updateDoc, collection, addDoc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 
 const HUNTER_API_KEY = 'fe9c130cb16875866817161423a1fde5781c89f1';
 const HUNTER_BASE_URL = 'https://api.hunter.io/v2';
@@ -36,6 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check user credits
+    const db = getAdminFirestore();
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
     const userData = userDoc.data();
@@ -75,10 +75,10 @@ export async function POST(request: NextRequest) {
           // Add failed verification to results
           verificationResults.push({
             email: emailAddress,
-            result: 'error',
-            error: 'API request failed',
-            provider: 'Hunter.io',
-            verifiedAt: new Date().toISOString()
+                      result: 'error',
+          error: 'API request failed',
+          provider: 'Email Intelligence',
+          verifiedAt: new Date().toISOString()
           });
           continue;
         }
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
             lastSeenOn: source.last_seen_on,
             stillOnPage: source.still_on_page
           })) || [],
-          provider: 'Hunter.io',
+          provider: 'Email Intelligence',
           verifiedAt: new Date().toISOString()
         };
 
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
           email: emailAddress,
           result: 'error',
           error: 'Verification failed',
-          provider: 'Hunter.io',
+          provider: 'Email Intelligence',
           verifiedAt: new Date().toISOString()
         });
       }
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
       subService: 'email_verifier',
       amount: emailsToVerify.length,
       cost: emailsToVerify.length * 0.05,
-      provider: 'Hunter.io',
+      provider: 'Email Intelligence',
       emailsVerified: emailsToVerify,
       successfulVerifications: verificationResults.filter(r => r.result !== 'error').length,
       createdAt: new Date().toISOString(),
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
       summary,
       creditsUsed: emailsToVerify.length,
       remainingCredits: emailVerificationCredits - emailsToVerify.length,
-      provider: 'Hunter.io'
+      provider: 'Email Intelligence'
     });
 
   } catch (error: any) {
@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json({
-    service: 'Hunter.io Email Verifier',
+    service: 'Email Verification & Validation',
     cost: '$0.05 per email',
     description: 'Verify email addresses for deliverability and validity',
     parameters: ['email', 'emails (array)'],

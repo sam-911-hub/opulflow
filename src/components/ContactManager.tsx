@@ -592,11 +592,11 @@ export default function ContactManager() {
             </div>
           )}
 
-          {/* Hunter Email Finder Tab */}
+          {/* Email Finder Tab */}
           {activeTab === 'email-finder' && (
             <div className="space-y-4">
               <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h3 className="font-semibold text-green-800 mb-2">Hunter.io Email Finder</h3>
+                <h3 className="font-semibold text-green-800 mb-2">Professional Email Finder</h3>
                 <p className="text-green-700 text-sm">Find email addresses for contacts at specific companies. Cost: $0.05 per search</p>
               </div>
               
@@ -642,7 +642,7 @@ export default function ContactManager() {
           {activeTab === 'email-verify' && (
             <div className="space-y-4">
               <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                <h3 className="font-semibold text-purple-800 mb-2">Hunter.io Email Verification</h3>
+                <h3 className="font-semibold text-purple-800 mb-2">Email Verification & Validation</h3>
                 <p className="text-purple-700 text-sm">Verify email addresses for deliverability. Cost: $0.05 per email. Max 50 emails at once.</p>
               </div>
               
