@@ -542,9 +542,12 @@ export default function ContactManager() {
           {/* Lead Intelligence Tab */}
           {activeTab === 'lead-search' && (
             <div className="space-y-4">
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-800 mb-2">Lead Intelligence & Enrichment</h3>
-                <p className="text-blue-700 text-sm">Search for leads and enrich with contact and company data. Cost: $0.25 per search</p>
+              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Lead Intelligence Temporarily Unavailable</h3>
+                <p className="text-yellow-700 text-sm mb-2">This service requires an upgraded plan and is currently unavailable.</p>
+                <p className="text-yellow-700 text-sm">
+                  <strong>Alternative:</strong> Use the <strong>Email Finder</strong> tab for email discovery and verification services, which are fully functional.
+                </p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -583,11 +586,10 @@ export default function ContactManager() {
               </div>
               
               <Button
-                onClick={handleLeadSearch}
-                disabled={isSearchingLeads}
-                className="bg-blue-600 hover:bg-blue-700"
+                disabled={true}
+                className="bg-gray-400 cursor-not-allowed"
               >
-                {isSearchingLeads ? 'Searching...' : 'Search Leads (1 Credit)'}
+                Service Temporarily Unavailable
               </Button>
             </div>
           )}
