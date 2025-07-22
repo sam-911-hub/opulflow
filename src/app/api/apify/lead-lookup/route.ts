@@ -43,13 +43,13 @@ export async function POST(request: NextRequest) {
     if (linkedinUrl) {
       const profileScrapingResult = await scrapeLinkedInProfile(linkedinUrl);
       if (profileScrapingResult.success) {
-        leads = profileScrapingResult.leads;
+        leads = profileScrapingResult.leads || [];
       }
     } else {
       // If no LinkedIn URL, try to find profiles using search
-      const searchResult = await searchLinkedInProfiles({ email, name, company, domain });
+              const searchResult = await searchLinkedInProfiles();
       if (searchResult.success) {
-        leads = searchResult.leads;
+        leads = searchResult.leads || [];
       }
     }
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       provider: 'Lead Intelligence'
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Apify lead lookup error:', error);
     return NextResponse.json({
       error: 'Internal server error',
@@ -148,17 +148,18 @@ async function scrapeLinkedInProfile(linkedinUrl: string) {
       }]
     };
 
-  } catch (error: any) {
+      } catch (error: unknown) {
     console.error('LinkedIn scraping error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return {
       success: false,
       error: 'LinkedIn scraping service temporarily unavailable',
-      details: error.message
+      details: errorMessage
     };
   }
 }
 
-async function searchLinkedInProfiles({ email, name, company, domain }: any) {
+async function searchLinkedInProfiles() {
   try {
     // For now, return a message that direct URL is required
     // In future, we could integrate LinkedIn search actors
@@ -166,9 +167,10 @@ async function searchLinkedInProfiles({ email, name, company, domain }: any) {
       success: false,
       error: 'LinkedIn URL required for profile enrichment. Please provide a LinkedIn profile URL.'
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('LinkedIn search error:', error);
-    return { success: false, error: error.message };
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return { success: false, error: errorMessage };
   }
 }
 

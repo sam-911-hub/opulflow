@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     if (linkedinCompanyUrl) {
       const scrapingResult = await scrapeLinkedInCompany(linkedinCompanyUrl);
       if (scrapingResult.success) {
-        companies = scrapingResult.companies;
+        companies = scrapingResult.companies || [];
       }
     } else {
       // For domain/company name, we'd need to implement search
@@ -82,11 +82,12 @@ export async function POST(request: NextRequest) {
       provider: 'Business Intelligence'
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Apify company enrichment error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json({
       error: 'Internal server error',
-      details: error.message
+      details: errorMessage
     }, { status: 500 });
   }
 }

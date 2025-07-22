@@ -79,7 +79,10 @@ export async function rateLimitMiddleware(
     await db.collection(`users/${userId}/api_calls`).add({
       service,
       timestamp: now,
-      ip: request.ip || 'unknown',
+      ip: request.headers.get('x-forwarded-for')?.split(',')[0] || 
+          request.headers.get('x-real-ip') || 
+          request.headers.get('cf-connecting-ip') || 
+          'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown'
     });
 

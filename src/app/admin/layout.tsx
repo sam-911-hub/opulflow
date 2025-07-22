@@ -8,7 +8,8 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   // Get session cookie
-  const sessionCookie = cookies().get('session')?.value;
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get('session')?.value;
   
   // If no session cookie, redirect to login
   if (!sessionCookie) {
@@ -26,7 +27,7 @@ export default async function AdminLayout({
     if (!isAdmin) {
       redirect('/');
     }
-  } catch (error) {
+  } catch {
     // Invalid session cookie, redirect to login
     redirect('/login');
   }

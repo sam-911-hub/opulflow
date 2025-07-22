@@ -1,137 +1,173 @@
 "use client";
-import { useState, useEffect } from "react";
-import { collection, query, orderBy, getDocs, where, limit } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { useAuth } from "@/context/AuthContext";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function AdminDashboardPage() {
-  const { user } = useAuth();
+interface User {
+  id: string;
+  email: string;
+  accountType: 'free' | 'pro';
+  createdAt: string;
+  credits?: Record<string, number>;
+}
+
+interface Transaction {
+  id: string;
+  userId: string;
+  type: 'purchase' | 'usage';
+  amount: number;
+  service: string;
+  createdAt: string;
+}
+
+export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalUsers: 0,
-    totalRevenue: 0,
+    activeUsers: 0,
     totalTransactions: 0,
-    recentTransactions: [] as any[]
+    totalRevenue: 0,
   });
+  const [recentUsers, setRecentUsers] = useState<User[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) fetchStats();
-  }, [user]);
+    fetchAdminData();
+  }, []);
 
-  const fetchStats = async () => {
+  const fetchAdminData = async () => {
     try {
-      // Get all users
-      const usersSnapshot = await getDocs(collection(db, "users"));
-      const totalUsers = usersSnapshot.docs.length;
-      const users = usersSnapshot.docs.reduce((acc, doc) => {
-        acc[doc.id] = doc.data().email;
-        return acc;
-      }, {} as Record<string, string>);
-      
-      // Collect transaction data
-      let totalRevenue = 0;
-      let totalTransactions = 0;
-      const recentTransactions: any[] = [];
-      
-      for (const userId of Object.keys(users)) {
-        const q = query(
-          collection(db, `users/${userId}/transactions`),
-          where("type", "==", "purchase"),
-          orderBy("createdAt", "desc")
-        );
-        
-        const querySnapshot = await getDocs(q);
-        totalTransactions += querySnapshot.size;
-        
-        querySnapshot.docs.forEach(doc => {
-          const data = doc.data();
-          if (data.paymentDetails?.totalPrice) {
-            totalRevenue += data.paymentDetails.totalPrice;
-          }
-          
-          if (recentTransactions.length < 5) {
-            recentTransactions.push({
-              ...data,
-              id: doc.id,
-              userId,
-              userEmail: users[userId]
-            });
-          }
-        });
+      // Use API route instead of direct Firestore access in client component
+      const [usersResponse, transactionsResponse] = await Promise.all([
+        fetch('/api/admin/users'),
+        fetch('/api/admin/transactions')
+      ]);
+
+      if (!usersResponse.ok || !transactionsResponse.ok) {
+        throw new Error('Failed to fetch admin data');
       }
-      
+
+      const users: User[] = await usersResponse.json();
+      const transactions: Transaction[] = await transactionsResponse.json();
+
+      // Calculate stats
+      const activeUsers = users.filter(user => 
+        user.accountType === 'pro' || 
+        (user.credits && Object.values(user.credits).some(credit => credit > 0))
+      ).length;
+
+      const totalRevenue = transactions
+        .filter(t => t.type === 'purchase')
+        .reduce((sum, t) => sum + t.amount, 0);
+
       setStats({
-        totalUsers,
+        totalUsers: users.length,
+        activeUsers,
+        totalTransactions: transactions.length,
         totalRevenue,
-        totalTransactions,
-        recentTransactions
       });
+
+      setRecentUsers(users.slice(0, 10));
+      setRecentTransactions(transactions.slice(0, 10));
+      
     } catch (error) {
-      console.error("Error fetching stats:", error);
+      console.error('Error fetching admin data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div>Loading dashboard...</div>;
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardContent className="p-6">
-            <h3 className="text-sm font-medium text-gray-500">Total Users</h3>
-            <p className="text-3xl font-bold">{stats.totalUsers}</p>
+          <CardHeader>
+            <CardTitle>Total Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalUsers}</div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardContent className="p-6">
-            <h3 className="text-sm font-medium text-gray-500">Total Revenue</h3>
-            <p className="text-3xl font-bold">${stats.totalRevenue.toFixed(2)}</p>
+          <CardHeader>
+            <CardTitle>Active Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.activeUsers}</div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardContent className="p-6">
-            <h3 className="text-sm font-medium text-gray-500">Total Transactions</h3>
-            <p className="text-3xl font-bold">{stats.totalTransactions}</p>
+          <CardHeader>
+            <CardTitle>Total Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalTransactions}</div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Revenue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
           </CardContent>
         </Card>
       </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {stats.recentTransactions.map((tx) => (
-              <div key={tx.id} className="flex justify-between items-center border-b pb-2">
-                <div>
-                  <p className="font-medium">{tx.userEmail}</p>
-                  <p className="text-sm text-gray-500">
-                    {tx.paymentDetails?.packageName || tx.service} - {new Date(tx.createdAt).toLocaleDateString()}
-                  </p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {recentUsers.map((user) => (
+                <div key={user.id} className="flex justify-between items-center">
+                  <div>
+                    <div className="font-medium">{user.email}</div>
+                    <div className="text-sm text-gray-500">{user.accountType}</div>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </div>
                 </div>
-                <div className="text-green-600 font-medium">
-                  ${tx.paymentDetails?.totalPrice || 'N/A'}
-                </div>
-              </div>
-            ))}
-            
-            <div className="pt-2">
-              <Link href="/admin/transactions" className="text-blue-600 hover:underline">
-                View all transactions →
-              </Link>
+              ))}
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {recentTransactions.map((transaction) => (
+                <div key={transaction.id} className="flex justify-between items-center">
+                  <div>
+                    <div className="font-medium">{transaction.service}</div>
+                    <div className="text-sm text-gray-500">{transaction.type}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium">${transaction.amount}</div>
+                    <div className="text-sm text-gray-500">
+                      {new Date(transaction.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

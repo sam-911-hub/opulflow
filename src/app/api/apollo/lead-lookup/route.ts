@@ -1,16 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { verifySessionCookie, getAdminFirestore } from '@/lib/admin';
-import { doc, updateDoc, collection, addDoc, getDoc } from 'firebase/firestore';
+import { NextResponse } from 'next/server';
 
-const APOLLO_API_KEY = 'Vs4mYR0wGQYl_63yB1kd8A';
-const APOLLO_BASE_URL = 'https://api.apollo.io/v1';
-
-export async function POST(request: NextRequest) {
+export async function POST() {
   return NextResponse.json({
     error: 'Lead Intelligence service temporarily unavailable',
     message: 'This service requires an upgraded Apollo.io plan. Please use the Email Finder service instead, or contact support to upgrade your plan.',
-    alternative: 'Try the Email Finder tab for email discovery and verification services.',
-    status: 'service_unavailable'
+    status: 'service_unavailable',
+    upgradeUrl: '/pricing'
   }, { status: 503 });
 }
 

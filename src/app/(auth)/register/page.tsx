@@ -57,18 +57,22 @@ export default function RegisterPage() {
 
       toast.success("Account created successfully!");
       router.push("/dashboard");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Registration error:", error);
       
       // Provide more user-friendly error messages
-      if (error.code === 'auth/email-already-in-use') {
-        toast.error("Email is already in use. Please use a different email or login.");
-      } else if (error.code === 'auth/invalid-email') {
-        toast.error("Invalid email address.");
-      } else if (error.code === 'auth/weak-password') {
-        toast.error("Password is too weak. Please use a stronger password.");
+      if (error instanceof Error) {
+        if (error.message.includes('auth/email-already-in-use')) {
+          toast.error("Email is already registered");
+        } else if (error.message.includes('auth/weak-password')) {
+          toast.error("Password should be at least 6 characters");
+        } else if (error.message.includes('auth/invalid-email')) {
+          toast.error("Please enter a valid email address");
+        } else {
+          toast.error(error.message || "Registration failed");
+        }
       } else {
-        toast.error(error.message || "Failed to create account");
+        toast.error("Registration failed");
       }
     } finally {
       setLoading(false);

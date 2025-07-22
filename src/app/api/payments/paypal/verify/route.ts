@@ -29,7 +29,7 @@ async function getPayPalAccessToken() {
 }
 
 // Credit packages mapping (amount in USD to credits)
-const CREDIT_PACKAGES = {
+const CREDIT_PACKAGES: Record<number, number> = {
   5: 100,
   10: 250,
   25: 750,
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     
     // Calculate credits based on amount
     let credits = 0;
-    if (CREDIT_PACKAGES[amount]) {
+    if (amount in CREDIT_PACKAGES) {
       credits = CREDIT_PACKAGES[amount];
     } else {
       // Default conversion: $1 = 15 credits

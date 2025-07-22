@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   return NextResponse.json({
     error: 'Company Intelligence service temporarily unavailable',
     message: 'This service requires an upgraded Apollo.io plan. Please use the Email Finder service instead, or contact support to upgrade your plan.',

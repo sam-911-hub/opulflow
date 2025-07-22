@@ -43,7 +43,7 @@ export default function AdminAnalyticsPage() {
               totalCreditsUsed += transaction.amount;
             }
           });
-        } catch (error) {
+        } catch {
           // Skip if user has no transactions
         }
       }

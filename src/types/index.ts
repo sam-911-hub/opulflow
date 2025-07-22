@@ -42,6 +42,52 @@ export interface UserProfile {
   additionalSeats?: number;
 }
 
+// CRM Integration Types
+export interface CRMIntegration {
+  id: string;
+  provider: 'salesforce' | 'hubspot' | 'pipedrive' | 'zoho' | 'custom';
+  name: string;
+  status: 'active' | 'inactive' | 'pending';
+  lastSync?: string;
+  apiKey?: string;
+  webhookUrl?: string;
+  mappings?: Record<string, string>;
+}
+
+// Notification Types
+export interface Notification {
+  id: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  title: string;
+  message: string;
+  createdAt: string;
+  read: boolean;
+  userId: string;
+  metadata?: Record<string, any>;
+}
+
+// Workflow Types
+export interface WorkflowTemplate {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  n8nId: string;
+  creditCost: number;
+  requiredCredits: string;
+  category: string;
+}
+
+export interface EmailTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  daysAfter: number;
+  isAIEnhanced: boolean;
+  variables: string[];
+}
+
 // Credit System Types
 export type CreditType = 
   // Core Services
@@ -105,7 +151,7 @@ export interface CreditExpiration {
 }
 
 // Service Pricing
-export const SERVICE_PRICING = {
+export const SERVICE_PRICING: Record<CreditType, { cost: number; price: number; description: string }> = {
   // Core Services
   lead_lookup: { cost: 0.10, price: 0.25, description: 'Lead Lookup' },
   company_enrichment: { cost: 0.15, price: 0.35, description: 'Company Enrichment' },
@@ -359,24 +405,38 @@ export const PRICING_TIERS = {
   }
 };
 
-// Interface definitions for templates
-interface WorkflowTemplate {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  n8nId: string;
-  creditCost: number;
-  requiredCredits: string;
-  category: string;
+// Rate Limiting Types
+export interface RateLimitConfig {
+  windowMs: number;
+  maxRequests: number;
+  service: CreditType;
 }
 
-interface EmailTemplate {
-  id: string;
-  name: string;
-  subject: string;
-  body: string;
-  daysAfter: number;
-  isAIEnhanced: boolean;
-  variables: string[];
+// API Response Types
+export interface APIResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+// User Session Types
+export interface UserSession {
+  uid: string;
+  email: string;
+  role: 'user' | 'admin';
+  accountType: 'free' | 'pro';
+}
+
+// Validation Types
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
+// Error Types
+export interface AppError extends Error {
+  code?: string;
+  statusCode?: number;
+  details?: any;
 }
