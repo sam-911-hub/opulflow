@@ -39,10 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Prepare Apollo API request
-    const searchParams: any = {
-      api_key: APOLLO_API_KEY,
-      per_page: 10
-    };
+    const searchParams: any = {};
 
     // Add search parameters
     if (email) searchParams.contact_emails = [email];
@@ -57,9 +54,13 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache',
+        'X-Api-Key': APOLLO_API_KEY
       },
-      body: JSON.stringify(searchParams)
+      body: JSON.stringify({
+        per_page: 10,
+        ...Object.fromEntries(Object.entries(searchParams).filter(([key]) => key !== 'api_key'))
+      })
     });
 
     if (!apolloResponse.ok) {

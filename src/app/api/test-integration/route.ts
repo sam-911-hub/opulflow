@@ -11,10 +11,7 @@ export async function POST(request: NextRequest) {
 
     if (service === 'apollo-test') {
       // Test Apollo API
-      const searchParams: any = {
-        api_key: APOLLO_API_KEY,
-        per_page: 1
-      };
+      const searchParams: any = {};
 
       if (params.domain) searchParams.organization_domains = [params.domain];
       if (params.company) searchParams.organization_names = [params.company];
@@ -25,9 +22,13 @@ export async function POST(request: NextRequest) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache',
+          'X-Api-Key': APOLLO_API_KEY
         },
-        body: JSON.stringify(searchParams)
+        body: JSON.stringify({
+          per_page: 1,
+          ...searchParams
+        })
       });
 
       if (!apolloResponse.ok) {
