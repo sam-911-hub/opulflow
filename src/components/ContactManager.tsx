@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { toast } from 'sonner';
+import { Badge } from './ui/badge';
 
 type Contact = {
   id: string;
@@ -11,6 +12,21 @@ type Contact = {
   email: string;
   company?: string;
   phone?: string;
+  title?: string;
+  industry?: string;
+  location?: string;
+  linkedinUrl?: string;
+  domain?: string;
+  companySize?: number;
+  technologies?: string[];
+  source?: string;
+  enrichedAt?: string;
+  verificationStatus?: {
+    result: string;
+    score: number;
+    disposable: boolean;
+    webmail: boolean;
+  };
   createdAt: string;
 };
 
@@ -19,6 +35,19 @@ type PaginationInfo = {
   limit: number;
   offset: number;
   hasMore: boolean;
+};
+
+type LeadSearchForm = {
+  email: string;
+  name: string;
+  company: string;
+  domain: string;
+};
+
+type EmailFinderForm = {
+  domain: string;
+  firstName: string;
+  lastName: string;
 };
 
 export default function ContactManager() {
@@ -42,6 +71,26 @@ export default function ContactManager() {
     company: '',
     phone: '',
   });
+
+  // Form states for API services
+  const [leadSearchForm, setLeadSearchForm] = useState<LeadSearchForm>({
+    email: '',
+    name: '',
+    company: '',
+    domain: ''
+  });
+
+  const [emailFinderForm, setEmailFinderForm] = useState<EmailFinderForm>({
+    domain: '',
+    firstName: '',
+    lastName: ''
+  });
+
+  const [emailsToVerify, setEmailsToVerify] = useState('');
+  const [isSearchingLeads, setIsSearchingLeads] = useState(false);
+  const [isFindingEmails, setIsFindingEmails] = useState(false);
+  const [isVerifyingEmails, setIsVerifyingEmails] = useState(false);
+  const [activeTab, setActiveTab] = useState('contacts');
   
   // Fetch contacts
   const fetchContacts = async (offset = 0, search = '') => {
@@ -245,12 +294,195 @@ export default function ContactManager() {
     } finally {
       setIsExporting(false);
     }
+    };
+
+  // Apollo.io Lead Lookup
+  const handleLeadSearch = async () => {
+    if (!leadSearchForm.email && !leadSearchForm.name && !leadSearchForm.company && !leadSearchForm.domain) {
+      toast.error('Please fill at least one search field');
+      return;
+    }
+
+    setIsSearchingLeads(true);
+    try {
+      const response = await fetch('/api/apollo/lead-lookup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(leadSearchForm),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to search leads');
+      }
+
+      if (data.leads && data.leads.length > 0) {
+        // Add found leads to contacts
+        const newContacts = data.leads.map((lead: any) => ({
+          id: `apollo-${lead.id}`,
+          name: lead.name,
+          email: lead.email,
+          company: lead.company,
+          phone: lead.phone,
+          title: lead.title,
+          industry: lead.industry,
+          location: lead.location,
+          linkedinUrl: lead.linkedinUrl,
+          domain: lead.domain,
+          companySize: lead.companySize,
+          technologies: lead.technologies,
+          source: lead.source,
+          enrichedAt: lead.enrichedAt,
+          createdAt: new Date().toISOString()
+        }));
+
+        setContacts(prev => [...newContacts, ...prev]);
+        toast.success(`Found ${data.leads.length} leads! Credits used: ${data.creditsUsed}`);
+        
+        // Reset form
+        setLeadSearchForm({ email: '', name: '', company: '', domain: '' });
+      } else {
+        toast.info('No leads found with the given criteria');
+      }
+    } catch (error: any) {
+      console.error('Lead search error:', error);
+      toast.error(error.message || 'Failed to search leads');
+    } finally {
+      setIsSearchingLeads(false);
+    }
   };
-  
+
+  // Hunter.io Email Finder
+  const handleEmailFinder = async () => {
+    if (!emailFinderForm.domain || (!emailFinderForm.firstName && !emailFinderForm.lastName)) {
+      toast.error('Please provide domain and at least first or last name');
+      return;
+    }
+
+    setIsFindingEmails(true);
+    try {
+      const response = await fetch('/api/hunter/email-finder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailFinderForm),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to find email');
+      }
+
+      if (data.result && data.result.email) {
+        const result = data.result;
+        const newContact = {
+          id: `hunter-${Date.now()}`,
+          name: `${result.firstName || ''} ${result.lastName || ''}`.trim(),
+          email: result.email,
+          company: result.company,
+          title: result.position,
+          domain: emailFinderForm.domain,
+          verificationStatus: result.verificationStatus,
+          source: result.provider,
+          createdAt: new Date().toISOString()
+        };
+
+        setContacts(prev => [newContact, ...prev]);
+        toast.success(`Email found: ${result.email} (Confidence: ${result.confidence}%)`);
+        
+        // Reset form
+        setEmailFinderForm({ domain: '', firstName: '', lastName: '' });
+      } else {
+        toast.info('No email found for the given criteria');
+      }
+    } catch (error: any) {
+      console.error('Email finder error:', error);
+      toast.error(error.message || 'Failed to find email');
+    } finally {
+      setIsFindingEmails(false);
+    }
+  };
+
+  // Hunter.io Email Verification
+  const handleEmailVerification = async () => {
+    if (!emailsToVerify.trim()) {
+      toast.error('Please enter at least one email address');
+      return;
+    }
+
+    const emails = emailsToVerify
+      .split('\n')
+      .map(email => email.trim())
+      .filter(email => email.length > 0);
+
+    if (emails.length === 0) {
+      toast.error('Please enter valid email addresses');
+      return;
+    }
+
+    setIsVerifyingEmails(true);
+    try {
+      const response = await fetch('/api/hunter/email-verifier', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ emails }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to verify emails');
+      }
+
+      if (data.results && data.results.length > 0) {
+        toast.success(
+          `Verified ${data.results.length} emails. ` +
+          `Deliverable: ${data.summary.deliverable}, ` +
+          `Undeliverable: ${data.summary.undeliverable}, ` +
+          `Risky: ${data.summary.risky}`
+        );
+        
+        // Update existing contacts with verification status
+        setContacts(prev => prev.map(contact => {
+          const verification = data.results.find((r: any) => r.email === contact.email);
+          if (verification) {
+            return {
+              ...contact,
+              verificationStatus: {
+                result: verification.result,
+                score: verification.score,
+                disposable: verification.disposable,
+                webmail: verification.webmail
+              }
+            };
+          }
+          return contact;
+        }));
+        
+        // Reset form
+        setEmailsToVerify('');
+      } else {
+        toast.info('No verification results received');
+      }
+    } catch (error: any) {
+      console.error('Email verification error:', error);
+      toast.error(error.message || 'Failed to verify emails');
+    } finally {
+      setIsVerifyingEmails(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Contact Management</h2>
+        <h2 className="text-2xl font-bold">Lead Intelligence & Contact Management</h2>
         <div className="flex space-x-2">
           <label className="cursor-pointer">
             <Input
@@ -279,8 +511,169 @@ export default function ContactManager() {
           </Button>
         </div>
       </div>
-      
-      <Card>
+
+      {/* Service Tabs */}
+      <div className="bg-white rounded-lg border">
+        <div className="border-b">
+          <nav className="flex space-x-8 px-6">
+            {[
+              { id: 'contacts', name: 'Contacts', icon: '👥' },
+              { id: 'lead-search', name: 'Apollo Lead Search', icon: '🔍' },
+              { id: 'email-finder', name: 'Hunter Email Finder', icon: '📧' },
+              { id: 'email-verify', name: 'Email Verification', icon: '✅' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === tab.id
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <span className="mr-2">{tab.icon}</span>
+                {tab.name}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        <div className="p-6">
+          {/* Apollo Lead Search Tab */}
+          {activeTab === 'lead-search' && (
+            <div className="space-y-4">
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 className="font-semibold text-blue-800 mb-2">Apollo.io Lead Lookup</h3>
+                <p className="text-blue-700 text-sm">Search for leads and enrich with contact and company data. Cost: $0.25 per search</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <Input
+                    value={leadSearchForm.email}
+                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Name</label>
+                  <Input
+                    value={leadSearchForm.name}
+                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Company</label>
+                  <Input
+                    value={leadSearchForm.company}
+                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, company: e.target.value }))}
+                    placeholder="Example Corp"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Domain</label>
+                  <Input
+                    value={leadSearchForm.domain}
+                    onChange={(e) => setLeadSearchForm(prev => ({ ...prev, domain: e.target.value }))}
+                    placeholder="example.com"
+                  />
+                </div>
+              </div>
+              
+              <Button
+                onClick={handleLeadSearch}
+                disabled={isSearchingLeads}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {isSearchingLeads ? 'Searching...' : 'Search Leads (1 Credit)'}
+              </Button>
+            </div>
+          )}
+
+          {/* Hunter Email Finder Tab */}
+          {activeTab === 'email-finder' && (
+            <div className="space-y-4">
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h3 className="font-semibold text-green-800 mb-2">Hunter.io Email Finder</h3>
+                <p className="text-green-700 text-sm">Find email addresses for contacts at specific companies. Cost: $0.05 per search</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Domain *</label>
+                  <Input
+                    value={emailFinderForm.domain}
+                    onChange={(e) => setEmailFinderForm(prev => ({ ...prev, domain: e.target.value }))}
+                    placeholder="example.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">First Name</label>
+                  <Input
+                    value={emailFinderForm.firstName}
+                    onChange={(e) => setEmailFinderForm(prev => ({ ...prev, firstName: e.target.value }))}
+                    placeholder="John"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Last Name</label>
+                  <Input
+                    value={emailFinderForm.lastName}
+                    onChange={(e) => setEmailFinderForm(prev => ({ ...prev, lastName: e.target.value }))}
+                    placeholder="Doe"
+                  />
+                </div>
+              </div>
+              
+              <Button
+                onClick={handleEmailFinder}
+                disabled={isFindingEmails}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {isFindingEmails ? 'Finding...' : 'Find Email (1 Credit)'}
+              </Button>
+            </div>
+          )}
+
+          {/* Email Verification Tab */}
+          {activeTab === 'email-verify' && (
+            <div className="space-y-4">
+              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h3 className="font-semibold text-purple-800 mb-2">Hunter.io Email Verification</h3>
+                <p className="text-purple-700 text-sm">Verify email addresses for deliverability. Cost: $0.05 per email. Max 50 emails at once.</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Email Addresses (one per line)</label>
+                <textarea
+                  value={emailsToVerify}
+                  onChange={(e) => setEmailsToVerify(e.target.value)}
+                  placeholder="john@example.com&#10;jane@example.com&#10;..."
+                  rows={6}
+                  className="w-full p-3 border rounded-md resize-vertical"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  {emailsToVerify.split('\n').filter(e => e.trim()).length} emails to verify
+                </p>
+              </div>
+              
+              <Button
+                onClick={handleEmailVerification}
+                disabled={isVerifyingEmails}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                {isVerifyingEmails ? 'Verifying...' : `Verify Emails (${emailsToVerify.split('\n').filter(e => e.trim()).length} Credits)`}
+              </Button>
+            </div>
+          )}
+
+          {/* Contacts Tab */}
+          {activeTab === 'contacts' && (
+            <div className="space-y-6">
+              <Card>
         <CardHeader>
           <CardTitle>Add New Contact</CardTitle>
         </CardHeader>
@@ -380,19 +773,90 @@ export default function ContactManager() {
                   <th className="px-4 py-2 text-left">Name</th>
                   <th className="px-4 py-2 text-left">Email</th>
                   <th className="px-4 py-2 text-left">Company</th>
-                  <th className="px-4 py-2 text-left">Phone</th>
+                  <th className="px-4 py-2 text-left">Title</th>
+                  <th className="px-4 py-2 text-left">Source</th>
+                  <th className="px-4 py-2 text-left">Status</th>
                   <th className="px-4 py-2 text-left">Created</th>
                 </tr>
               </thead>
               <tbody>
                 {contacts.map((contact) => (
                   <tr key={contact.id} className="border-t hover:bg-gray-50">
-                    <td className="px-4 py-2">{contact.name}</td>
-                    <td className="px-4 py-2">{contact.email}</td>
-                    <td className="px-4 py-2">{contact.company || '-'}</td>
-                    <td className="px-4 py-2">{contact.phone || '-'}</td>
                     <td className="px-4 py-2">
-                      {new Date(contact.createdAt).toLocaleDateString()}
+                      <div>
+                        <div className="font-medium">{contact.name}</div>
+                        {contact.location && (
+                          <div className="text-sm text-gray-500">{contact.location}</div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2">
+                      <div>
+                        <div>{contact.email}</div>
+                        {contact.verificationStatus && (
+                          <Badge 
+                            variant={contact.verificationStatus.result === 'deliverable' ? 'default' : 
+                                   contact.verificationStatus.result === 'risky' ? 'secondary' : 'destructive'}
+                            className="text-xs mt-1"
+                          >
+                            {contact.verificationStatus.result} ({contact.verificationStatus.score}%)
+                          </Badge>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2">
+                      <div>
+                        <div>{contact.company || '-'}</div>
+                        {contact.industry && (
+                          <div className="text-sm text-gray-500">{contact.industry}</div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2">{contact.title || '-'}</td>
+                    <td className="px-4 py-2">
+                      {contact.source && (
+                        <Badge variant="outline" className="text-xs">
+                          {contact.source}
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="px-4 py-2">
+                      <div className="flex flex-col gap-1">
+                        {contact.technologies && contact.technologies.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {contact.technologies.slice(0, 2).map((tech, i) => (
+                              <Badge key={i} variant="outline" className="text-xs">
+                                {tech}
+                              </Badge>
+                            ))}
+                            {contact.technologies.length > 2 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{contact.technologies.length - 2}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+                        {contact.linkedinUrl && (
+                          <a 
+                            href={contact.linkedinUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 text-xs"
+                          >
+                            LinkedIn
+                          </a>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2">
+                      <div className="text-sm">
+                        {new Date(contact.createdAt).toLocaleDateString()}
+                      </div>
+                      {contact.enrichedAt && (
+                        <div className="text-xs text-gray-500">
+                          Enriched: {new Date(contact.enrichedAt).toLocaleDateString()}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -423,6 +887,10 @@ export default function ContactManager() {
           </div>
         </>
       )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
