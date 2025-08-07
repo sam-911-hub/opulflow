@@ -11,15 +11,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    // Return default profile data for now
+    const { adminDb } = await import('@/lib/firebase-admin');
+    const userDoc = await adminDb.collection('users').doc(email).get();
+    const userData = userDoc.exists ? userDoc.data() : {};
+    
     return NextResponse.json({
       email,
-      name: '',
-      phone: ''
+      name: userData?.name || '',
+      phone: userData?.phone || ''
     });
   } catch (error) {
     console.error('Get profile error:', error);
-    return NextResponse.json({ error: 'Failed to get profile' }, { status: 500 });
+    return NextResponse.json({
+      email: request.nextUrl.searchParams.get('email') || '',
+      name: '',
+      phone: ''
+    });
   }
 }
 
@@ -32,11 +39,16 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     
-    // Return success without saving for now
-    return NextResponse.json({ 
-      success: true, 
-      data: { email, name: name.trim(), phone: phone.trim() }
-    });
+    const { adminDb } = await import('@/lib/firebase-admin');
+    const profileData = { 
+      email, 
+      name: name.trim(), 
+      phone: phone.trim(), 
+      lastUpdated: new Date().toISOString() 
+    };
+    
+    await adminDb.collection('users').doc(email).set(profileData, { merge: true });
+    return NextResponse.json({ success: true, data: profileData });
   } catch (error) {
     console.error('Profile save error:', error);
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
