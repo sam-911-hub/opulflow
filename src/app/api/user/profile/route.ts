@@ -12,6 +12,10 @@ export async function GET(request: NextRequest) {
     }
 
     const { adminDb } = await import('@/lib/firebase-admin');
+    if (!adminDb) {
+      return NextResponse.json({ email, name: '', phone: '' });
+    }
+    
     const userDoc = await adminDb.collection('users').doc(email).get();
     const userData = userDoc.exists ? userDoc.data() : {};
     
@@ -46,15 +50,12 @@ export async function PUT(request: NextRequest) {
       lastUpdated: new Date().toISOString() 
     };
     
-    try {
-      const { adminDb } = await import('@/lib/firebase-admin');
-      if (adminDb) {
-        await adminDb.collection('users').doc(email).set(profileData, { merge: true });
-      }
-    } catch (dbError) {
-      console.error('Database error:', dbError);
+    const { adminDb } = await import('@/lib/firebase-admin');
+    if (!adminDb) {
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 });
     }
     
+    await adminDb.collection('users').doc(email).set(profileData, { merge: true });
     return NextResponse.json({ success: true, data: profileData });
   } catch (error) {
     console.error('Profile save error:', error);
