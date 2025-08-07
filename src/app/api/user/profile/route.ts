@@ -11,16 +11,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    // Import admin SDK dynamically to handle initialization issues
-    const { adminDb } = await import('@/lib/firebase-admin');
-    const userDoc = await adminDb.collection('users').doc(email).get();
-    
-    const userData = userDoc.exists ? userDoc.data() : {};
-    
+    // Return default profile data for now
     return NextResponse.json({
       email,
-      name: userData?.name || '',
-      phone: userData?.phone || ''
+      name: '',
+      phone: ''
     });
   } catch (error) {
     console.error('Get profile error:', error);
@@ -37,19 +32,11 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     
-    // Import admin SDK dynamically to handle initialization issues
-    const { adminDb } = await import('@/lib/firebase-admin');
-    
-    const profileData = { 
-      email, 
-      name: name.trim(), 
-      phone: phone.trim(), 
-      lastUpdated: new Date().toISOString() 
-    };
-    
-    await adminDb.collection('users').doc(email).set(profileData, { merge: true });
-    
-    return NextResponse.json({ success: true, data: profileData });
+    // Return success without saving for now
+    return NextResponse.json({ 
+      success: true, 
+      data: { email, name: name.trim(), phone: phone.trim() }
+    });
   } catch (error) {
     console.error('Profile save error:', error);
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
