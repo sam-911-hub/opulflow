@@ -39,7 +39,6 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     
-    const { adminDb } = await import('@/lib/firebase-admin');
     const profileData = { 
       email, 
       name: name.trim(), 
@@ -47,7 +46,15 @@ export async function PUT(request: NextRequest) {
       lastUpdated: new Date().toISOString() 
     };
     
-    await adminDb.collection('users').doc(email).set(profileData, { merge: true });
+    try {
+      const { adminDb } = await import('@/lib/firebase-admin');
+      if (adminDb) {
+        await adminDb.collection('users').doc(email).set(profileData, { merge: true });
+      }
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+    }
+    
     return NextResponse.json({ success: true, data: profileData });
   } catch (error) {
     console.error('Profile save error:', error);

@@ -1,30 +1,30 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-if (!getApps().length) {
-  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
-  if (!privateKey) {
-    throw new Error('FIREBASE_ADMIN_PRIVATE_KEY is not set');
+let adminDb: any;
+
+try {
+  if (!getApps().length) {
+    const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+    if (!privateKey) {
+      console.error('FIREBASE_ADMIN_PRIVATE_KEY is not set');
+      throw new Error('Firebase admin not configured');
+    }
+    
+    let formattedPrivateKey = privateKey.replace(/\\n/g, '\n');
+    
+    initializeApp({
+      credential: cert({
+        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+        privateKey: formattedPrivateKey,
+      }),
+    });
   }
-  
-  // Handle different private key formats
-  let formattedPrivateKey = privateKey;
-  if (privateKey.includes('\\n')) {
-    formattedPrivateKey = privateKey.replace(/\\n/g, '\n');
-  }
-  
-  // Ensure proper PEM format
-  if (!formattedPrivateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-    formattedPrivateKey = `-----BEGIN PRIVATE KEY-----\n${formattedPrivateKey}\n-----END PRIVATE KEY-----\n`;
-  }
-  
-  initializeApp({
-    credential: cert({
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-      privateKey: formattedPrivateKey,
-    }),
-  });
+  adminDb = getFirestore();
+} catch (error) {
+  console.error('Firebase admin initialization failed:', error);
+  adminDb = null;
 }
 
-export const adminDb = getFirestore();
+export { adminDb };
