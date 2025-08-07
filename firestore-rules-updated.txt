@@ -1,0 +1,252 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email in ['opulflow.inc@gmail.com'];
+    }
+    
+    function isTeamMember(userId) {
+      return isSignedIn() && exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/members/$(request.auth.uid)).data.teamId == userId;
+    }
+    
+    // Users collection - main user documents (using email as document ID)
+    match /users/{userEmail} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (request.auth.token.email == userEmail || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Contacts collection - user-specific contacts
+    match /contacts/{contactId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Transactions collection - credit and payment transactions
+    match /transactions/{transactionId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+    
+    // API Keys collection - user API keys
+    match /apiKeys/{keyId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Teams collection - team management
+    match /teams/{teamId} {
+      allow read: if isSignedIn() && (
+        resource.data.ownerId == request.auth.uid || 
+        request.auth.uid in resource.data.members
+      );
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+    
+    // Members collection - team member relationships
+    match /members/{memberId} {
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        exists(/databases/$(database)/documents/teams/$(resource.data.teamId)) &&
+        get(/databases/$(database)/documents/teams/$(resource.data.teamId)).data.ownerId == request.auth.uid
+      );
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        exists(/databases/$(database)/documents/teams/$(resource.data.teamId)) &&
+        get(/databases/$(database)/documents/teams/$(resource.data.teamId)).data.ownerId == request.auth.uid
+      );
+      allow delete: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        exists(/databases/$(database)/documents/teams/$(resource.data.teamId)) &&
+        get(/databases/$(database)/documents/teams/$(resource.data.teamId)).data.ownerId == request.auth.uid
+      );
+    }
+    
+    // AI Generations collection - user AI content
+    match /aiGenerations/{generationId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Leads collection - user leads
+    match /leads/{leadId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Companies collection - user company data
+    match /companies/{companyId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Email sequences collection
+    match /emailSequences/{sequenceId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Sequence runs collection
+    match /sequenceRuns/{runId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Workflows collection - user workflows
+    match /workflows/{workflowId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Notifications collection - user notifications
+    match /notifications/{notificationId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Files collection - user uploaded files
+    match /files/{fileId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Reports collection - user reports
+    match /reports/{reportId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Email templates collection
+    match /emailTemplates/{templateId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Tech stack data collection
+    match /techStacks/{stackId} {
+      allow read, write: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Email delivery logs
+    match /emailLogs/{logId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+    
+    // SMS logs
+    match /smsLogs/{logId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+    
+    // Block all client-side access - use APIs only
+    match /pipelines/{pipelineId} {
+      allow read, write: if false;
+    }
+    
+    match /emails/{emailId} {
+      allow read, write: if false;
+    }
+    
+    match /intentSignals/{signalId} {
+      allow read, write: if false;
+    }
+    
+    match /crmIntegrations/{integrationId} {
+      allow read, write: if false;
+    }
+    
+    match /sources/{sourceId} {
+      allow read, write: if false;
+    }
+    
+    match /callAnalyses/{analysisId} {
+      allow read, write: if false;
+    }
+    
+    match /subscriptions/{subscriptionId} {
+      allow read, write: if false;
+    }
+    
+    match /leads/{leadId} {
+      allow read, write: if false;
+    }
+    
+    match /companies/{companyId} {
+      allow read, write: if false;
+    }
+    
+    match /contacts/{contactId} {
+      allow read, write: if false;
+    }
+    
+    match /emailSequences/{sequenceId} {
+      allow read, write: if false;
+    }
+    
+    match /workflows/{workflowId} {
+      allow read, write: if false;
+    }
+    
+    // Admin collections - restricted to admin users only
+    match /admin/{document=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /creditLogs/{logId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // System collections - read-only for authenticated users
+    match /system_config/{configId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    
+    match /feature_flags/{flagId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    
+    // Analytics collection - admin only
+    match /analytics/{document=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Public tracking - allow anonymous access for webhooks
+    match /public_tracking/{trackingId} {
+      allow read, create: if true;
+      allow update, delete: if false;
+    }
+    
+    // Global shared data - read access for authenticated users
+    match /technologies/{techId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    
+    // Test collection for database connectivity
+    match /_test/{testId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}
