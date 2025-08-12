@@ -1,28 +1,27 @@
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-
+// Simple Firebase admin setup for Netlify
 let adminDb: any = null;
 
 try {
-  if (getApps().length === 0) {
-    const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
-    const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+  // Only initialize if we have the required environment variables
+  if (process.env.FIREBASE_ADMIN_PROJECT_ID && 
+      process.env.FIREBASE_ADMIN_CLIENT_EMAIL && 
+      process.env.FIREBASE_ADMIN_PRIVATE_KEY) {
+    
+    const { initializeApp, getApps, cert } = require('firebase-admin/app');
+    const { getFirestore } = require('firebase-admin/firestore');
 
-    if (projectId && clientEmail && privateKey) {
-      const formattedPrivateKey = privateKey.replace(/\\n/g, '\n');
+    if (getApps().length === 0) {
+      const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g, '\n');
 
       initializeApp({
         credential: cert({
-          projectId,
-          clientEmail,
-          privateKey: formattedPrivateKey,
+          projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+          privateKey: privateKey,
         }),
       });
     }
-  }
-  
-  if (getApps().length > 0) {
+    
     adminDb = getFirestore();
   }
 } catch (error) {
