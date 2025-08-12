@@ -1,30 +1,30 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-let adminDb: any;
-
-try {
-  if (!getApps().length) {
-    const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
-    if (!privateKey) {
-      console.error('FIREBASE_ADMIN_PRIVATE_KEY is not set');
-      throw new Error('Firebase admin not configured');
-    }
-    
-    let formattedPrivateKey = privateKey.replace(/\\n/g, '\n');
-    
-    initializeApp({
-      credential: cert({
-        projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: formattedPrivateKey,
-      }),
-    });
+function initializeFirebaseAdmin() {
+  if (getApps().length > 0) {
+    return getFirestore();
   }
-  adminDb = getFirestore();
-} catch (error) {
-  console.error('Firebase admin initialization failed:', error);
-  adminDb = null;
+
+  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+
+  if (!projectId || !clientEmail || !privateKey) {
+    throw new Error('Missing Firebase admin credentials');
+  }
+
+  const formattedPrivateKey = privateKey.replace(/\\n/g, '\n');
+
+  initializeApp({
+    credential: cert({
+      projectId,
+      clientEmail,
+      privateKey: formattedPrivateKey,
+    }),
+  });
+
+  return getFirestore();
 }
 
-export { adminDb };
+export const adminDb = initializeFirebaseAdmin();
