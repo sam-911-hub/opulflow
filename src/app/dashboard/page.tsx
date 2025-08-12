@@ -26,8 +26,7 @@ const Onboarding = lazy(() => import("@/components/Onboarding"));
 const MobileNavigation = lazy(() => import("@/components/MobileNavigation"));
 const LogoutTab = lazy(() => import("./logout"));
 const OptimizedDashboardStats = lazy(() => import("@/components/OptimizedDashboardStats"));
-const ProfileOverview = lazy(() => import("@/components/ProfileOverview"));
-const UserProfile = lazy(() => import("@/components/UserProfile"));
+
 
 
 export default function DashboardPage() {
