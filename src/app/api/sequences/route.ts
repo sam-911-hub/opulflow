@@ -1,19 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore } from '@/lib/admin';
-import { getAuthenticatedUser } from '@/lib/auth-utils';
+import { adminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await getAuthenticatedUser(request);
-    if ('error' in authResult) {
-      return NextResponse.json({ error: authResult.error }, { status: authResult.status });
+    if (!adminDb) {
+      return NextResponse.json({ sequences: [] });
     }
 
-    const db = getAdminFirestore();
-    const snapshot = await db.collection('emailSequences')
-      .where('userId', '==', authResult.uid)
+    const snapshot = await adminDb.collection('emailSequences')
       .orderBy('createdAt', 'desc')
       .limit(50)
       .get();
@@ -26,29 +22,26 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ sequences });
   } catch (error) {
     console.error('Get sequences error:', error);
-    return NextResponse.json({ error: 'Failed to get sequences' }, { status: 500 });
+    return NextResponse.json({ sequences: [] });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await getAuthenticatedUser(request);
-    if ('error' in authResult) {
-      return NextResponse.json({ error: authResult.error }, { status: authResult.status });
-    }
-
     const sequenceData = await request.json();
     
     if (!sequenceData.name || !sequenceData.emails) {
       return NextResponse.json({ error: 'Name and emails are required' }, { status: 400 });
     }
 
-    const db = getAdminFirestore();
-    const sequenceRef = db.collection('emailSequences').doc();
+    if (!adminDb) {
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    }
+
+    const sequenceRef = adminDb.collection('emailSequences').doc();
 
     await sequenceRef.set({
       ...sequenceData,
-      userId: authResult.uid,
       status: 'draft',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

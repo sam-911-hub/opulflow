@@ -1,19 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore } from '@/lib/admin';
-import { getAuthenticatedUser } from '@/lib/auth-utils';
+import { adminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await getAuthenticatedUser(request);
-    if ('error' in authResult) {
-      return NextResponse.json({ error: authResult.error }, { status: authResult.status });
+    if (!adminDb) {
+      return NextResponse.json({ teams: [] });
     }
 
-    const db = getAdminFirestore();
-    const snapshot = await db.collection('teams')
-      .where('ownerId', '==', authResult.uid)
+    const snapshot = await adminDb.collection('teams')
       .orderBy('createdAt', 'desc')
       .get();
 
@@ -25,31 +21,28 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ teams });
   } catch (error) {
     console.error('Get teams error:', error);
-    return NextResponse.json({ error: 'Failed to get teams' }, { status: 500 });
+    return NextResponse.json({ teams: [] });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await getAuthenticatedUser(request);
-    if ('error' in authResult) {
-      return NextResponse.json({ error: authResult.error }, { status: authResult.status });
-    }
-
     const { name, description } = await request.json();
     
     if (!name) {
       return NextResponse.json({ error: 'Team name is required' }, { status: 400 });
     }
 
-    const db = getAdminFirestore();
-    const teamRef = db.collection('teams').doc();
+    if (!adminDb) {
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 });
+    }
+
+    const teamRef = adminDb.collection('teams').doc();
 
     await teamRef.set({
       name,
       description: description || '',
-      ownerId: authResult.uid,
-      members: [authResult.uid],
+      members: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });

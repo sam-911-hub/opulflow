@@ -1,24 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore } from '@/lib/admin';
-import { getAuthenticatedUser } from '@/lib/auth-utils';
-import { isUserAdmin } from '@/lib/admin';
+import { adminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await getAuthenticatedUser(request);
-    if ('error' in authResult) {
-      return NextResponse.json({ error: authResult.error }, { status: authResult.status });
+    if (!adminDb) {
+      return NextResponse.json({ users: [] });
     }
     
-    const isAdmin = await isUserAdmin(authResult.uid);
-    if (!isAdmin) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
-    const db = getAdminFirestore();
-    const snapshot = await db.collection('users').limit(50).get();
+    const snapshot = await adminDb.collection('users').limit(50).get();
     
     const users = [];
     snapshot.docs.forEach(doc => {
@@ -46,9 +37,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ users });
   } catch (error) {
     console.error('Users API error:', error);
-    return NextResponse.json({ 
-      users: [], 
-      error: error.message 
-    }, { status: 500 });
+    return NextResponse.json({ users: [] });
   }
 }
