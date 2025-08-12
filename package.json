@@ -40,8 +40,9 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9.31.0",
