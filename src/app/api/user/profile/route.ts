@@ -1,20 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
 export const dynamic = 'force-dynamic';
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const db = getFirestore(app);
+// Simple in-memory storage (will reset on deployment)
+const profiles = new Map();
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,14 +14,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    const userRef = doc(db, 'users', email);
-    const userDoc = await getDoc(userRef);
-    const userData = userDoc.exists() ? userDoc.data() : {};
+    const profile = profiles.get(email) || { name: '', phone: '' };
     
     return NextResponse.json({
       email,
-      name: userData?.name || '',
-      phone: userData?.phone || ''
+      name: profile.name || '',
+      phone: profile.phone || ''
     });
   } catch (error) {
     console.error('Get profile error:', error);
@@ -50,16 +37,14 @@ export async function PUT(request: NextRequest) {
     }
     
     const profileData = { 
-      email, 
       name: name.trim(), 
       phone: phone.trim(), 
       lastUpdated: new Date().toISOString() 
     };
     
-    const userRef = doc(db, 'users', email);
-    await setDoc(userRef, profileData, { merge: true });
+    profiles.set(email, profileData);
     
-    return NextResponse.json({ success: true, data: profileData });
+    return NextResponse.json({ success: true, data: { email, ...profileData } });
   } catch (error) {
     console.error('Profile save error:', error);
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
