@@ -1,19 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { initializeApp, getApps } from 'firebase/app';
+import { getFirestore, collection, getDocs, addDoc, query, orderBy } from 'firebase/firestore';
 
 export const dynamic = 'force-dynamic';
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
+
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const db = getFirestore(app);
 
 export async function GET(request: NextRequest) {
   try {
     const url = new URL(request.url);
-    const limit = parseInt(url.searchParams.get('limit') || '50');
-    const offset = parseInt(url.searchParams.get('offset') || '0');
     const search = url.searchParams.get('search') || '';
     
-    const snapshot = await adminDb.collection('contacts').get();
+    const q = query(collection(db, 'contacts'), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
     let allContacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    // Magic search - searches across all fields
+    // Magic search
     if (search) {
       const searchLower = search.toLowerCase();
       allContacts = allContacts.filter(contact => {
@@ -22,27 +34,14 @@ export async function GET(request: NextRequest) {
           contact.email?.toLowerCase().includes(searchLower) ||
           contact.company?.toLowerCase().includes(searchLower) ||
           contact.title?.toLowerCase().includes(searchLower) ||
-          contact.phone?.toLowerCase().includes(searchLower) ||
-          contact.location?.toLowerCase().includes(searchLower) ||
-          contact.industry?.toLowerCase().includes(searchLower) ||
-          contact.notes?.toLowerCase().includes(searchLower)
+          contact.phone?.toLowerCase().includes(searchLower)
         );
       });
     }
     
-    // Sort by most recent first
-    allContacts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    
-    const paginatedContacts = allContacts.slice(offset, offset + limit);
-    
     return NextResponse.json({
-      contacts: paginatedContacts,
-      pagination: { 
-        total: allContacts.length, 
-        limit, 
-        offset, 
-        hasMore: offset + limit < allContacts.length 
-      },
+      contacts: allContacts,
+      pagination: { total: allContacts.length, limit: 50, offset: 0, hasMore: false },
       searchTerm: search
     });
   } catch (error) {
@@ -68,7 +67,7 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date().toISOString(),
     };
     
-    const docRef = await adminDb.collection('contacts').add(contact);
+    const docRef = await addDoc(collection(db, 'contacts'), contact);
     
     return NextResponse.json({ 
       success: true, 
