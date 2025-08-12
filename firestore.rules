@@ -9,7 +9,12 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.email in ['opulflow.inc@gmail.com'];
     }
     
-    // Allow authenticated users to access all collections
+    // Allow server-side access to users collection
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+    
+    // Allow authenticated users to access other collections
     match /{document=**} {
       allow read, write: if isSignedIn();
     }

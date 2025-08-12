@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-// Simple in-memory storage (will reset on deployment)
-const profiles = new Map();
-
 export async function GET(request: NextRequest) {
   try {
     const url = new URL(request.url);
@@ -14,12 +11,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    const profile = profiles.get(email) || { name: '', phone: '' };
+    const { adminDb } = await import('@/lib/firebase-admin');
+    const userDoc = await adminDb.collection('users').doc(email).get();
+    const userData = userDoc.exists ? userDoc.data() : {};
     
     return NextResponse.json({
       email,
-      name: profile.name || '',
-      phone: profile.phone || ''
+      name: userData?.name || '',
+      phone: userData?.phone || ''
     });
   } catch (error) {
     console.error('Get profile error:', error);
@@ -37,14 +36,16 @@ export async function PUT(request: NextRequest) {
     }
     
     const profileData = { 
+      email, 
       name: name.trim(), 
       phone: phone.trim(), 
       lastUpdated: new Date().toISOString() 
     };
     
-    profiles.set(email, profileData);
+    const { adminDb } = await import('@/lib/firebase-admin');
+    await adminDb.collection('users').doc(email).set(profileData, { merge: true });
     
-    return NextResponse.json({ success: true, data: { email, ...profileData } });
+    return NextResponse.json({ success: true, data: profileData });
   } catch (error) {
     console.error('Profile save error:', error);
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
