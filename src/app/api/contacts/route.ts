@@ -8,6 +8,13 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const search = url.searchParams.get('search') || '';
     
+    if (!adminDb) {
+      return NextResponse.json({
+        contacts: [],
+        pagination: { total: 0, limit: 50, offset: 0, hasMore: false }
+      });
+    }
+    
     const snapshot = await adminDb.collection('contacts').orderBy('createdAt', 'desc').get();
     let allContacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
@@ -45,6 +52,10 @@ export async function POST(request: NextRequest) {
     
     if (!contactData.name || !contactData.email) {
       return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
+    }
+    
+    if (!adminDb) {
+      return NextResponse.json({ error: 'Database not available' }, { status: 503 });
     }
     
     const contact = {
