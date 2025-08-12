@@ -10,8 +10,30 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '50');
     const offset = parseInt(url.searchParams.get('offset') || '0');
+    const search = url.searchParams.get('search') || '';
     
-    const allContacts = Array.from(contacts.values());
+    let allContacts = Array.from(contacts.values());
+    
+    // Magic search - searches across all fields
+    if (search) {
+      const searchLower = search.toLowerCase();
+      allContacts = allContacts.filter(contact => {
+        return (
+          contact.name?.toLowerCase().includes(searchLower) ||
+          contact.email?.toLowerCase().includes(searchLower) ||
+          contact.company?.toLowerCase().includes(searchLower) ||
+          contact.title?.toLowerCase().includes(searchLower) ||
+          contact.phone?.toLowerCase().includes(searchLower) ||
+          contact.location?.toLowerCase().includes(searchLower) ||
+          contact.industry?.toLowerCase().includes(searchLower) ||
+          contact.notes?.toLowerCase().includes(searchLower)
+        );
+      });
+    }
+    
+    // Sort by most recent first
+    allContacts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
     const paginatedContacts = allContacts.slice(offset, offset + limit);
     
     return NextResponse.json({
@@ -21,7 +43,8 @@ export async function GET(request: NextRequest) {
         limit, 
         offset, 
         hasMore: offset + limit < allContacts.length 
-      }
+      },
+      searchTerm: search
     });
   } catch (error) {
     console.error('Get contacts error:', error);
