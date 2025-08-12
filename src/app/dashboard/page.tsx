@@ -45,8 +45,16 @@ export default function DashboardPage() {
 
   if (loading && !forceLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="text-center">
+          <div className="w-16 h-16 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500 border-r-purple-500 mx-auto mb-6" />
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Welcome to OpulFlow
+            </h2>
+            <p className="text-gray-600 animate-pulse">Loading your dashboard...</p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -116,11 +124,13 @@ export default function DashboardPage() {
               <li key={item.id}>
                 <button
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 group ${
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
                     activeTab === item.id
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg transform scale-105'
-                      : 'text-gray-700 hover:bg-white hover:shadow-md hover:scale-102'
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-xl transform scale-105'
+                      : 'text-gray-700 hover:bg-white hover:shadow-lg hover:scale-102'
                   }`}
+                  aria-label={`Navigate to ${item.name}`}
+                  aria-current={activeTab === item.id ? 'page' : undefined}
                 >
                   <span className="text-xl">{item.icon}</span>
                   <span className="font-medium">{item.name}</span>
@@ -140,7 +150,8 @@ export default function DashboardPage() {
             <p className="text-sm font-semibold mb-3">Need more credits?</p>
             <Button 
               onClick={() => setActiveTab('credits')} 
-              className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-0 font-semibold px-6 py-2 rounded-xl transition-all duration-200 hover:scale-105"
+              className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-0 font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50"
+              aria-label="Buy more credits"
             >
               Buy Credits
             </Button>
@@ -243,7 +254,8 @@ export default function DashboardPage() {
                           <button
                             key={action.id}
                             onClick={() => setActiveTab(action.id)}
-                            className="p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-100 hover:shadow-lg hover:scale-105 transition-all duration-200 text-left group"
+                            className="p-6 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300 text-left group focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+                            aria-label={`Navigate to ${action.title}`}
                           >
                             <div className="flex items-center gap-3">
                               <div className="text-2xl p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white group-hover:scale-110 transition-transform">
@@ -301,22 +313,41 @@ export default function DashboardPage() {
           {/* Settings Tab */}
           {activeTab === 'settings' && (
             <div className="space-y-8">
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">⚙️ Account Settings</h2>
-                <p className="text-gray-600">Manage your profile information and API configuration</p>
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-3xl border border-blue-100 shadow-lg">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-3xl">⚙️</span>
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Account Settings</h2>
+                    <p className="text-gray-600 text-lg">Configure your API keys and account preferences</p>
+                  </div>
+                </div>
+                <div className="bg-blue-100/50 p-4 rounded-xl">
+                  <p className="text-blue-800 text-sm flex items-center gap-2">
+                    <span className="text-lg">💡</span>
+                    Tip: Keep your API keys secure and never share them publicly
+                  </p>
+                </div>
               </div>
               
-
-              
-              <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
-                  <CardTitle className="text-xl font-bold flex items-center gap-2">
-                    🔑 API Configuration
+              <Card className="bg-white/90 backdrop-blur-sm shadow-2xl border-0 overflow-hidden hover:shadow-3xl transition-all duration-300">
+                <CardHeader className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-8">
+                  <CardTitle className="text-2xl font-bold flex items-center gap-3">
+                    <span className="text-3xl">🔑</span>
+                    API Configuration
                   </CardTitle>
+                  <p className="text-white/90 mt-2">Manage your API keys for seamless integration</p>
                 </CardHeader>
-                <CardContent className="p-6">
+                <CardContent className="p-8">
                   <ErrorBoundary>
-                    <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+                    <Suspense fallback={
+                      <div className="space-y-4">
+                        <Skeleton className="h-12 w-full rounded-xl" />
+                        <Skeleton className="h-32 w-full rounded-xl" />
+                        <Skeleton className="h-10 w-32 rounded-xl" />
+                      </div>
+                    }>
                       <ApiKeyManager />
                     </Suspense>
                   </ErrorBoundary>
