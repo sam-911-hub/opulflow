@@ -214,11 +214,7 @@ export default function DashboardPage() {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
-              <ErrorBoundary>
-                <Suspense fallback={<Skeleton className="h-32 w-full rounded-xl" />}>
-                  <ProfileOverview />
-                </Suspense>
-              </ErrorBoundary>
+
               
               <ErrorBoundary>
                 <Suspense fallback={<Skeleton className="h-32 w-full rounded-xl" />}>
@@ -311,11 +307,7 @@ export default function DashboardPage() {
                 <p className="text-gray-600">Manage your profile information and API configuration</p>
               </div>
               
-              <ErrorBoundary>
-                <Suspense fallback={<Skeleton className="h-96 w-full rounded-xl" />}>
-                  <UserProfile />
-                </Suspense>
-              </ErrorBoundary>
+
               
               <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 overflow-hidden">
                 <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
