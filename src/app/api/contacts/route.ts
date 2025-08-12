@@ -16,12 +16,12 @@ export async function GET(request: NextRequest) {
     }
     
     const snapshot = await adminDb.collection('contacts').orderBy('createdAt', 'desc').get();
-    let allContacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let allContacts = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
     
     // Magic search
     if (search) {
       const searchLower = search.toLowerCase();
-      allContacts = allContacts.filter(contact => {
+      allContacts = allContacts.filter((contact: any) => {
         return (
           contact.name?.toLowerCase().includes(searchLower) ||
           contact.email?.toLowerCase().includes(searchLower) ||
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       contact: { id: docRef.id, ...contact }
     });
   } catch (error) {
-    console.error('Create contact error:', error);
-    return NextResponse.json({ error: 'Failed to create contact' }, { status: 500 });
+    console.error("API /api/contacts error:", error);
+    return new Response(JSON.stringify({ error: "Internal Server Error", details: error instanceof Error ? error.message : error }), { status: 500 });
   }
 }
