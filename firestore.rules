@@ -14,6 +14,11 @@ service cloud.firestore {
       allow read, write: if true;
     }
     
+    // Allow server-side access to contacts collection
+    match /contacts/{contactId} {
+      allow read, write: if true;
+    }
+    
     // Allow authenticated users to access other collections
     match /{document=**} {
       allow read, write: if isSignedIn();
