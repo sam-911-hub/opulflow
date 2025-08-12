@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { adminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
-
-// Simple in-memory storage
-const contacts = new Map();
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,7 +10,8 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(url.searchParams.get('offset') || '0');
     const search = url.searchParams.get('search') || '';
     
-    let allContacts = Array.from(contacts.values());
+    const snapshot = await adminDb.collection('contacts').get();
+    let allContacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     // Magic search - searches across all fields
     if (search) {
@@ -63,17 +62,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
     }
     
-    const id = Date.now().toString();
     const contact = {
-      id,
       ...contactData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     
-    contacts.set(id, contact);
+    const docRef = await adminDb.collection('contacts').add(contact);
     
-    return NextResponse.json({ success: true, id, contact });
+    return NextResponse.json({ 
+      success: true, 
+      id: docRef.id, 
+      contact: { id: docRef.id, ...contact }
+    });
   } catch (error) {
     console.error('Create contact error:', error);
     return NextResponse.json({ error: 'Failed to create contact' }, { status: 500 });
