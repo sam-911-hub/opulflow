@@ -1,28 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, query, orderBy } from 'firebase/firestore';
+import { adminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
-
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const db = getFirestore(app);
 
 export async function GET(request: NextRequest) {
   try {
     const url = new URL(request.url);
     const search = url.searchParams.get('search') || '';
     
-    const q = query(collection(db, 'contacts'), orderBy('createdAt', 'desc'));
-    const snapshot = await getDocs(q);
+    const snapshot = await adminDb.collection('contacts').orderBy('createdAt', 'desc').get();
     let allContacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     // Magic search
@@ -67,7 +53,7 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date().toISOString(),
     };
     
-    const docRef = await addDoc(collection(db, 'contacts'), contact);
+    const docRef = await adminDb.collection('contacts').add(contact);
     
     return NextResponse.json({ 
       success: true, 
