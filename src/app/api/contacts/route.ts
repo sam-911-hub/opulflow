@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
+
+// Simple in-memory storage
+const contacts = new Map();
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,12 +11,17 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(url.searchParams.get('limit') || '50');
     const offset = parseInt(url.searchParams.get('offset') || '0');
     
-    const snapshot = await adminDb.collection('contacts').limit(limit).get();
-    const contacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const allContacts = Array.from(contacts.values());
+    const paginatedContacts = allContacts.slice(offset, offset + limit);
     
     return NextResponse.json({
-      contacts,
-      pagination: { total: contacts.length, limit, offset, hasMore: false }
+      contacts: paginatedContacts,
+      pagination: { 
+        total: allContacts.length, 
+        limit, 
+        offset, 
+        hasMore: offset + limit < allContacts.length 
+      }
     });
   } catch (error) {
     console.error('Get contacts error:', error);
@@ -33,14 +40,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
     }
     
-    const contactRef = adminDb.collection('contacts').doc();
-    await contactRef.set({
+    const id = Date.now().toString();
+    const contact = {
+      id,
       ...contactData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    };
     
-    return NextResponse.json({ success: true, id: contactRef.id });
+    contacts.set(id, contact);
+    
+    return NextResponse.json({ success: true, id, contact });
   } catch (error) {
     console.error('Create contact error:', error);
     return NextResponse.json({ error: 'Failed to create contact' }, { status: 500 });
