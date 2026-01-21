@@ -12,6 +12,12 @@ const nextConfig = {
   experimental: {
     esmExternals: false
   },
+  allowedDevOrigins: [
+    '5b3a9e13-ac41-4bb6-b7aa-1b9a87995662-00-unvcxf3c6r7w.kirk.replit.dev',
+    '.replit.dev',
+    '.repl.co',
+    '127.0.0.1'
+  ],
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
