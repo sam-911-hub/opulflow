@@ -32,7 +32,9 @@ const nextConfig = {
     }
     return config;
   },
-  serverExternalPackages: ['firebase-admin']
+  serverExternalPackages: ['firebase-admin'],
+  output: 'export',
+  trailingSlash: true,
 }
 
 module.exports = nextConfig
