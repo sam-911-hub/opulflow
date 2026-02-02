@@ -21,7 +21,12 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Ensure Tailwind/PostCSS present
-        run: npm install tailwindcss@3.4.1 postcss@8.4.31 autoprefixer@10.4.16 --no-save --no-audit --no-fund
+        run: npm install --save-dev tailwindcss@3.4.1 postcss@8.4.31 autoprefixer@10.4.16 --no-audit --no-fund
+
+      - name: Verify installed packages
+        run: |
+          node -e "console.log(require('child_process').execSync('npm ls tailwindcss --depth=0 || true').toString())"
+          node -e "console.log(require('child_process').execSync('node -v; npm -v').toString())"
 
       - name: Build and export
         run: |
