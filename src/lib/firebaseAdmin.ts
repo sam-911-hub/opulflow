@@ -9,17 +9,28 @@ export function getAdmin() {
     const missing = !process.env.FIREBASE_ADMIN_PROJECT_ID || !process.env.FIREBASE_ADMIN_CLIENT_EMAIL || !privateKey;
 
     if (missing) {
-      // Return a proxy that throws when any admin method is accessed to avoid failing at import time
+      // Return a safe stub so imports and build-time page collection do not throw.
       const message = 'FIREBASE_ADMIN_PROJECT_ID, FIREBASE_ADMIN_CLIENT_EMAIL, and FIREBASE_ADMIN_PRIVATE_KEY must be set';
-      const handler = {
-        get(_target: any, prop: string) {
-          throw new Error(`${message} — attempted to access admin.${prop}`);
-        },
-        apply() {
-          throw new Error(message);
-        }
+
+      const stub: any = {
+        auth: () => ({
+          verifyIdToken: async () => { throw new Error(message); },
+          getUser: async () => { throw new Error(message); },
+          createCustomToken: async () => { throw new Error(message); },
+        }),
+        firestore: () => ({
+          collection: (_name: string) => ({
+            doc: (_id?: string) => ({
+              get: async () => null,
+              set: async () => { throw new Error(message); },
+              update: async () => { throw new Error(message); },
+            }),
+            add: async () => { throw new Error(message); },
+          }),
+        }),
       };
-      return new Proxy({}, handler) as unknown as typeof admin;
+
+      return stub as typeof admin;
     }
 
     admin.initializeApp({
@@ -33,5 +44,5 @@ export function getAdmin() {
   return admin;
 }
 
-export const getAuthAdmin = () => getAdmin().auth ? getAdmin().auth() : getAdmin().auth();
-export const getFirestoreAdmin = () => getAdmin().firestore ? getAdmin().firestore() : getAdmin().firestore();
+export const getAuthAdmin = () => getAdmin().auth();
+export const getFirestoreAdmin = () => getAdmin().firestore();
