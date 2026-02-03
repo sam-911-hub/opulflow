@@ -6,8 +6,20 @@ export function getAdmin() {
       ? process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g, '\n')
       : undefined;
 
-    if (!process.env.FIREBASE_ADMIN_PROJECT_ID || !process.env.FIREBASE_ADMIN_CLIENT_EMAIL || !privateKey) {
-      throw new Error('FIREBASE_ADMIN_PROJECT_ID, FIREBASE_ADMIN_CLIENT_EMAIL, and FIREBASE_ADMIN_PRIVATE_KEY must be set');
+    const missing = !process.env.FIREBASE_ADMIN_PROJECT_ID || !process.env.FIREBASE_ADMIN_CLIENT_EMAIL || !privateKey;
+
+    if (missing) {
+      // Return a proxy that throws when any admin method is accessed to avoid failing at import time
+      const message = 'FIREBASE_ADMIN_PROJECT_ID, FIREBASE_ADMIN_CLIENT_EMAIL, and FIREBASE_ADMIN_PRIVATE_KEY must be set';
+      const handler = {
+        get(_target: any, prop: string) {
+          throw new Error(`${message} — attempted to access admin.${prop}`);
+        },
+        apply() {
+          throw new Error(message);
+        }
+      };
+      return new Proxy({}, handler) as unknown as typeof admin;
     }
 
     admin.initializeApp({
@@ -21,5 +33,5 @@ export function getAdmin() {
   return admin;
 }
 
-export const getAuthAdmin = () => getAdmin().auth();
-export const getFirestoreAdmin = () => getAdmin().firestore();
+export const getAuthAdmin = () => getAdmin().auth ? getAdmin().auth() : getAdmin().auth();
+export const getFirestoreAdmin = () => getAdmin().firestore ? getAdmin().firestore() : getAdmin().firestore();
