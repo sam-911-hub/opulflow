@@ -6,6 +6,12 @@
 
 OpulFlow is a next-generation sales intelligence platform offering pay-as-you-go pricing with no subscriptions or lock-in. Access powerful sales tools including lead lookup, company enrichment, email verification, AI-powered content generation, and workflow automation.
 
+## 🚀 Quick Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/opulflow)
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+
 ## Features
 
 - **Pay-As-You-Go Model**: Only pay for what you use

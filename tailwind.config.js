@@ -18,7 +18,22 @@ module.exports = {
         card: 'hsl(var(--card) / <alpha-value>)',
         'card-foreground': 'hsl(var(--card-foreground) / <alpha-value>)',
         input: 'hsl(var(--input) / <alpha-value>)',
-        'muted-foreground': 'hsl(var(--muted-foreground) / <alpha-value>)'
+        'muted-foreground': 'hsl(var(--muted-foreground) / <alpha-value>)',
+        // Modern orange/brown theme colors
+        'orange-25': '#fefbf7',
+        'orange-950': '#431407',
+        'amber-950': '#451a03'
+      },
+      borderRadius: {
+        'xl': '0.75rem',
+        '2xl': '1rem',
+        '3xl': '1.5rem'
+      },
+      backdropBlur: {
+        'xs': '2px'
+      },
+      scale: {
+        '102': '1.02'
       }
     }
   },

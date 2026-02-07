@@ -45,72 +45,72 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: #fafafa;
-  --foreground: #09090b;
+  --radius: 0.75rem;
+  --background: #fef7f0;
+  --foreground: #3c2415;
   --card: #ffffff;
-  --card-foreground: #09090b;
+  --card-foreground: #3c2415;
   --popover: #ffffff;
-  --popover-foreground: #09090b;
-  --primary: #18181b;
-  --primary-foreground: #fafafa;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
-  --destructive: #ef4444;
-  --border: #e4e4e7;
+  --popover-foreground: #3c2415;
+  --primary: #d97706;
+  --primary-foreground: #ffffff;
+  --secondary: #fed7aa;
+  --secondary-foreground: #9a3412;
+  --muted: #fef3e2;
+  --muted-foreground: #a16207;
+  --accent: #fb923c;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --border: #fed7aa;
   --input: #ffffff;
-  --ring: #18181b;
-  --chart-1: #3b82f6;
-  --chart-2: #10b981;
+  --ring: #d97706;
+  --chart-1: #d97706;
+  --chart-2: #ea580c;
   --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #8b5cf6;
+  --chart-4: #dc2626;
+  --chart-5: #9a3412;
   --sidebar: #ffffff;
-  --sidebar-foreground: #09090b;
-  --sidebar-primary: #18181b;
-  --sidebar-primary-foreground: #fafafa;
-  --sidebar-accent: #f4f4f5;
-  --sidebar-accent-foreground: #18181b;
-  --sidebar-border: #e4e4e7;
-  --sidebar-ring: #18181b;
+  --sidebar-foreground: #3c2415;
+  --sidebar-primary: #d97706;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fed7aa;
+  --sidebar-accent-foreground: #9a3412;
+  --sidebar-border: #fed7aa;
+  --sidebar-ring: #d97706;
 }
 
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
-  --card: #18181b;
-  --card-foreground: #fafafa;
-  --popover: #18181b;
-  --popover-foreground: #fafafa;
-  --primary: #fafafa;
-  --primary-foreground: #18181b;
-  --secondary: #27272a;
-  --secondary-foreground: #fafafa;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
-  --destructive: #ef4444;
-  --border: #27272a;
-  --input: #18181b;
-  --ring: #fafafa;
-  --chart-1: #3b82f6;
-  --chart-2: #10b981;
+  --background: #1c0f0a;
+  --foreground: #fef7f0;
+  --card: #2d1b13;
+  --card-foreground: #fef7f0;
+  --popover: #2d1b13;
+  --popover-foreground: #fef7f0;
+  --primary: #fb923c;
+  --primary-foreground: #1c0f0a;
+  --secondary: #451a03;
+  --secondary-foreground: #fed7aa;
+  --muted: #451a03;
+  --muted-foreground: #a16207;
+  --accent: #ea580c;
+  --accent-foreground: #fef7f0;
+  --destructive: #dc2626;
+  --border: #451a03;
+  --input: #2d1b13;
+  --ring: #fb923c;
+  --chart-1: #fb923c;
+  --chart-2: #ea580c;
   --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #8b5cf6;
-  --sidebar: #18181b;
-  --sidebar-foreground: #fafafa;
-  --sidebar-primary: #fafafa;
-  --sidebar-primary-foreground: #18181b;
-  --sidebar-accent: #27272a;
-  --sidebar-accent-foreground: #fafafa;
-  --sidebar-border: #27272a;
-  --sidebar-ring: #fafafa;
+  --chart-4: #dc2626;
+  --chart-5: #9a3412;
+  --sidebar: #2d1b13;
+  --sidebar-foreground: #fef7f0;
+  --sidebar-primary: #fb923c;
+  --sidebar-primary-foreground: #1c0f0a;
+  --sidebar-accent: #451a03;
+  --sidebar-accent-foreground: #fed7aa;
+  --sidebar-border: #451a03;
+  --sidebar-ring: #fb923c;
 }
 
 @layer base {
@@ -122,7 +122,7 @@
   }
 }
 
-/* Professional visibility improvements */
+/* Modern 2026 UI utilities */
 @layer utilities {
   .text-readable {
     @apply text-foreground;
@@ -137,18 +137,38 @@
   }
   
   .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105;
   }
   
   .input-readable {
-    @apply bg-input text-foreground border-border;
+    @apply bg-input text-foreground border-border rounded-xl;
   }
   
   .card-readable {
-    @apply bg-card text-card-foreground border-border;
+    @apply bg-card text-card-foreground border-border rounded-xl shadow-lg backdrop-blur-sm;
   }
   
   .text-muted-readable {
     @apply text-muted-foreground;
+  }
+  
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl;
+  }
+  
+  .gradient-primary {
+    @apply bg-gradient-to-r from-orange-600 to-amber-600;
+  }
+  
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-orange-500 to-orange-700;
+  }
+  
+  .modern-button {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl;
+  }
+  
+  .modern-card {
+    @apply rounded-2xl shadow-xl border-0 overflow-hidden backdrop-blur-sm;
   }
 }

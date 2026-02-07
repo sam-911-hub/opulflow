@@ -1,12 +1,38 @@
 import { NextResponse } from 'next/server';
+import { logger } from './security/logger';
+import { ZodError } from 'zod';
+
+export class AppError extends Error {
+  constructor(
+    public statusCode: number,
+    public message: string,
+    public isOperational = true
+  ) {
+    super(message);
+    Object.setPrototypeOf(this, AppError.prototype);
+  }
+}
 
 export function handleApiError(error: any, context: string = 'API') {
-  console.error(`${context} error:`, error);
+  logger.error(`${context} error`, { context }, error);
   
-  // Firebase specific errors
+  if (error instanceof ZodError) {
+    return NextResponse.json(
+      { error: 'Validation failed' },
+      { status: 400 }
+    );
+  }
+
+  if (error instanceof AppError) {
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.statusCode }
+    );
+  }
+  
   if (error.code === 'permission-denied') {
     return NextResponse.json(
-      { error: 'Permission denied. Please check your access rights.' },
+      { error: 'Access denied' },
       { status: 403 }
     );
   }
@@ -27,12 +53,11 @@ export function handleApiError(error: any, context: string = 'API') {
   
   if (error.code === 'quota-exceeded') {
     return NextResponse.json(
-      { error: 'Service quota exceeded. Please try again later.' },
+      { error: 'Too many requests' },
       { status: 429 }
     );
   }
   
-  // Network/timeout errors
   if (error.name === 'AbortError') {
     return NextResponse.json(
       { error: 'Request timeout' },
@@ -40,9 +65,8 @@ export function handleApiError(error: any, context: string = 'API') {
     );
   }
   
-  // Default server error
   return NextResponse.json(
-    { error: 'Internal server error' },
+    { error: 'Something went wrong' },
     { status: 500 }
   );
 }

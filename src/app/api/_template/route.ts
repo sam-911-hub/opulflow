@@ -1,37 +1,37 @@
+/**
+ * SECURE API ROUTE TEMPLATE
+ * 
+ * Use this template for all new API routes to ensure security best practices
+ */
+
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/security/auth';
-import { validateBody } from '@/lib/security/validation';
-import { LeadLookupDTO } from '@/lib/security/dto';
+import { requireAuth, requireAdmin } from '@/lib/security/auth';
+import { validateBody, validateQuery } from '@/lib/security/validation';
 import { handleError, successResponse } from '@/lib/security/errorHandler';
 import { rateLimit } from '@/lib/security/rateLimit';
-import { leadService } from '@/services/leadService';
 import { sanitizeResponse } from '@/lib/security/sanitizer';
+import { logger } from '@/lib/security/logger';
 
 export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
 
 const limiter = rateLimit({ windowMs: 60000, maxRequests: 30 });
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
     const rateLimitResponse = await limiter(request);
     if (rateLimitResponse) return rateLimitResponse;
 
-    // Authentication
     const user = await requireAuth(request);
     
-    // Validate input using DTO
-    const params = await validateBody(request, LeadLookupDTO);
+    logger.info('Operation completed', {
+      userId: user.uid,
+      endpoint: '/api/your-endpoint',
+    });
     
-    // Business logic in service layer
-    const result = await leadService.lookupLead(user.uid, params);
-    
-    // Sanitize response
-    return successResponse(sanitizeResponse(result));
+    return successResponse({ message: 'Success' });
   } catch (error) {
     return handleError(error, {
-      endpoint: '/api/leads/lookup',
+      endpoint: '/api/your-endpoint',
       method: 'POST',
     });
   }

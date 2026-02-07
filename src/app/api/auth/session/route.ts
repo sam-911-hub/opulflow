@@ -1,22 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminAuth } from '@/lib/admin';
+import { validateBody } from '@/lib/security/validation';
+import { LoginDTO } from '@/lib/security/dto';
+import { handleError, successResponse } from '@/lib/security/errorHandler';
+import { rateLimit } from '@/lib/security/rateLimit';
+import { logger } from '@/lib/security/logger';
+import { getClientIp } from '@/lib/security/auth';
+
+const limiter = rateLimit({ windowMs: 60000, maxRequests: 10 });
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json().catch(() => ({}));
-    const { idToken } = body;
+    // Rate limiting
+    const rateLimitResponse = await limiter(request);
+    if (rateLimitResponse) return rateLimitResponse;
+
+    // Validate input
+    const { idToken } = await validateBody(request, LoginDTO);
     
-    if (!idToken) {
-      return NextResponse.json({ error: 'ID token is required' }, { status: 400 });
-    }
-    
-    // Validate ID token before storing
+    // Verify token
     await getAdminAuth().verifyIdToken(idToken);
     
-    const expiresIn = 60 * 60 * 24 * 14; // 2 weeks in seconds
+    const expiresIn = 60 * 60 * 24 * 14; // 2 weeks
     
-    const response = NextResponse.json({ success: true });
+    const response = successResponse({ message: 'Session created' });
     
+    // Store JWT in HTTP-only cookie (secure against XSS)
     response.cookies.set({
       name: 'session',
       value: idToken,
@@ -27,26 +36,17 @@ export async function POST(request: NextRequest) {
       sameSite: 'lax',
     });
     
+    logger.info('Session created', {
+      endpoint: '/api/auth/session',
+      ip: getClientIp(request),
+    });
+    
     return response;
-  } catch (error: any) {
-    console.error('Session creation error:', error);
-    
-    // Provide more specific error messages
-    if (error.code === 'auth/id-token-expired') {
-      return NextResponse.json(
-        { error: 'ID token has expired. Please login again.' },
-        { status: 401 }
-      );
-    } else if (error.code === 'auth/invalid-id-token') {
-      return NextResponse.json(
-        { error: 'Invalid ID token. Please login again.' },
-        { status: 401 }
-      );
-    }
-    
-    return NextResponse.json(
-      { error: 'Failed to create session' },
-      { status: 401 }
-    );
+  } catch (error) {
+    return handleError(error, {
+      endpoint: '/api/auth/session',
+      method: 'POST',
+      ip: getClientIp(request),
+    });
   }
 }

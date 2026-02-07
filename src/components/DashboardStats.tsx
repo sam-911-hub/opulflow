@@ -63,18 +63,18 @@ export default function DashboardStats() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-40">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
       </div>
     );
   }
   
   if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-md text-red-800">
+      <div className="bg-red-50 p-4 rounded-xl text-red-800 border border-red-200">
         <p>{error}</p>
         <button 
           onClick={() => setPeriod(period)} 
-          className="mt-2 text-sm text-red-600 hover:text-red-800"
+          className="mt-2 text-sm text-red-600 hover:text-red-800 transition-colors"
         >
           Try again
         </button>
@@ -89,7 +89,7 @@ export default function DashboardStats() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-readable">Dashboard Overview</h2>
+        <h2 className="text-2xl font-bold text-orange-900">Dashboard Overview</h2>
         <div className="flex space-x-2">
           <PeriodButton active={period === '7d'} onClick={() => handlePeriodChange('7d')}>7 Days</PeriodButton>
           <PeriodButton active={period === '30d'} onClick={() => handlePeriodChange('30d')}>30 Days</PeriodButton>
@@ -104,22 +104,22 @@ export default function DashboardStats() {
       </div>
       
       <div className="mt-8">
-        <h3 className="text-lg font-medium mb-4 text-readable">Recent Activity</h3>
-        <div className="space-y-2">
+        <h3 className="text-lg font-medium mb-6 text-orange-900">Recent Activity</h3>
+        <div className="space-y-3">
           {stats.recentActivities && stats.recentActivities.length > 0 ? (
             stats.recentActivities.map(activity => (
-              <div key={activity.id} className="flex justify-between p-3 card-readable rounded-md shadow-sm">
+              <div key={activity.id} className="flex justify-between p-4 modern-card glass-effect hover:scale-102 transition-all duration-300">
                 <div>
-                  <p className="font-medium text-readable">{activity.description}</p>
-                  <p className="text-sm text-muted-readable">{activity.type}</p>
+                  <p className="font-medium text-orange-900">{activity.description}</p>
+                  <p className="text-sm text-orange-600">{activity.type}</p>
                 </div>
-                <div className="text-sm text-muted-readable">
+                <div className="text-sm text-orange-600">
                   {new Date(activity.timestamp).toLocaleString()}
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-muted-readable">No recent activities</p>
+            <p className="text-orange-600 text-center py-8">No recent activities</p>
           )}
         </div>
       </div>
@@ -139,10 +139,10 @@ function PeriodButton({
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1 text-sm rounded-md ${
+      className={`px-4 py-2 text-sm rounded-xl font-medium transition-all duration-300 ${
         active 
-          ? 'bg-primary text-white' 
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          ? 'gradient-primary text-white shadow-lg scale-105' 
+          : 'bg-orange-50 text-orange-700 hover:bg-orange-100 hover:scale-105'
       }`}
     >
       {children}
@@ -152,9 +152,9 @@ function PeriodButton({
 
 function StatCard({ title, value }: { title: string; value: number }) {
   return (
-    <Card className="p-4 card-readable">
-      <h3 className="text-muted-readable text-sm font-medium">{title}</h3>
-      <p className="text-2xl font-bold mt-2 text-readable">{value.toLocaleString()}</p>
+    <Card className="p-6 modern-card glass-effect hover:scale-105 transition-all duration-300">
+      <h3 className="text-orange-600 text-sm font-medium uppercase tracking-wide">{title}</h3>
+      <p className="text-3xl font-bold mt-3 text-orange-900">{value.toLocaleString()}</p>
     </Card>
   );
 }

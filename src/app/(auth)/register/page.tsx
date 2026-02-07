@@ -55,20 +55,20 @@ export default function RegisterPage() {
       // Initialize team and member relationships
       await initFirestoreSchema(userCredential.user.uid);
 
-      toast.success("Account created successfully!");
+      toast.success("Account created successfully. Welcome to OpulFlow!");
       router.push("/dashboard");
     } catch (error: any) {
       console.error("Registration error:", error);
       
       // Provide more user-friendly error messages
       if (error.code === 'auth/email-already-in-use') {
-        toast.error("Email is already in use. Please use a different email or login.");
+        toast.error("This email address is already registered. Please sign in or use a different email.");
       } else if (error.code === 'auth/invalid-email') {
-        toast.error("Invalid email address.");
+        toast.error("Please enter a valid email address.");
       } else if (error.code === 'auth/weak-password') {
-        toast.error("Password is too weak. Please use a stronger password.");
+        toast.error("Password must be at least 6 characters long with a mix of letters and numbers.");
       } else {
-        toast.error(error.message || "Failed to create account");
+        toast.error(error.message || "Account creation failed. Please try again.");
       }
     } finally {
       setLoading(false);

@@ -1,7 +1,5 @@
 "use client";
 import { Button } from "./ui/button";
-import { auth } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -10,29 +8,20 @@ export default function LogoutButton({ className = "" }: { className?: string })
 
   const handleLogout = async () => {
     try {
-      // Sign out from Firebase
-      await signOut(auth);
+      const [{ signOut }, { auth }] = await Promise.all([
+        import('firebase/auth'),
+        import('@/lib/firebase')
+      ]);
       
-      // Clear session cookie
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      await Promise.all([
+        signOut(auth),
+        fetch('/api/auth/logout', { method: 'POST' })
+      ]);
       
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to clear session');
-      }
-      
-      toast.success("Logged out successfully");
-      
-      // Use window.location for a full page refresh to clear any state
-      window.location.href = "/";
+      toast.success("You have been successfully signed out");
+      router.replace("/");
     } catch (error) {
-      console.error("Logout error:", error);
-      toast.error("Failed to log out. Please try again.");
+      toast.error("Unable to sign out. Please try again.");
     }
   };
 
@@ -42,7 +31,10 @@ export default function LogoutButton({ className = "" }: { className?: string })
       variant="ghost" 
       className={`text-red-600 hover:text-red-800 hover:bg-red-50 ${className}`}
     >
-      <span className="mr-2">🚪</span> Logout
+      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+      </svg>
+      Sign Out
     </Button>
   );
 }

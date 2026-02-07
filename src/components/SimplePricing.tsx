@@ -41,33 +41,33 @@ export default function SimplePricing() {
 
   return (
     <div className="space-y-8">
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
-        <h3 className="text-lg font-semibold text-blue-800 mb-2">Pay-As-You-Go Pricing</h3>
-        <p className="text-blue-700">Only pay for what you use. No subscriptions, no lock-in.</p>
-        <p className="text-blue-600 text-sm mt-2">Save 50-70% vs. competitors' forced subscriptions</p>
+      <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-200 shadow-lg">
+        <h3 className="text-lg font-semibold text-orange-800 mb-2">Pay-As-You-Go Pricing</h3>
+        <p className="text-orange-700">Only pay for what you use. No subscriptions, no lock-in.</p>
+        <p className="text-orange-600 text-sm mt-2 font-medium">Save 50-70% vs. competitors' forced subscriptions</p>
       </div>
       
       <div>
         <h3 className="text-xl font-semibold mb-4 border-b pb-2">Core Services</h3>
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
+          <table className="w-full border-collapse modern-card">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="p-2 text-left">Service</th>
-                <th className="p-2 text-right">Price</th>
-                <th className="p-2 text-right">Competitor Price</th>
-                <th className="p-2 text-right">Your Savings</th>
+              <tr className="bg-gradient-to-r from-orange-100 to-amber-100">
+                <th className="p-4 text-left font-semibold text-orange-900">Service</th>
+                <th className="p-4 text-right font-semibold text-orange-900">Price</th>
+                <th className="p-4 text-right font-semibold text-orange-900">Competitor Price</th>
+                <th className="p-4 text-right font-semibold text-orange-900">Your Savings</th>
               </tr>
             </thead>
             <tbody>
-              {coreServices.map((service) => (
-                <tr key={service.key} className="border-t">
-                  <td className="p-2">
-                    <div className="font-medium">{service.description}</div>
+              {coreServices.map((service, index) => (
+                <tr key={service.key} className={`border-t border-orange-200 hover:bg-orange-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-orange-25'}`}>
+                  <td className="p-4">
+                    <div className="font-medium text-orange-900">{service.description}</div>
                   </td>
-                  <td className="p-2 text-right font-medium">${service.price.toFixed(2)}</td>
-                  <td className="p-2 text-right text-gray-500">${(service.price * 2).toFixed(2)}</td>
-                  <td className="p-2 text-right text-green-600">50%</td>
+                  <td className="p-4 text-right font-medium text-orange-800">${service.price.toFixed(2)}</td>
+                  <td className="p-4 text-right text-orange-600">${(service.price * 2).toFixed(2)}</td>
+                  <td className="p-4 text-right text-green-600 font-medium">50%</td>
                 </tr>
               ))}
             </tbody>
@@ -75,25 +75,25 @@ export default function SimplePricing() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="modern-card glass-effect hover:scale-105 transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-orange-500 to-amber-500 text-white">
             <CardTitle>CRM Light</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
+          <CardContent className="p-6">
+            <div className="space-y-3">
               {crmServices.map((service) => (
-                <div key={service.key} className="flex justify-between items-center">
-                  <span>{service.description}</span>
-                  <span className="font-medium">${service.price.toFixed(2)}</span>
+                <div key={service.key} className="flex justify-between items-center py-2">
+                  <span className="text-orange-900">{service.description}</span>
+                  <span className="font-medium text-orange-700">${service.price.toFixed(2)}</span>
                 </div>
               ))}
-              <div className="mt-4 pt-2 border-t">
+              <div className="mt-6 pt-4 border-t border-orange-200">
                 <div className="flex justify-between items-center font-medium">
-                  <span>Bundle Price</span>
-                  <span className="text-purple-600">$20.00/month</span>
+                  <span className="text-orange-900">Bundle Price</span>
+                  <span className="text-orange-600 text-lg">$20.00/month</span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">
+                <div className="text-sm text-orange-600 mt-2">
                   Unlimited leads + 5 pipelines + 10 reports
                 </div>
               </div>
@@ -101,24 +101,24 @@ export default function SimplePricing() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
+        <Card className="modern-card glass-effect hover:scale-105 transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-orange-600 to-amber-600 text-white">
             <CardTitle>Email Automation</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
+          <CardContent className="p-6">
+            <div className="space-y-3">
               {emailServices.map((service) => (
-                <div key={service.key} className="flex justify-between items-center">
-                  <span>{service.description}</span>
-                  <span className="font-medium">${service.price.toFixed(2)}</span>
+                <div key={service.key} className="flex justify-between items-center py-2">
+                  <span className="text-orange-900">{service.description}</span>
+                  <span className="font-medium text-orange-700">${service.price.toFixed(2)}</span>
                 </div>
               ))}
-              <div className="mt-4 pt-2 border-t">
+              <div className="mt-6 pt-4 border-t border-orange-200">
                 <div className="flex justify-between items-center font-medium">
-                  <span>Bundle Price</span>
-                  <span className="text-purple-600">$50.00</span>
+                  <span className="text-orange-900">Bundle Price</span>
+                  <span className="text-orange-600 text-lg">$50.00</span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">
+                <div className="text-sm text-orange-600 mt-2">
                   500 emails + tracking + personalization
                 </div>
               </div>
@@ -126,24 +126,24 @@ export default function SimplePricing() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
+        <Card className="modern-card glass-effect hover:scale-105 transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-orange-700 to-amber-700 text-white">
             <CardTitle>AI Lead Scoring</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
+          <CardContent className="p-6">
+            <div className="space-y-3">
               {leadScoringServices.map((service) => (
-                <div key={service.key} className="flex justify-between items-center">
-                  <span>{service.description}</span>
-                  <span className="font-medium">${service.price.toFixed(2)}</span>
+                <div key={service.key} className="flex justify-between items-center py-2">
+                  <span className="text-orange-900">{service.description}</span>
+                  <span className="font-medium text-orange-700">${service.price.toFixed(2)}</span>
                 </div>
               ))}
-              <div className="mt-4 pt-2 border-t">
+              <div className="mt-6 pt-4 border-t border-orange-200">
                 <div className="flex justify-between items-center font-medium">
-                  <span>Bundle Price</span>
-                  <span className="text-purple-600">$100.00</span>
+                  <span className="text-orange-900">Bundle Price</span>
+                  <span className="text-orange-600 text-lg">$100.00</span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">
+                <div className="text-sm text-orange-600 mt-2">
                   Score 1,000 leads (all signals)
                 </div>
               </div>
@@ -151,24 +151,24 @@ export default function SimplePricing() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
+        <Card className="modern-card glass-effect hover:scale-105 transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-orange-800 to-amber-800 text-white">
             <CardTitle>AI Sales Coach</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
+          <CardContent className="p-6">
+            <div className="space-y-3">
               {aiCoachServices.map((service) => (
-                <div key={service.key} className="flex justify-between items-center">
-                  <span>{service.description}</span>
-                  <span className="font-medium">${service.price.toFixed(2)}</span>
+                <div key={service.key} className="flex justify-between items-center py-2">
+                  <span className="text-orange-900">{service.description}</span>
+                  <span className="font-medium text-orange-700">${service.price.toFixed(2)}</span>
                 </div>
               ))}
-              <div className="mt-4 pt-2 border-t">
+              <div className="mt-6 pt-4 border-t border-orange-200">
                 <div className="flex justify-between items-center font-medium">
-                  <span>Bundle Price</span>
-                  <span className="text-purple-600">$30.00/month</span>
+                  <span className="text-orange-900">Bundle Price</span>
+                  <span className="text-orange-600 text-lg">$30.00/month</span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">
+                <div className="text-sm text-orange-600 mt-2">
                   Unlimited queries + 60 mins call analysis
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default function SimplePricing() {
       <div className="flex justify-center mt-8">
         <Button 
           onClick={() => router.push('/dashboard/credits')}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium"
+          className="gradient-primary text-white px-10 py-4 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
         >
           Buy your first credit pack in 2 minutes
         </Button>

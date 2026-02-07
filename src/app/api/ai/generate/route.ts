@@ -1,91 +1,72 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAdminAuth } from '@/lib/admin';
-import { db } from '@/lib/firebase';
-import { doc, updateDoc, getDoc, collection, addDoc } from 'firebase/firestore';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/security/auth';
+import { validateBody } from '@/lib/security/validation';
+import { AIGenerateDTO } from '@/lib/security/dto';
+import { handleError, successResponse } from '@/lib/security/errorHandler';
+import { rateLimit } from '@/lib/security/rateLimit';
+import { creditService } from '@/services/creditService';
 import { generateText } from '@/lib/openai';
+import { logger } from '@/lib/security/logger';
+import { getAdminFirestore } from '@/lib/admin';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
+const limiter = rateLimit({ windowMs: 60000, maxRequests: 20 });
+
 export async function POST(request: NextRequest) {
   try {
-    // Get session cookie
-    const sessionCookie = request.cookies.get('session')?.value;
+    // Rate limiting
+    const rateLimitResponse = await limiter(request);
+    if (rateLimitResponse) return rateLimitResponse;
+
+    // Authentication
+    const user = await requireAuth(request);
     
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // Validate input with DTO
+    const { prompt, type, context } = await validateBody(request, AIGenerateDTO);
     
-    // Verify session cookie
-    const decodedClaims = await getAdminAuth().verifySessionCookie(sessionCookie);
-    const userId = decodedClaims.uid;
+    // Check and deduct credits
+    await creditService.deductCredits(user.uid, 'ai', 1);
     
-    // Get request data
-    const { prompt, style, recipient } = await request.json();
-    
-    if (!prompt) {
-      return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
-    }
-    
-    // Check if user has enough credits
-    const userRef = doc(db, "users", userId);
-    const userDoc = await getDoc(userRef);
-    const userData = userDoc.data();
-    
-    if (!userData) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-    
-    const aiCredits = userData.credits?.ai_email || 0;
-    
-    if (aiCredits < 1) {
-      return NextResponse.json({ error: 'Insufficient AI email credits' }, { status: 403 });
-    }
-    
-    // Generate AI content using OpenAI
-    const aiPrompt = `Generate a ${style || 'professional'} email ${recipient ? `to ${recipient}` : ''} based on this request: ${prompt}`;
-    
+    // Generate AI content
+    const aiPrompt = buildPrompt(type, prompt, context);
     const aiResponse = await generateText({
       prompt: aiPrompt,
       maxTokens: 500,
       temperature: 0.7
     });
     
-    const emailContent = aiResponse.text;
-    
-    // Deduct credits
-    await updateDoc(userRef, {
-      'credits.ai_email': aiCredits - 1
-    });
-    
-    // Record transaction
-    const transactionData = {
-      type: 'consumption',
-      amount: 1,
-      service: 'ai_email',
-      createdAt: new Date().toISOString(),
-      remainingBalance: aiCredits - 1
-    };
-    
-    await addDoc(collection(db, `users/${userId}/transactions`), transactionData);
-    
-    // Save the generated email
-    await addDoc(collection(db, `users/${userId}/aiGenerations`), {
-      type: 'email',
+    // Save generation record
+    const db = getAdminFirestore();
+    await db.collection(`users/${user.uid}/aiGenerations`).add({
+      type,
       prompt,
-      style,
-      content: emailContent,
-      createdAt: new Date().toISOString()
+      content: aiResponse.text,
+      createdAt: new Date().toISOString(),
     });
     
-    // Return the generated email
-    return NextResponse.json({
-      text: emailContent,
-      credits_remaining: aiCredits - 1
+    logger.info('AI content generated', {
+      userId: user.uid,
+      type,
     });
     
+    // Return only the generated text, no internal data
+    return successResponse({ text: aiResponse.text });
   } catch (error) {
-    console.error('AI generation error:', error);
-    return NextResponse.json({ error: 'Failed to generate AI content' }, { status: 500 });
+    return handleError(error, {
+      endpoint: '/api/ai/generate',
+      method: 'POST',
+    });
   }
+}
+
+function buildPrompt(type: string, prompt: string, context?: any): string {
+  const templates: Record<string, string> = {
+    email: `Generate a professional email based on: ${prompt}`,
+    script: `Generate a sales call script for: ${prompt}`,
+    message: `Generate a professional message: ${prompt}`,
+  };
+  
+  return templates[type] || prompt;
 }
