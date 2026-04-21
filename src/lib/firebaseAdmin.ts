@@ -14,7 +14,7 @@ if (privateKey && !privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
   privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----\n`;
 }
 
-function getFirebaseAdminApp(): FirebaseApp {
+export function getFirebaseAdminApp(): FirebaseApp {
   if (getApps().length > 0) {
     return getApps()[0];
   }
@@ -32,15 +32,10 @@ function getFirebaseAdminApp(): FirebaseApp {
   });
 }
 
-function getFirebaseAdminAuth(): Auth {
+export function getFirebaseAdminAuth(): Auth {
   return getAdminAuth(getFirebaseAdminApp());
 }
 
-function getFirebaseAdminDb(): Firestore {
+export function getFirebaseAdminDb(): Firestore {
   return getAdminFirestore(getFirebaseAdminApp());
 }
-
-export { getFirebaseAdminApp, getFirebaseAdminAuth, getFirebaseAdminDb };
-
-export const adminAuth = getFirebaseAdminAuth();
-export const adminDb = getFirebaseAdminDb();

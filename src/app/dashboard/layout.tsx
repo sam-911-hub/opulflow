@@ -36,6 +36,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               Dashboard
             </Link>
             <Link
+              href="/dashboard/place-order"
+              className="block py-2 px-4 rounded hover:bg-orange-700"
+            >
+              Place Order
+            </Link>
+            <Link
               href="/dashboard/orders"
               className="block py-2 px-4 rounded hover:bg-orange-700"
             >
