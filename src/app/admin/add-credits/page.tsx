@@ -5,12 +5,15 @@ import { onAuthStateChanged } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
 
+const ADMIN_EMAIL = "samuelomondi288@gmail.com";
+
 export default function AddCreditsPage() {
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [adminEmails, setAdminEmails] = useState<string[]>([]);
   const [targetEmail, setTargetEmail] = useState("");
   const [creditsToAdd, setCreditsToAdd] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("paypal");
+  const [transactionId, setTransactionId] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -18,9 +21,6 @@ export default function AddCreditsPage() {
 
   useEffect(() => {
     const auth = getFirebaseAuth();
-    const adminEmailList = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",");
-
-    setAdminEmails(adminEmailList);
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -30,8 +30,8 @@ export default function AddCreditsPage() {
 
       const userEmail = currentUser.email || "";
       
-      // Only allow admin emails
-      if (!adminEmailList.includes(userEmail)) {
+      // Only allow admin email
+      if (userEmail !== ADMIN_EMAIL) {
         router.push('/dashboard');
         return;
       }
@@ -59,7 +59,12 @@ export default function AddCreditsPage() {
       const res = await fetch('/api/admin/add-credits', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userEmail: targetEmail, creditsToAdd }),
+        body: JSON.stringify({ 
+          userEmail: targetEmail, 
+          creditsToAdd,
+          paymentMethod,
+          transactionId: transactionId || null,
+        }),
       });
 
       const data = await res.json();
@@ -68,9 +73,10 @@ export default function AddCreditsPage() {
         throw new Error(data.error || 'Failed to add credits');
       }
 
-      setMessage(data.message || `Successfully added ${creditsToAdd} credits`);
+      setMessage(`Successfully added ${creditsToAdd} credits to ${targetEmail}. New balance: ${data.newCredits}`);
       setTargetEmail("");
       setCreditsToAdd(0);
+      setTransactionId("");
     } catch (err: any) {
       setError(err.message || "Failed to add credits");
     } finally {
@@ -91,7 +97,7 @@ export default function AddCreditsPage() {
       <h1 className="text-3xl font-bold text-white mb-8">Add Credits to User</h1>
 
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md">
-        <p className="text-gray-600 mb-4">Logged in as admin: {user?.email}</p>
+        <p className="text-gray-600 mb-4">Admin: {user?.email}</p>
 
         {message && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -132,6 +138,34 @@ export default function AddCreditsPage() {
               placeholder="0"
               min={1}
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Payment Method
+            </label>
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="paypal">PayPal</option>
+              <option value="mpesa">M-PESA</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Transaction ID (Optional)
+            </label>
+            <input
+              type="text"
+              value={transactionId}
+              onChange={(e) => setTransactionId(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="PayPal txn ID or M-PESA code"
             />
           </div>
 
