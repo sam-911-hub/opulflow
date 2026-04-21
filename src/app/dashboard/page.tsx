@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface UserData {
@@ -111,17 +112,17 @@ export default function DashboardPage() {
       <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
         <h2 className="text-xl font-semibold mb-4">Your Credits</h2>
         <p className="text-4xl font-bold text-orange-600 mb-4">{user?.credits || 0}</p>
-        <button className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
+        <Link href="/dashboard/buy-credits" className="inline-block bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700">
           Buy Credits
-        </button>
+        </Link>
       </div>
 
       {/* Place Order Card */}
       <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
         <h2 className="text-xl font-semibold mb-4">Place New Order</h2>
-        <button className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+        <Link href="/dashboard/place-order" className="inline-block bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
           Place New Order
-        </button>
+        </Link>
       </div>
 
       {/* Recent Orders */}

@@ -47,6 +47,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             >
               Orders
             </Link>
+            <Link
+              href="/dashboard/buy-credits"
+              className="block py-2 px-4 rounded hover:bg-orange-700"
+            >
+              Buy Credits
+            </Link>
           </nav>
 
           <div className="mt-8">

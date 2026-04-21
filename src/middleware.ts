@@ -15,6 +15,13 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Protect admin routes
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!isAuthenticated) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+
   // Allow public paths
   if (isPublicPath) {
     return NextResponse.next();
