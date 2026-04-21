@@ -164,7 +164,7 @@ export default function BuyCreditsPage() {
                 <ol className="list-decimal list-inside text-sm space-y-1 text-gray-700">
                   <li>Go to M-PESA on your phone</li>
                   <li>Select "Buy Goods and Services"</li>
-                  <li>Enter Till Number: <strong>YOUR_TILL_NUMBER</strong></li>
+                  <li>Enter Till Number: <strong>{process.env.NEXT_PUBLIC_MPESA_TILL_NUMBER || 'YOUR_TILL_NUMBER'}</strong></li>
                   <li>Enter Amount: KES {Math.round(selectedPackage.price * 150)}</li>
                   <li>Enter your M-PESA PIN to confirm</li>
                   <li>Note the confirmation code you receive</li>
