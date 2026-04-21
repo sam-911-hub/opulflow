@@ -138,11 +138,11 @@ export default function PlaceOrderPage() {
         throw new Error(data.error || 'Failed to create order');
       }
 
-      setSuccess("Order placed successfully!");
+      setSuccess("Order placed successfully! Check your dashboard for order details.");
       
       setTimeout(() => {
         router.push('/dashboard');
-      }, 2000);
+      }, 3000);
     } catch (err: any) {
       setError(err.message || "Failed to place order");
     } finally {

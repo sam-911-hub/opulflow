@@ -70,34 +70,32 @@ export async function POST(request: NextRequest) {
       credits: currentCredits - totalCost,
     });
 
-    // Send email notification to admin
-    const adminEmail = process.env.FROM_EMAIL || 'opulflow.inc@gmail.com';
-    
-    const emailBody = `
-New Order Received!
-
-Order ID: ${orderId}
-User Email: ${userEmail}
-
-Product/Service: ${productName}
-Platforms: ${platforms.join(', ')}
-Quantity: ${quantity}
-Tone: ${tone}
-Instructions: ${instructions || 'None'}
-
-Cost: ${totalCost} credits
-Status: pending
-Date: ${timestamp.toISOString()}
-    `.trim();
-
-    // Log for now (email sending would require additional setup)
-    console.log(`ORDER EMAIL TO ${adminEmail}:`);
-    console.log(emailBody);
+    // Send email notification to admin (non-blocking)
+    try {
+      await fetch(`${request.nextUrl.origin}/api/orders/send-admin-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          userEmail,
+          productName,
+          platforms,
+          quantity,
+          tone,
+          instructions,
+          totalCost,
+          status: 'pending',
+          createdAt: timestamp.toISOString(),
+        }),
+      });
+    } catch (emailError) {
+      console.error('Failed to send admin email (non-blocking):', emailError);
+    }
 
     return NextResponse.json({
       success: true,
       orderId,
-      message: 'Order placed successfully',
+      message: 'Order placed successfully. We will process your order soon!',
     });
   } catch (error: any) {
     console.error('Order creation error:', error);
