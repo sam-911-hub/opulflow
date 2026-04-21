@@ -40,7 +40,6 @@ export default function PlaceOrderPage() {
     );
   };
 
-  // Calculate discount
   const getDiscount = () => {
     if (quantity >= 100) return 0.30;
     if (quantity >= 50) return 0.20;
@@ -62,21 +61,21 @@ export default function PlaceOrderPage() {
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
-        router.push('/login');
+        router.push("/login");
         return;
       }
 
       try {
-        const userDoc = await getDoc(doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         const userData = userDoc.exists() ? userDoc.data() : {};
 
         setUser({
           uid: currentUser.uid,
-          email: currentUser.email || '',
+          email: currentUser.email || "",
           credits: userData.credits || 0,
         });
       } catch (err) {
-        console.error('Error:', err);
+        console.error("Error:", err);
       } finally {
         setLoading(false);
       }
@@ -110,16 +109,16 @@ export default function PlaceOrderPage() {
     
     if (!user || user.credits < totalCost) {
       setInsufficientCredits(true);
-      setError(`Insufficient credits. You have ${user?.credits || 0} credits but need ${totalCost} credits.`);
+      setError("Insufficient credits");
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const response = await fetch('/api/orders/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user.uid,
           userEmail: user.email,
@@ -135,13 +134,13 @@ export default function PlaceOrderPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create order');
+        throw new Error(data.error || "Failed to create order");
       }
 
-      setSuccess("Order placed successfully! Check your dashboard for order details.");
+      setSuccess("Order placed! Check dashboard for details.");
       
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }, 3000);
     } catch (err: any) {
       setError(err.message || "Failed to place order");
@@ -177,13 +176,11 @@ export default function PlaceOrderPage() {
         </div>
       )}
 
-      {/* Credits Display */}
       <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
         <p className="font-semibold">Your Available Credits: <span className="text-orange-600 text-xl">{user?.credits || 0}</span></p>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-lg space-y-6">
-        {/* Product Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Product/Service Name *
@@ -198,7 +195,6 @@ export default function PlaceOrderPage() {
           />
         </div>
 
-        {/* Platforms */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Target Platforms *
@@ -218,7 +214,6 @@ export default function PlaceOrderPage() {
           </div>
         </div>
 
-        {/* Quantity */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Quantity of Comments *
@@ -234,7 +229,6 @@ export default function PlaceOrderPage() {
           <p className="text-sm text-gray-500 mt-1">Min: 1, Max: 100</p>
         </div>
 
-        {/* Tone */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Tone of Voice *
@@ -250,7 +244,6 @@ export default function PlaceOrderPage() {
           </select>
         </div>
 
-        {/* Special Instructions */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Special Instructions (Optional)
@@ -260,29 +253,23 @@ export default function PlaceOrderPage() {
             onChange={(e) => setInstructions(e.target.value)}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            placeholder="Any specific points to mention or avoid..."
+            placeholder="Any specific points..."
           />
         </div>
 
-        {/* Cost Calculation */}
         <div className="bg-gray-100 p-4 rounded-lg">
           <h3 className="font-semibold mb-2">Cost Calculation</h3>
           <p className="text-gray-600">
-            {quantity} comments × ${PRICE_PER_COMMENT.toFixed(2)} = ${(quantity * PRICE_PER_COMMENT).toFixed(2)}
+            {quantity} comments x ${PRICE_PER_COMMENT.toFixed(2)} = ${(quantity * PRICE_PER_COMMENT).toFixed(2)}
           </p>
           {discountPercent > 0 && (
             <p className="text-green-600">
-              Bulk discount ({discountPercent}% off): -${((quantity * PRICE_PER_COMMENT) * discountPercent / 100).toFixed(2)}
+              Bulk discount ({discountPercent}% off)
             </p>
           )}
           <p className="text-xl font-bold mt-2">
             Total: ${calculateCost().toFixed(2)} USD
           </p>
-          {insufficientCredits && (
-            <p className="text-red-600 text-sm mt-1">
-              Need {calculateCost()} credits, have {user?.credits || 0}
-            </p>
-          )}
         </div>
 
         <button
