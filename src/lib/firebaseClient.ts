@@ -11,23 +11,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-function getFirebaseApp(): FirebaseApp {
+export function getFirebaseApp(): FirebaseApp {
   if (typeof window === 'undefined') {
     throw new Error('Firebase Client can only be initialized on the client side');
   }
   return getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
 }
 
-function getFirebaseAuth(): Auth {
+export function getFirebaseAuth(): Auth {
   return getAuth(getFirebaseApp());
 }
 
-function getFirebaseDb(): Firestore {
+export function getFirebaseDb(): Firestore {
   return getFirestore(getFirebaseApp());
 }
-
-export { getFirebaseApp, getFirebaseAuth, getFirebaseDb };
-
-export const app = typeof window !== 'undefined' ? getFirebaseApp() : ({} as FirebaseApp);
-export const auth = typeof window !== 'undefined' ? getFirebaseAuth() : ({} as Auth);
-export const db = typeof window !== 'undefined' ? getFirebaseDb() : ({} as Firestore);
