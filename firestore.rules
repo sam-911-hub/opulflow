@@ -1,38 +1,46 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isSignedIn() {
-      return request.auth != null;
-    }
     
+    // Helper function to check if user is admin
     function isAdmin() {
-      return isSignedIn() && request.auth.token.email in ['opulflow.inc@gmail.com'];
+      return request.auth != null && request.auth.token.email == 'samuelomondi288@gmail.com';
     }
     
-    // Allow server-side access to users collection
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    // USERS collection
+    // - Users can read/write their own document
+    // - Admins can read all
+    // - No one can delete
     match /users/{userId} {
-      allow read, write: if true;
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if request.auth != null;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if false;
+      
+      // Transactions subcollection - users can read their own
+      match /transactions/{transactionId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) || isAdmin();
+        allow delete: if false;
+      }
     }
     
-    // Allow server-side access to contacts collection
-    match /contacts/{contactId} {
-      allow read, write: if true;
-    }
-    
-    // Allow authenticated users to access other collections
-    match /{document=**} {
-      allow read, write: if isSignedIn();
-    }
-    
-    // Admin collections
-    match /admin/{document=**} {
-      allow read, write: if isAdmin();
-    }
-    
-    // Public collections
-    match /public_tracking/{trackingId} {
-      allow read, create: if true;
-      allow update, delete: if false;
+    // ORDERS collection
+    // - Users can read their own orders
+    // - Users can create orders
+    // - Admins can read all
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create: if request.auth != null;
+      // Only allow users to create orders with their own userId
+      allow create: if request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(resource.data.userId) || isAdmin();
+      allow delete: if isAdmin();
     }
   }
 }
