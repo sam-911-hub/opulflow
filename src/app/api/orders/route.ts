@@ -24,12 +24,14 @@ export async function GET(request: NextRequest) {
 
     const orders = ordersSnapshot.docs.map(doc => {
       const data = doc.data();
+      const createdAt = data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString();
       return {
         id: doc.id,
         orderId: data.orderId || doc.id,
         status: data.status || 'pending',
-        date: data.createdAt?.toDate?.()?.toISOString()?.split('T')[0] || new Date().toISOString().split('T')[0],
-        amount: data.amount || 0,
+        date: createdAt,
+        amount: data.totalCost || data.creditsUsed || 0,
+        quantity: data.quantity || 0,
       };
     });
 
