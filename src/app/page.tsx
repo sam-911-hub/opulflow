@@ -1,73 +1,8 @@
-"use client";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function Home() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-  const [showWelcome, setShowWelcome] = useState(true);
-  const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
-
-  // Clear any existing timer when component unmounts
-  useEffect(() => {
-    return () => {
-      if (redirectTimer) {
-        clearTimeout(redirectTimer);
-      }
-    };
-  }, [redirectTimer]);
-
-  // Handle authenticated user with delay
-  useEffect(() => {
-    if (!loading && user && showWelcome) {
-      // Show welcome page for at least 5 seconds before redirecting
-      const timer = setTimeout(() => {
-        router.push("/dashboard");
-      }, 5000); // 5 second delay
-      
-      setRedirectTimer(timer);
-      
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [user, loading, router, showWelcome]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-900 to-orange-800">
-      {user && (
-        <div className="fixed top-0 left-0 right-0 bg-green-100 p-2 text-center z-50">
-          <p className="text-green-800">
-            You're already logged in! Redirecting to dashboard in a few seconds...
-            <button 
-              onClick={() => router.push('/dashboard')} 
-              className="ml-2 underline text-orange-600 hover:text-orange-800"
-            >
-              Go now
-            </button>
-            <button 
-              onClick={() => {
-                setShowWelcome(false);
-                if (redirectTimer) clearTimeout(redirectTimer);
-              }} 
-              className="ml-2 underline text-gray-600 hover:text-gray-800"
-            >
-              Stay on this page
-            </button>
-          </p>
-        </div>
-      )}
-      
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-orange-700 to-orange-800 text-white py-20">
         <div className="container mx-auto px-4 text-center">
@@ -82,28 +17,22 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/login"
+              href="/pricing"
               className="bg-white text-orange-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
             >
-              Login
+              View Pricing
             </Link>
             <Link
-              href="/register"
+              href="/help"
               className="bg-orange-600 text-white px-8 py-3 rounded-lg font-medium border border-orange-500 hover:bg-orange-700 transition-colors"
             >
-              Get Started Free
+              Learn More
             </Link>
           </div>
-          <Link
-            href="/pricing"
-            className="inline-block mt-6 text-white/80 hover:text-white underline"
-          >
-            View Pricing
-          </Link>
         </div>
       </div>
       
-      {/* Feature Highlights */}
+      {/* Features Section */}
       <div className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">Features</h2>
@@ -158,10 +87,8 @@ export default function Home() {
           </p>
           
           <div className="relative max-w-4xl mx-auto">
-            {/* Connection Lines */}
             <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-orange-200 -translate-y-1/2 z-0"></div>
             
-            {/* Steps */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 rounded-full bg-white shadow-md flex items-center justify-center text-2xl mb-4 border-4 border-orange-500">
@@ -212,75 +139,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-        
-      {/* Custom Credit Purchase */}
-      <div className="py-16 bg-gradient-to-br from-orange-50 to-orange-100">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4 text-gray-900">Custom Credit Purchase</h2>
-              <p className="text-xl text-gray-800 mb-2">
-                Buy exactly the number of credits you need
-              </p>
-              <p className="text-gray-700">
-                No bundles required - purchase as few or as many credits as you want
-              </p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-lg border">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-bold text-lg mb-4 text-gray-900">How Custom Credits Work</h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-2">
-                      <div className="bg-green-100 text-green-600 rounded-full p-1 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-800">Choose any credit type you need</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <div className="bg-green-100 text-green-600 rounded-full p-1 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-800">Select any quantity - no minimum purchase</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <div className="bg-green-100 text-green-600 rounded-full p-1 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-800">Pay in your preferred currency</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <div className="bg-green-100 text-green-600 rounded-full p-1 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-800">Credits valid for 90 days</span>
-                    </li>
-                  </ul>
-                </div>
-                
-                <div className="flex flex-col justify-center items-center">
-                  <div className="text-center mb-4">
-                    <div className="text-4xl mb-2">💳</div>
-                    <p className="text-lg font-medium text-gray-900">Flexible Purchasing</p>
-                  </div>
-                  <Link href="/pricing#custom" className="bg-orange-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-orange-700 transition-colors">
-                    Try Custom Credits
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       
       {/* Footer */}
       <footer className="bg-gray-900 text-white pt-12 pb-8">
@@ -307,13 +165,13 @@ export default function Home() {
                 <li><Link href="/help" className="text-gray-400 hover:text-white">User Manual</Link></li>
                 <li><Link href="/pricing" className="text-gray-400 hover:text-white">Pricing</Link></li>
                 <li><Link href="/help" className="text-gray-400 hover:text-white">FAQ</Link></li>
-                <li><a href="mailto:opulflow.inc@gmail.com" className="text-gray-400 hover:text-white">Support</a></li>
+                <li><a href="mailto:support@opulflow.com" className="text-gray-400 hover:text-white">Support</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold mb-3">Contact</h4>
-              <p className="text-gray-400 mb-2">Email: <a href="mailto:opulflow.inc@gmail.com" className="text-orange-400 hover:text-orange-300">opulflow.inc@gmail.com</a></p>
+              <p className="text-gray-400 mb-2">Email: <a href="mailto:support@opulflow.com" className="text-orange-400 hover:text-orange-300">support@opulflow.com</a></p>
               <p className="text-gray-400">© {new Date().getFullYear()} OpulFlow Inc. All rights reserved.</p>
             </div>
           </div>
