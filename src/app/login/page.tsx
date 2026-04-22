@@ -1,72 +1,68 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { getFirebaseAuth } from "@/lib/firebaseClient";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useState } from "react"
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth"
+import { getFirebaseAuth } from "@/lib/firebaseClient"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
+  var [email, setEmail] = useState("")
+  var [password, setPassword] = useState("")
+  var [loading, setLoading] = useState(false)
+  var [error, setError] = useState("")
+  var router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError("")
 
     if (!email || !password) {
-      setError("Please enter your email and password");
-      return;
+      setError("Please enter your email and password")
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
 
     try {
-      const auth = getFirebaseAuth();
+      var auth = getFirebaseAuth()
+      await setPersistence(auth, browserLocalPersistence)
 
-      // Set persistence to LOCAL so user stays logged in
-      await setPersistence(auth, browserLocalPersistence);
+      var userCredential = await signInWithEmailAndPassword(auth, email, password)
+      var user = userCredential.user
 
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      var idToken = await user.getIdToken()
 
-      // Get ID token and create session
-      const idToken = await user.getIdToken();
-
-      const response = await fetch('/api/auth/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      var response = await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to create session');
+        throw new Error("Failed to create session")
       }
 
-      router.push("/dashboard");
-    } catch (err: any) {
-      console.error("Login error:", err);
-      
-      const errorCode = err.code || err.message;
-      
+      router.push("/dashboard")
+    } catch (err) {
+      console.error("Login error:", err)
+      var errorCode = err.code || err.message
+
       if (errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password" || errorCode === "auth/invalid-login-credentials") {
-        setError("Invalid email or password");
+        setError("Invalid email or password")
       } else if (errorCode === "auth/invalid-email") {
-        setError("Invalid email address");
+        setError("Invalid email address")
       } else if (errorCode === "auth/network-request-failed") {
-        setError("Network error. Please check your connection");
+        setError("Network error. Please check your connection")
       } else if (errorCode === "auth/too-many-requests") {
-        setError("Too many failed attempts. Please try again later");
+        setError("Too many failed attempts. Please try again later")
       } else {
-        setError("Login failed. Please check your credentials");
+        setError("Login failed. Please check your credentials")
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-900 to-orange-800">
@@ -79,7 +75,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
@@ -87,6 +83,7 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
+              autoComplete="off"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -101,6 +98,7 @@ export default function LoginPage() {
             <input
               id="password"
               type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -127,5 +125,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

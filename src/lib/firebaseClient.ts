@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, Firestore, Settings } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -23,5 +23,29 @@ export function getFirebaseAuth(): Auth {
 }
 
 export function getFirebaseDb(): Firestore {
-  return getFirestore(getFirebaseApp());
+  const app = getFirebaseApp();
+  const db = getFirestore(app);
+  // Configure Firestore settings to prevent "client is offline" and undefined property errors
+  const settings: Settings = {
+    ignoreUndefinedProperties: true,
+  };
+  db.settings(settings);
+  return db;
+}
+  return getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
+}
+
+export function getFirebaseAuth(): Auth {
+  return getAuth(getFirebaseApp());
+}
+
+export function getFirebaseDb(): Firestore {
+  const app = getFirebaseApp();
+  const db = getFirestore(app);
+  // Configure Firestore settings to prevent "client is offline" and undefined property errors
+  const settings: Settings = {
+    ignoreUndefinedProperties: true,
+  };
+  db.settings(settings);
+  return db;
 }
