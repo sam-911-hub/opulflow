@@ -48,31 +48,47 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="bg-white border border-[#d1d9e0] rounded-lg p-6">
-            <h2 className="text-2xl font-semibold text-[#24292F] mb-2">Starter</h2>
-            <div className="text-3xl font-bold text-[#24292F] mb-4">$99<span className="text-lg font-normal text-[#656d76]">/month</span></div>
-            <p className="text-[#656d76] mb-6">Perfect for startups and small businesses</p>
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                50 qualified leads
+            <h2 className="text-2xl font-semibold text-[#24292F] mb-4">Pay-Per-Use Pricing</h2>
+            <p className="text-[#656d76] mb-6">No subscriptions, pay only for what you use</p>
+            <ul className="space-y-4 mb-6">
+              <li className="flex items-start text-[#656d76]">
+                <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div>
+                  <span className="font-medium text-[#24292F]">$0.30 per human-written comment</span>
+                  <br />
+                  <span className="text-sm">(discounts applicable for bulk orders)</span>
+                </div>
               </li>
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Email outreach
+              <li className="flex items-start text-[#656d76]">
+                <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div>
+                  <span className="font-medium text-[#24292F]">$1.00 per product review</span>
+                </div>
               </li>
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Basic reporting
+              <li className="flex items-start text-[#656d76]">
+                <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div>
+                  <span className="font-medium text-[#24292F]">$1.00 per influencer information searched</span>
+                </div>
+              </li>
+              <li className="flex items-start text-[#656d76]">
+                <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div>
+                  <span className="font-medium text-[#24292F]">$0.015 per word for AI content humanization</span>
+                </div>
               </li>
             </ul>
+            <div className="bg-[#f6f8fa] p-4 rounded-md mb-6">
+              <h3 className="font-medium text-[#24292F] mb-2">Example Costs:</h3>
+              <ul className="text-sm text-[#656d76] space-y-1">
+                <li>• 10 comments = $3.00</li>
+                <li>• 5 product reviews = $5.00</li>
+                <li>• 20 influencer searches = $20.00</li>
+                <li>• 1,000 words humanization = $15.00</li>
+              </ul>
+            </div>
             <Link
               href="/register"
               className="w-full bg-[#24292F] text-white py-2 px-4 rounded-md hover:bg-[#1b1f23] transition-colors font-medium text-center block"
@@ -83,80 +99,41 @@ export default function PricingPage() {
 
           <div className="bg-white border-2 border-[#0969DA] rounded-lg p-6 relative">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-[#0969DA] text-white px-3 py-1 rounded-full text-sm font-medium">Most Popular</span>
+              <span className="bg-[#0969DA] text-white px-3 py-1 rounded-full text-sm font-medium">Buy Credits</span>
             </div>
-            <h2 className="text-2xl font-semibold text-[#24292F] mb-2">Professional</h2>
-            <div className="text-3xl font-bold text-[#24292F] mb-4">$299<span className="text-lg font-normal text-[#656d76]">/month</span></div>
-            <p className="text-[#656d76] mb-6">Best for growing companies</p>
+            <h2 className="text-2xl font-semibold text-[#24292F] mb-4">Credit System</h2>
+            <p className="text-[#656d76] mb-6">Purchase credits and use them for any service</p>
             <ul className="space-y-3 mb-6">
               <li className="flex items-center text-[#656d76]">
                 <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                200 qualified leads
+                PayPal & M-Pesa payments
               </li>
               <li className="flex items-center text-[#656d76]">
                 <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                Multi-channel outreach
+                Credits never expire
               </li>
               <li className="flex items-center text-[#656d76]">
                 <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                Advanced analytics
+                Real-time balance tracking
               </li>
               <li className="flex items-center text-[#656d76]">
                 <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                Priority support
+                Instant order processing
               </li>
             </ul>
             <Link
               href="/register"
               className="w-full bg-[#0969DA] text-white py-2 px-4 rounded-md hover:bg-[#0757c2] transition-colors font-medium text-center block"
             >
-              Get Started
-            </Link>
-          </div>
-
-          <div className="bg-white border border-[#d1d9e0] rounded-lg p-6">
-            <h2 className="text-2xl font-semibold text-[#24292F] mb-2">Enterprise</h2>
-            <div className="text-3xl font-bold text-[#24292F] mb-4">Custom<span className="text-lg font-normal text-[#656d76]">/month</span></div>
-            <p className="text-[#656d76] mb-6">For large organizations with custom needs</p>
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Unlimited leads
-              </li>
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                White-label solution
-              </li>
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Custom integrations
-              </li>
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Dedicated account manager
-              </li>
-            </ul>
-            <Link
-              href="/register"
-              className="w-full bg-[#24292F] text-white py-2 px-4 rounded-md hover:bg-[#1b1f23] transition-colors font-medium text-center block"
-            >
-              Contact Sales
+              Create Account
             </Link>
           </div>
         </div>

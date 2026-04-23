@@ -40,60 +40,92 @@ export default function HowItWorksPage() {
       </nav>
 
       {/* How It Works Content */}
-      <main className="max-w-4xl mx-auto px-4 py-16">
+      <main className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-[#24292F] mb-4">How It Works</h1>
-          <p className="text-xl text-[#656d76] max-w-2xl mx-auto">
-            Our simple 4-step process to get your product in front of the right people.
+          <h1 className="text-4xl font-bold text-[#24292F] mb-4">How OpulFlow Works</h1>
+          <p className="text-xl text-[#656d76] max-w-3xl mx-auto">
+            Here's how each OpulFlow service works, explained simply:
           </p>
         </div>
 
         <div className="space-y-8">
-          <div className="flex flex-col md:flex-row items-center bg-white border border-[#d1d9e0] rounded-lg p-6">
-            <div className="flex-shrink-0 w-16 h-16 bg-[#0969DA] rounded-full flex items-center justify-center mb-4 md:mb-0 md:mr-6">
-              <span className="text-2xl font-bold text-white">1</span>
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold text-[#24292F] mb-2">Define Your Target</h2>
-              <p className="text-[#656d76]">
-                Tell us about your ideal customer profile, industry, company size, and key decision-makers you want to reach.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center bg-white border border-[#d1d9e0] rounded-lg p-6">
-            <div className="flex-shrink-0 w-16 h-16 bg-[#0969DA] rounded-full flex items-center justify-center mb-4 md:mb-0 md:mr-6">
-              <span className="text-2xl font-bold text-white">2</span>
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold text-[#24292F] mb-2">AI-Powered Research</h2>
-              <p className="text-[#656d76]">
-                Our system identifies and qualifies prospects using advanced algorithms and human verification.
-              </p>
+          <div className="bg-white border border-[#d1d9e0] rounded-lg p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-[#0969DA] rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-2xl font-semibold text-[#24292F] mb-3">Comment Writing</h2>
+                <p className="text-[#656d76] leading-relaxed">
+                  You purchase credits, then submit an order telling us your product name, which social media platforms to target (Twitter, Reddit, LinkedIn, Instagram, Facebook, TikTok, or Quora), how many comments you want, and the tone you prefer. We manually find relevant conversations where people are asking for recommendations or solutions, then write and post authentic, helpful comments promoting your brand. We take screenshots of every comment and deliver them to your dashboard and email.
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center bg-white border border-[#d1d9e0] rounded-lg p-6">
-            <div className="flex-shrink-0 w-16 h-16 bg-[#0969DA] rounded-full flex items-center justify-center mb-4 md:mb-0 md:mr-6">
-              <span className="text-2xl font-bold text-white">3</span>
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold text-[#24292F] mb-2">Human Outreach</h2>
-              <p className="text-[#656d76]">
-                Our team of experienced sales professionals personally reaches out with customized messaging.
-              </p>
+          <div className="bg-white border border-[#d1d9e0] rounded-lg p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-[#0969DA] rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-2xl font-semibold text-[#24292F] mb-3">Manual Product Search</h2>
+                <p className="text-[#656d76] leading-relaxed">
+                  You enter your product name into the search tool. We manually search across social media platforms to find and count how many people are actively asking about or seeking recommendations for a product like yours. We give you an estimated number (with a note that actual numbers may be higher) displayed in your dashboard—no links or specific post details, just the demand estimate to help you decide if you want to engage.
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center bg-white border border-[#d1d9e0] rounded-lg p-6">
-            <div className="flex-shrink-0 w-16 h-16 bg-[#0969DA] rounded-full flex items-center justify-center mb-4 md:mb-0 md:mr-6">
-              <span className="text-2xl font-bold text-white">4</span>
+          <div className="bg-white border border-[#d1d9e0] rounded-lg p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-[#0969DA] rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-2xl font-semibold text-[#24292F] mb-3">Influencer Research</h2>
+                <p className="text-[#656d76] leading-relaxed">
+                  You tell us your niche (e.g., fitness, SaaS, beauty, gaming), preferred platforms, and how many influencer profiles you need. We manually research and compile a list of relevant micro-influencers, including their names, social media handles, profile URLs, follower counts, engagement estimates, and contact information where available. We deliver the list to your dashboard and email as a PDF or CSV file.
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-2xl font-semibold text-[#24292F] mb-2">Track & Optimize</h2>
-              <p className="text-[#656d76]">
-                Monitor campaign performance in real-time and receive detailed reports on engagement and conversions.
-              </p>
+          </div>
+
+          <div className="bg-white border border-[#d1d9e0] rounded-lg p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-[#0969DA] rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-2xl font-semibold text-[#24292F] mb-3">Product Reviews</h2>
+                <p className="text-[#656d76] leading-relaxed">
+                  You tell us what needs reviews (your app, book, website, or product), which platform (App Store, Google Play, Amazon, Goodreads, Product Hunt, Capterra, or Trustpilot), and your preferred rating (5-star focused or authentic honest). We write thoughtful, human-generated reviews based on your product's actual features and benefits, post them to the platform, and send you screenshot proof of every review.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-[#d1d9e0] rounded-lg p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-[#0969DA] rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-2xl font-semibold text-[#24292F] mb-3">AI Content Humanization</h2>
+                <p className="text-[#656d76] leading-relaxed">
+                  You upload your AI-generated document (blog post, email, social caption, essay, or article) and tell us the word count and your deadline. We have a real human rewrite the content to sound natural, conversational, and genuinely human—removing robotic phrasing, awkward transitions, and detectable AI patterns while keeping your original message and key points intact. We deliver the humanized version to your email and dashboard.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -103,7 +135,7 @@ export default function HowItWorksPage() {
             href="/register"
             className="bg-[#24292F] text-white px-8 py-3 rounded-md hover:bg-[#1b1f23] transition-colors font-medium"
           >
-            Start Your First Campaign
+            Start Using OpulFlow
           </Link>
         </div>
       </main>
