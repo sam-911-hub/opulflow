@@ -1,0 +1,38 @@
+{
+  "name": "OpulFlow Favicon",
+  "description": "Professional monogram favicon combining O and P letters",
+  "design": {
+    "letterO": {
+      "color": "#2D2A24",
+      "shape": "Slightly rounded, modern, not perfectly circular",
+      "strokeWidth": "Medium (2-3px)",
+      "position": "Center-left"
+    },
+    "letterP": {
+      "color": "#E6B17E",
+      "shape": "Clean, professional serif-like stem",
+      "overlap": "Elegant intersection with O's right side",
+      "strokeWidth": "Medium (2-3px)",
+      "position": "Center-right, overlapping O"
+    },
+    "background": "Transparent",
+    "overall": {
+      "style": "Zoho-inspired - clean, professional, minimalist",
+      "spacing": "Letters touch/intersect elegantly",
+      "balance": "O and P feel like equal partners"
+    }
+  },
+  "sizes": [
+    "16x16",
+    "32x32",
+    "64x64",
+    "180x180"
+  ],
+  "files": [
+    "favicon.ico",
+    "favicon-16x16.png",
+    "favicon-32x32.png",
+    "favicon-64x64.png",
+    "apple-touch-icon.png"
+  ]
+}
