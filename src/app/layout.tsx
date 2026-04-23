@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "OpulFlow - Sales Intelligence Platform",
   description: "Next-gen sales tools for modern teams",
+  verification: {
+    google: "google8c17f0e170a2d62b.html",
+  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",

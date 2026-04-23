@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /privacy
+Allow: /terms
+Allow: /refund
+
+# Disallow admin and user-specific areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+
+# Sitemap location
+Sitemap: https://opulflow.com/sitemap.xml
