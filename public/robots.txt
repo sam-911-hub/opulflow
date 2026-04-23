@@ -10,4 +10,4 @@ Disallow: /api/
 Disallow: /dashboard/
 
 # Sitemap location
-Sitemap: https://opulflow.com/sitemap.xml
+Sitemap: https://opulflow.top/sitemap.xml
