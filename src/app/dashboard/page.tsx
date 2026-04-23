@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { ChevronRightIcon } from "lucide-react"
 
 interface UserInfo {
   uid: string
@@ -52,6 +53,7 @@ export default function DashboardPage() {
   const [activeService, setActiveService] = useState<string | null>(null)
   const [formData, setFormData] = useState<ServiceFormData>({})
   const [activeNav, setActiveNav] = useState('dashboard')
+  const [notificationsExpanded, setNotificationsExpanded] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -442,36 +444,48 @@ export default function DashboardPage() {
             </div>
 
             {/* Notifications & Messages */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">Notifications & Messages</h2>
-              <div className="space-y-3">
-                {orders.length === 0 ? (
-                  <div className="text-center py-6 text-[#848d97]">
-                    <div className="text-3xl mb-2">📬</div>
-                    <div>No notifications yet</div>
-                    <div className="text-sm">Your activity notifications will appear here</div>
+            <div className="bg-[#161b22] border border-[#30363d] rounded-md">
+              <button
+                onClick={() => setNotificationsExpanded(!notificationsExpanded)}
+                className="w-full flex items-center justify-between p-6 hover:bg-[#21262d] transition-colors rounded-md"
+              >
+                <h2 className="text-lg font-semibold text-[#e6edf3]">Notifications & Messages</h2>
+                <ChevronRightIcon
+                  className={`w-5 h-5 text-[#848d97] transition-transform ${notificationsExpanded ? 'rotate-90' : ''}`}
+                />
+              </button>
+              {notificationsExpanded && (
+                <div className="px-6 pb-6">
+                  <div className="space-y-3">
+                    {orders.length === 0 ? (
+                      <div className="text-center py-6 text-[#848d97]">
+                        <div className="text-3xl mb-2">📬</div>
+                        <div>No notifications yet</div>
+                        <div className="text-sm">Your activity notifications will appear here</div>
+                      </div>
+                    ) : (
+                      orders.slice(0, 3).map((order) => (
+                        <div key={order.id} className="flex items-start space-x-3 p-3 bg-[#21262d] rounded-md">
+                          <div className="w-6 h-6 bg-[#2f81f7] rounded-full flex items-center justify-center text-white text-xs mt-0.5">
+                            ✓
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-sm text-[#e6edf3] font-medium">
+                              {getServiceName(order.service || '')} order processed
+                            </div>
+                            <div className="text-xs text-[#848d97] mt-1">
+                              Order {order.orderId} has been {order.status === 'verified' ? 'verified and is being processed' : order.status === 'paid' ? 'paid successfully' : 'submitted'}
+                            </div>
+                            <div className="text-xs text-[#848d97] mt-1">
+                              {new Date(order.date).toLocaleDateString()} at {new Date(order.date).toLocaleTimeString()}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
-                ) : (
-                  orders.slice(0, 3).map((order) => (
-                    <div key={order.id} className="flex items-start space-x-3 p-3 bg-[#21262d] rounded-md">
-                      <div className="w-6 h-6 bg-[#2f81f7] rounded-full flex items-center justify-center text-white text-xs mt-0.5">
-                        ✓
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm text-[#e6edf3] font-medium">
-                          {getServiceName(order.service || '')} order processed
-                        </div>
-                        <div className="text-xs text-[#848d97] mt-1">
-                          Order {order.orderId} has been {order.status === 'verified' ? 'verified and is being processed' : order.status === 'paid' ? 'paid successfully' : 'submitted'}
-                        </div>
-                        <div className="text-xs text-[#848d97] mt-1">
-                          {new Date(order.date).toLocaleDateString()} at {new Date(order.date).toLocaleTimeString()}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Recent Orders Table */}
