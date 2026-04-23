@@ -1,4 +1,4 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+﻿import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore, Settings } from 'firebase/firestore';
 
@@ -25,25 +25,7 @@ export function getFirebaseAuth(): Auth {
 export function getFirebaseDb(): Firestore {
   const app = getFirebaseApp();
   const db = getFirestore(app);
-  // Configure Firestore settings to prevent "client is offline" and undefined property errors
-  const settings: Settings = {
-    ignoreUndefinedProperties: true,
-  };
-  db.settings(settings);
-  return db;
-}
-  return getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
-}
-
-export function getFirebaseAuth(): Auth {
-  return getAuth(getFirebaseApp());
-}
-
-export function getFirebaseDb(): Firestore {
-  const app = getFirebaseApp();
-  const db = getFirestore(app);
-  // Configure Firestore settings to prevent "client is offline" and undefined property errors
-  const settings: Settings = {
+  const settings = {
     ignoreUndefinedProperties: true,
   };
   db.settings(settings);
