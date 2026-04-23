@@ -32,13 +32,11 @@ service cloud.firestore {
     
     // ORDERS collection
     // - Users can read their own orders
-    // - Users can create orders
+    // - Users can create orders with their own userId
     // - Admins can read all
     match /orders/{orderId} {
       allow read: if isOwner(resource.data.userId) || isAdmin();
-      allow create: if request.auth != null;
-      // Only allow users to create orders with their own userId
-      allow create: if request.resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
       allow update: if isOwner(resource.data.userId) || isAdmin();
       allow delete: if isAdmin();
     }
