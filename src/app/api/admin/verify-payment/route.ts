@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
     const adminAuth = await import('@/lib/firebaseAdmin')
     const decodedToken = await adminAuth.getFirebaseAdminAuth().verifyIdToken(session.value)
 
-    // Check if user is admin (samuelomondi288@gmail.com)
-    if (decodedToken.email !== 'samuelomondi288@gmail.com') {
+    // Check if user is admin (opulflow.inc@gmail.com)
+    if (decodedToken.email !== 'opulflow.inc@gmail.com') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getFirebaseAdminAuth } from '@/lib/firebaseAdmin';
 import { getFirebaseAdminDb } from '@/lib/firebaseAdmin';
 
-const ADMIN_EMAIL = "samuelomondi288@gmail.com";
+const ADMIN_EMAIL = "opulflow.inc@gmail.com";
 
 export async function POST(request: NextRequest) {
   try {

@@ -44,7 +44,7 @@ export default function VerifyPaymentsPage() {
         setUser(userData.user)
 
         // Check if user is admin
-        if (userData.user.email !== 'samuelomondi288@gmail.com') {
+        if (userData.user.email !== 'opulflow.inc@gmail.com') {
           alert('Access denied. Admin privileges required.')
           router.push('/dashboard')
           return
@@ -123,7 +123,7 @@ export default function VerifyPaymentsPage() {
   }
 
   // Deny access if not admin
-  if (!user || user.email !== 'samuelomondi288@gmail.com') {
+  if (!user || user.email !== 'opulflow.inc@gmail.com') {
     return (
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
         <div className="max-w-md mx-auto text-center">

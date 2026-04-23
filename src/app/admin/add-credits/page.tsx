@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
 
-const ADMIN_EMAIL = "samuelomondi288@gmail.com";
+const ADMIN_EMAIL = "opulflow.inc@gmail.com";
 
 export default function AddCreditsPage() {
   const [user, setUser] = useState<{ email: string } | null>(null);

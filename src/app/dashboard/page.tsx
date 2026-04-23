@@ -291,7 +291,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 {/* Admin Access */}
-                {user?.email === 'samuelomondi288@gmail.com' && (
+                {user?.email === 'opulflow.inc@gmail.com' && (
                   <div className="pt-2 border-t border-[#30363d]">
                     <Link
                       href="/admin/verify-payments"
