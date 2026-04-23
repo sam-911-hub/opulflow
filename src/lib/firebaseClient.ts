@@ -15,7 +15,17 @@ export function getFirebaseApp(): FirebaseApp {
   if (typeof window === 'undefined') {
     throw new Error('Firebase Client can only be initialized on the client side');
   }
-  return getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
+
+  if (getApps().length > 0) {
+    return getApps()[0];
+  }
+
+  // Validate required config
+  if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+    throw new Error('Firebase configuration is incomplete');
+  }
+
+  return initializeApp(firebaseConfig);
 }
 
 export function getFirebaseAuth(): Auth {
