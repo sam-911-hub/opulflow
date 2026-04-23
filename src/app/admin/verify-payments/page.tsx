@@ -17,15 +17,51 @@ interface Order {
   createdAt: any
 }
 
+interface UserInfo {
+  uid: string
+  email: string
+  credits: number
+  accountType: string
+}
+
 export default function VerifyPaymentsPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [verifying, setVerifying] = useState<string | null>(null)
+  const [user, setUser] = useState<UserInfo | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    fetchPendingOrders()
+    checkAuthentication()
   }, [])
+
+  const checkAuthentication = async () => {
+    try {
+      const userRes = await fetch("/api/user")
+      if (userRes.ok) {
+        const userData = await userRes.json()
+        setUser(userData.user)
+
+        // Check if user is admin
+        if (userData.user.email !== 'samuelomondi288@gmail.com') {
+          alert('Access denied. Admin privileges required.')
+          router.push('/dashboard')
+          return
+        }
+
+        // User is admin, fetch orders
+        fetchPendingOrders()
+      } else {
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Auth check error:', error)
+      router.push('/login')
+    } finally {
+      setAuthLoading(false)
+    }
+  }
 
   const fetchPendingOrders = async () => {
     try {
@@ -78,10 +114,43 @@ export default function VerifyPaymentsPage() {
     }
   }
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+        <div className="text-[#848d97] text-xl">Verifying access...</div>
+      </div>
+    )
+  }
+
+  // Deny access if not admin
+  if (!user || user.email !== 'samuelomondi288@gmail.com') {
+    return (
+      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center">
+          <div className="w-16 h-16 bg-[#da3633] rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-semibold text-[#e6edf3] mb-4">Access Denied</h1>
+          <p className="text-[#848d97] mb-6">
+            You don't have permission to access this admin page.
+          </p>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="bg-[#2f81f7] hover:bg-[#79c0ff] text-white px-6 py-3 rounded-md transition-colors font-medium"
+          >
+            Back to Dashboard
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
-        <div className="text-[#848d97] text-xl">Loading...</div>
+        <div className="text-[#848d97] text-xl">Loading orders...</div>
       </div>
     )
   }
