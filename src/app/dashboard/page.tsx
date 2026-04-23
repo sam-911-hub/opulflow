@@ -30,6 +30,7 @@ interface ServiceFormData {
   targetKeywords?: string
   niche?: string
   platformPreference?: string
+  platformPreferences?: string[]
   numInfluencers?: number
   budgetRange?: string
   platform?: string
@@ -38,6 +39,10 @@ interface ServiceFormData {
   file?: File
   wordCount?: number
   deadline?: string
+  commentType?: string
+  influencerSize?: string
+  contentFocus?: string
+  reviewFocus?: string
 }
 
 export default function DashboardPage() {
@@ -506,28 +511,50 @@ export default function DashboardPage() {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-[#e6edf3] mb-2">Platforms *</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {['Twitter', 'Reddit', 'LinkedIn', 'Instagram', 'Facebook', 'TikTok', 'Quora'].map(platform => (
-                          <label key={platform} className="flex items-center text-[#e6edf3] text-sm">
-                            <input
-                              type="checkbox"
-                              className="mr-2"
-                              onChange={(e) => {
-                                const current = formData.platforms || []
-                                if (e.target.checked) {
-                                  updateFormData('platforms', [...current, platform])
-                                } else {
-                                  updateFormData('platforms', current.filter(p => p !== platform))
-                                }
-                              }}
-                            />
-                            {platform}
-                          </label>
-                        ))}
-                      </div>
-                    </div>
+              <div>
+                <label className="block text-sm font-medium text-[#e6edf3] mb-2">Platforms *</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    'Twitter/X', 'Reddit', 'LinkedIn', 'Instagram', 'Facebook',
+                    'TikTok', 'Quora', 'YouTube', 'Discord', 'Telegram',
+                    'Pinterest', 'Tumblr', 'Medium', 'HackerNews', 'ProductHunt'
+                  ].map(platform => (
+                    <label key={platform} className="flex items-center text-[#e6edf3] text-sm">
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        onChange={(e) => {
+                          const current = formData.platforms || []
+                          if (e.target.checked) {
+                            updateFormData('platforms', [...current, platform])
+                          } else {
+                            updateFormData('platforms', current.filter(p => p !== platform))
+                          }
+                        }}
+                      />
+                      {platform}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#e6edf3] mb-2">Comment Type</label>
+                <select
+                  className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+                  onChange={(e) => updateFormData('commentType', e.target.value)}
+                >
+                  <option value="">Select type</option>
+                  <option value="question">Question/Help Request</option>
+                  <option value="recommendation">Recommendation Request</option>
+                  <option value="complaint">Complaint/Issue</option>
+                  <option value="praise">Praise/Positive Feedback</option>
+                  <option value="comparison">Comparison Request</option>
+                  <option value="tutorial">Tutorial/How-to</option>
+                  <option value="review">Review Request</option>
+                  <option value="discussion">General Discussion</option>
+                </select>
+              </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#e6edf3] mb-2">Quantity (1-100) *</label>
@@ -551,6 +578,10 @@ export default function DashboardPage() {
                         <option value="casual">Casual</option>
                         <option value="enthusiastic">Enthusiastic</option>
                         <option value="helpful">Helpful</option>
+                        <option value="urgent">Urgent/Important</option>
+                        <option value="educational">Educational</option>
+                        <option value="humorous">Humorous/Light</option>
+                        <option value="controversial">Controversial</option>
                       </select>
                     </div>
 
@@ -604,20 +635,66 @@ export default function DashboardPage() {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-[#e6edf3] mb-2">Platform Preference</label>
-                      <select
-                        className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
-                        onChange={(e) => updateFormData('platformPreference', e.target.value)}
-                      >
-                        <option value="">Any platform</option>
-                        <option value="Instagram">Instagram</option>
-                        <option value="TikTok">TikTok</option>
-                        <option value="YouTube">YouTube</option>
-                        <option value="Twitter">Twitter</option>
-                        <option value="LinkedIn">LinkedIn</option>
-                      </select>
-                    </div>
+              <div>
+                <label className="block text-sm font-medium text-[#e6edf3] mb-1">Platform Preferences</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    'Instagram', 'TikTok', 'YouTube', 'Twitter/X', 'LinkedIn',
+                    'Facebook', 'Pinterest', 'Snapchat', 'Twitch', 'Discord'
+                  ].map(platform => (
+                    <label key={platform} className="flex items-center text-[#e6edf3] text-sm">
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        onChange={(e) => {
+                          const current = formData.platformPreferences || []
+                          if (e.target.checked) {
+                            updateFormData('platformPreferences', [...current, platform])
+                          } else {
+                            updateFormData('platformPreferences', current.filter(p => p !== platform))
+                          }
+                        }}
+                      />
+                      {platform}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#e6edf3] mb-1">Influencer Size</label>
+                <select
+                  className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+                  onChange={(e) => updateFormData('influencerSize', e.target.value)}
+                >
+                  <option value="">Any size</option>
+                  <option value="nano">Nano (1K-10K)</option>
+                  <option value="micro">Micro (10K-100K)</option>
+                  <option value="mid">Mid-tier (100K-500K)</option>
+                  <option value="macro">Macro (500K-1M)</option>
+                  <option value="mega">Mega (1M+)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#e6edf3] mb-1">Content Focus</label>
+                <select
+                  className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+                  onChange={(e) => updateFormData('contentFocus', e.target.value)}
+                >
+                  <option value="">Any focus</option>
+                  <option value="lifestyle">Lifestyle</option>
+                  <option value="fashion">Fashion & Beauty</option>
+                  <option value="tech">Technology</option>
+                  <option value="gaming">Gaming</option>
+                  <option value="food">Food & Cooking</option>
+                  <option value="fitness">Fitness & Health</option>
+                  <option value="travel">Travel</option>
+                  <option value="business">Business & Finance</option>
+                  <option value="education">Education</option>
+                  <option value="entertainment">Entertainment</option>
+                </select>
+              </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#e6edf3] mb-2">Number of Influencers (1-50) *</label>
@@ -672,17 +749,37 @@ export default function DashboardPage() {
                       </select>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-[#e6edf3] mb-2">Rating Preference *</label>
-                      <select
-                        className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
-                        onChange={(e) => updateFormData('ratingPreference', e.target.value)}
-                      >
-                        <option value="">Select preference</option>
-                        <option value="5-star focused">5-star focused</option>
-                        <option value="authentic honest">Authentic honest</option>
-                      </select>
-                    </div>
+              <div>
+                <label className="block text-sm font-medium text-[#e6edf3] mb-1">Rating Preference *</label>
+                <select
+                  className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+                  onChange={(e) => updateFormData('ratingPreference', e.target.value)}
+                >
+                  <option value="">Select preference</option>
+                  <option value="5-star focused">5-star focused</option>
+                  <option value="4-star positive">4-star positive</option>
+                  <option value="3-star mixed">3-star mixed</option>
+                  <option value="authentic honest">Authentic honest</option>
+                  <option value="critical constructive">Critical but constructive</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#e6edf3] mb-1">Review Focus</label>
+                <select
+                  className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+                  onChange={(e) => updateFormData('reviewFocus', e.target.value)}
+                >
+                  <option value="">General review</option>
+                  <option value="features">Feature highlights</option>
+                  <option value="usability">Ease of use</option>
+                  <option value="performance">Performance & speed</option>
+                  <option value="support">Customer support</option>
+                  <option value="pricing">Value for money</option>
+                  <option value="comparison">Comparison with competitors</option>
+                  <option value="pros-cons">Balanced pros & cons</option>
+                </select>
+              </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#e6edf3] mb-2">Key Points to Mention</label>

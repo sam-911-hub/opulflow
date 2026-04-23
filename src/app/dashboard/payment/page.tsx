@@ -18,6 +18,7 @@ export default function PaymentPage() {
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState<'paypal' | 'mpesa'>('paypal')
   const [mpesaCode, setMpesaCode] = useState('')
+  const [paypalTransactionId, setPaypalTransactionId] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
@@ -62,10 +63,11 @@ export default function PaymentPage() {
           userEmail: orderData.userEmail,
           formData: orderData.formData,
           totalCost: orderData.totalCost,
-          paymentMethod: isFreeService ? 'free' : paymentMethod,
-          mpesaCode: confirmationCode,
+          paymentMethod,
+          mpesaCode: paymentMethod === 'mpesa' ? confirmationCode : undefined,
+          paypalTransactionId: paymentMethod === 'paypal' ? paypalTransactionId : undefined,
           timestamp: orderData.timestamp,
-          orderId
+          orderId: orderId
         }),
       })
 
@@ -232,6 +234,19 @@ export default function PaymentPage() {
                   <div className="text-xs text-[#848d97] mb-1">Order ID for reference:</div>
                   <div className="font-mono text-[#e6edf3]">{orderId}</div>
                 </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-[#e6edf3]">PayPal Transaction ID (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 8X123456789012345"
+                    value={paypalTransactionId}
+                    onChange={(e) => setPaypalTransactionId(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+                  />
+                  <div className="text-xs text-[#848d97]">You can find this in your PayPal transaction details</div>
+                </div>
+
                 <div className="text-sm text-[#848d97]">
                   Payments verified within 2 hours during working hours (Mon-Sat, 7AM-5PM EAT)
                 </div>

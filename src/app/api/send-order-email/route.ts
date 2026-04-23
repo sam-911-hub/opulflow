@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { service, userEmail, formData, totalCost, paymentMethod, timestamp } = body
+    const { service, userEmail, formData, totalCost, paymentMethod, timestamp, orderId, mpesaCode, paypalTransactionId } = body
 
     if (!service || !userEmail || !totalCost || !paymentMethod) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -23,11 +23,14 @@ export async function POST(request: NextRequest) {
 
     // Create detailed order information
     const orderDetails = {
+      orderId: orderId || 'N/A',
       service: getServiceName(service),
       userEmail,
       paymentMethod: paymentMethod.toUpperCase(),
       totalCost: `$${totalCost.toFixed(2)}`,
       timestamp: new Date(timestamp).toLocaleString(),
+      paymentConfirmation: paymentMethod === 'paypal' && paypalTransactionId ? `PayPal Transaction ID: ${paypalTransactionId}` :
+                           paymentMethod === 'mpesa' && mpesaCode ? `M-PESA Code: ${mpesaCode}` : 'Pending verification',
       details: formData
     }
 
@@ -35,11 +38,13 @@ export async function POST(request: NextRequest) {
     const emailContent = `
 New OpulFlow Order Received!
 
+Order ID: ${orderDetails.orderId}
 Service: ${orderDetails.service}
 Customer Email: ${orderDetails.userEmail}
 Payment Method: ${orderDetails.paymentMethod}
 Total Amount: ${orderDetails.totalCost}
 Order Date: ${orderDetails.timestamp}
+Payment Confirmation: ${orderDetails.paymentConfirmation}
 
 Order Details:
 ${JSON.stringify(orderDetails.details, null, 2)}
@@ -67,15 +72,17 @@ Please process this order promptly and update the customer on progress.
                 Name: 'OpulFlow Admin'
               }
             ],
-            Subject: `New ${orderDetails.service} Order - $${totalCost.toFixed(2)}`,
+            Subject: `New ${orderDetails.service} Order - ${orderDetails.orderId} - $${totalCost.toFixed(2)}`,
             TextPart: emailContent,
             HTMLPart: `
               <h2>New OpulFlow Order Received!</h2>
+              <p><strong>Order ID:</strong> <code style="background: #f6f8fa; padding: 2px 6px; border-radius: 3px; font-family: monospace;">${orderDetails.orderId}</code></p>
               <p><strong>Service:</strong> ${orderDetails.service}</p>
               <p><strong>Customer Email:</strong> ${orderDetails.userEmail}</p>
               <p><strong>Payment Method:</strong> ${orderDetails.paymentMethod}</p>
               <p><strong>Total Amount:</strong> ${orderDetails.totalCost}</p>
               <p><strong>Order Date:</strong> ${orderDetails.timestamp}</p>
+              <p><strong>Payment Confirmation:</strong> <code style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; font-family: monospace;">${orderDetails.paymentConfirmation}</code></p>
 
               <h3>Order Details:</h3>
               <pre style="background: #f6f8fa; padding: 15px; border-radius: 5px; overflow-x: auto;">${JSON.stringify(orderDetails.details, null, 2)}</pre>
