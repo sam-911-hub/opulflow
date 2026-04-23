@@ -82,6 +82,9 @@ export default function ProductPage() {
                 <p className="text-[#656d76] mb-4">
                   We manually search social media to provide an estimated count of how many people are asking about or seeking recommendations for a specific product.
                 </p>
+                <div className="bg-green-50 border border-green-200 rounded-md p-3 mb-4">
+                  <p className="text-sm text-green-800 font-medium">🎉 This service is completely FREE!</p>
+                </div>
                 <div className="bg-[#f6f8fa] p-4 rounded-md">
                   <p className="text-sm text-[#656d76]">
                     <strong>How it works:</strong> You enter your product name into the search tool. We manually search across social media platforms to find and count how many people are actively asking about or seeking recommendations for a product like yours. We give you an estimated number (with a note that actual numbers may be higher) displayed in your dashboard—no links or specific post details, just the demand estimate to help you decide if you want to engage.

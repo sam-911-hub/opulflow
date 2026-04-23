@@ -82,7 +82,7 @@ export default function DashboardPage() {
         if (quantity >= 50) return quantity * 0.30 * 0.9
         return quantity * 0.30
       case 'search':
-        return 5.00
+        return 0.00
       case 'influencer':
         return (data.numInfluencers || 0) * 0.30
       case 'review':
@@ -367,10 +367,10 @@ export default function DashboardPage() {
                   className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left"
                 >
                   <span className="text-lg mr-3">🔍</span>
-                  <div>
-                    <div className="text-sm font-medium text-[#e6edf3]">Product Search</div>
-                    <div className="text-xs text-[#848d97]">$5.00</div>
-                  </div>
+                <div>
+                  <div className="text-sm font-medium text-[#e6edf3]">Product Search</div>
+                  <div className="text-xs text-[#848d97]">Free</div>
+                </div>
                 </button>
 
                 <button

@@ -24,11 +24,19 @@ export default function PaymentPage() {
   useEffect(() => {
     const pendingOrder = localStorage.getItem('pendingOrder')
     if (pendingOrder) {
-      setOrderData(JSON.parse(pendingOrder))
+      const order = JSON.parse(pendingOrder)
+      setOrderData(order)
     } else {
       router.push('/dashboard')
     }
   }, [router])
+
+  // Auto-process free orders
+  useEffect(() => {
+    if (orderData && orderData.totalCost === 0 && !loading) {
+      handlePaymentConfirmation('free')
+    }
+  }, [orderData])
 
   const handlePaymentConfirmation = async (paymentMethod: string, confirmationCode?: string) => {
     if (!orderData) {
@@ -41,6 +49,10 @@ export default function PaymentPage() {
     try {
       const orderId = orderData.orderId || `OPF-${Date.now()}`
 
+      // For free services, skip payment verification and mark as paid directly
+      const isFreeService = orderData.totalCost === 0
+      const orderStatus = isFreeService ? 'paid' : 'pending_verification'
+
       // Send email notification
       const emailResponse = await fetch('/api/send-order-email', {
         method: 'POST',
@@ -50,7 +62,7 @@ export default function PaymentPage() {
           userEmail: orderData.userEmail,
           formData: orderData.formData,
           totalCost: orderData.totalCost,
-          paymentMethod,
+          paymentMethod: isFreeService ? 'free' : paymentMethod,
           mpesaCode: confirmationCode,
           timestamp: orderData.timestamp,
           orderId
@@ -69,9 +81,9 @@ export default function PaymentPage() {
           service: orderData.service,
           formData: orderData.formData,
           totalCost: orderData.totalCost,
-          paymentMethod,
+          paymentMethod: isFreeService ? 'free' : paymentMethod,
           mpesaCode: confirmationCode,
-          status: 'pending_verification',
+          status: orderStatus,
           orderId
         }),
       })
@@ -81,7 +93,13 @@ export default function PaymentPage() {
       }
 
       localStorage.removeItem('pendingOrder')
-      alert('Payment recorded! We\'ll verify within 2 hours and email you when work begins.')
+
+      if (isFreeService) {
+        alert('Order placed successfully! Your free product search will be processed soon.')
+      } else {
+        alert('Payment recorded! We\'ll verify within 2 hours and email you when work begins.')
+      }
+
       router.push('/dashboard')
 
     } catch (error) {
@@ -117,6 +135,28 @@ export default function PaymentPage() {
     return (
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
         <div className="text-[#848d97] text-xl">Loading...</div>
+      </div>
+    )
+  }
+
+  // For free services, show processing message
+  if (orderData.totalCost === 0) {
+    return (
+      <div className="min-h-screen bg-[#0d1117] text-[#e6edf3] flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center">
+          <div className="w-16 h-16 bg-[#238636] rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-semibold text-[#e6edf3] mb-4">Processing Free Order</h1>
+          <p className="text-[#848d97] mb-6">
+            Your free product search is being processed. You'll receive the results soon!
+          </p>
+          <div className="text-sm text-[#848d97]">
+            Redirecting to dashboard...
+          </div>
+        </div>
       </div>
     )
   }

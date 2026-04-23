@@ -62,6 +62,14 @@ export default function PricingPage() {
                 </div>
               </li>
               <li className="flex items-start text-[#656d76]">
+                <div className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <div>
+                  <span className="font-medium text-green-800">FREE - Manual product search</span>
+                  <br />
+                  <span className="text-sm">Get demand estimates for your product</span>
+                </div>
+              </li>
+              <li className="flex items-start text-[#656d76]">
                 <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
                 <div>
                   <span className="font-medium text-[#24292F]">$1.00 per product review</span>
@@ -84,6 +92,7 @@ export default function PricingPage() {
               <h3 className="font-medium text-[#24292F] mb-2">Example Costs:</h3>
               <ul className="text-sm text-[#656d76] space-y-1">
                 <li>• 10 comments = $3.00</li>
+                <li>• Product search = FREE</li>
                 <li>• 5 product reviews = $5.00</li>
                 <li>• 20 influencer searches = $20.00</li>
                 <li>• 1,000 words humanization = $15.00</li>
