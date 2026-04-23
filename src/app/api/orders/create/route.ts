@@ -5,7 +5,7 @@ import { getFirebaseAdminDb } from '@/lib/firebaseAdmin';
 export async function POST(request: NextRequest) {
   try {
     const session = request.cookies.get('session');
-    
+
     if (!session?.value) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
@@ -16,14 +16,13 @@ export async function POST(request: NextRequest) {
 
     // Get request body
     const body = await request.json();
-    const { userId: bodyUserId, userEmail, productName, platforms, quantity, tone, instructions, totalCost } = body;
+    const { service, formData, totalCost, paymentMethod, status = 'pending' } = body;
 
-    // Verify user owns the session
-    if (userId !== bodyUserId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    if (!service || !totalCost || !paymentMethod) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Get user credits from Firestore
+    // Get user from Firestore to get email
     const db = getFirebaseAdminDb();
     const userRef = db.collection('users').doc(userId);
     const userDoc = await userRef.get();
@@ -33,64 +32,31 @@ export async function POST(request: NextRequest) {
     }
 
     const userData = userDoc.data();
-    const currentCredits = userData?.credits || 0;
-
-    // Check if user has enough credits
-    if (currentCredits < totalCost) {
-      return NextResponse.json({ 
-        error: 'Insufficient credits',
-        currentCredits,
-        requiredCredits: totalCost
-      }, { status: 400 });
-    }
+    const userEmail = userData?.email || decodedToken.email;
 
     // Generate order ID
-    const orderId = `OPF-${Date.now()}`;
+    const orderId = `OPF-${Date.now()}-${service.toUpperCase()}`;
     const timestamp = new Date();
 
-    // Create order document
+    // Create order document with service-specific data
     const orderRef = db.collection('orders').doc(orderId);
     await orderRef.set({
       orderId,
       userId,
       userEmail,
-      productName,
-      platforms,
-      quantity,
-      tone,
-      instructions: instructions || '',
+      service,
+      formData,
       totalCost,
-      creditsUsed: totalCost,
-      status: 'pending',
+      paymentMethod,
+      status,
       createdAt: timestamp,
+      // Legacy fields for backward compatibility
+      productName: formData.productName || '',
+      platforms: formData.platforms || [],
+      quantity: formData.quantity || formData.numInfluencers || 1,
+      tone: formData.tone || '',
+      instructions: formData.specialInstructions || formData.keyPoints || '',
     });
-
-    // Deduct credits from user
-    await userRef.update({
-      credits: currentCredits - totalCost,
-    });
-
-    // Send email notification to admin (non-blocking)
-    try {
-      await fetch(`${request.nextUrl.origin}/api/orders/send-admin-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId,
-          userEmail,
-          productName,
-          platforms,
-          quantity,
-          tone,
-          instructions,
-          totalCost,
-          status: 'pending',
-          createdAt: timestamp.toISOString(),
-        }),
-      });
-    } catch (emailError) {
-      console.error('Failed to send admin email (non-blocking):', emailError);
-    }
 
     return NextResponse.json({
       success: true,
