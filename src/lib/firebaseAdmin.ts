@@ -1,6 +1,7 @@
-import { initializeApp, getApps, cert, FirebaseApp } from 'firebase-admin/app';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getAuth as getAdminAuth, Auth } from 'firebase-admin/auth';
 import { getFirestore as getAdminFirestore, Firestore } from 'firebase-admin/firestore';
+
 
 const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
 const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
@@ -14,7 +15,7 @@ if (privateKey && !privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
   privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----\n`;
 }
 
-export function getFirebaseAdminApp(): FirebaseApp {
+export function getFirebaseAdminApp() {
   if (getApps().length > 0) {
     return getApps()[0];
   }

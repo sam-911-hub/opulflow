@@ -17,10 +17,10 @@ export async function GET(request: NextRequest) {
     // Get user from Auth
     const user = await getFirebaseAdminAuth().getUser(userId);
 
-    // Get user data from Firestore
-    const db = getFirebaseAdminDb();
-    const userDoc = await db.collection('users').doc(userId).get();
-    const userData = userDoc.exists() ? userDoc.data() : {};
+     // Get user data from Firestore
+     const db = getFirebaseAdminDb();
+     const userDoc = await db.collection('users').doc(userId).get();
+     const userData = userDoc.exists ? userDoc.data() : {};
 
     return NextResponse.json({
       user: {

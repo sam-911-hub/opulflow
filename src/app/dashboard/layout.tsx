@@ -20,47 +20,47 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-900 to-orange-800">
+    <div className="min-h-screen bg-[#F6F8FA]">
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-gray-900 text-white min-h-screen p-4">
+        <aside className="w-64 bg-white border-r border-[#d1d9e0] min-h-screen p-4">
           <div className="mb-8">
-            <h1 className="text-xl font-bold">OpulFlow</h1>
+            <h1 className="text-xl font-semibold text-[#24292F]">OpulFlow</h1>
           </div>
-          
-          <nav className="space-y-2">
+
+          <nav className="space-y-1">
             <Link
               href="/dashboard"
-              className="block py-2 px-4 rounded hover:bg-orange-700"
+              className="block py-2 px-3 rounded-md hover:bg-[#f6f8fa] text-[#24292F] hover:text-[#0969DA] transition-colors"
             >
               Dashboard
             </Link>
             <Link
-              href="/dashboard/place-order"
-              className="block py-2 px-4 rounded hover:bg-orange-700"
-            >
-              Place Order
-            </Link>
-            <Link
               href="/dashboard/orders"
-              className="block py-2 px-4 rounded hover:bg-orange-700"
+              className="block py-2 px-3 rounded-md hover:bg-[#f6f8fa] text-[#24292F] hover:text-[#0969DA] transition-colors"
             >
               Orders
             </Link>
             <Link
               href="/dashboard/buy-credits"
-              className="block py-2 px-4 rounded hover:bg-orange-700"
+              className="block py-2 px-3 rounded-md hover:bg-[#f6f8fa] text-[#24292F] hover:text-[#0969DA] transition-colors"
             >
               Buy Credits
             </Link>
+            <Link
+              href="/dashboard/settings"
+              className="block py-2 px-3 rounded-md hover:bg-[#f6f8fa] text-[#24292F] hover:text-[#0969DA] transition-colors"
+            >
+              Settings
+            </Link>
           </nav>
 
-          <div className="mt-8">
+          <div className="mt-auto pt-8">
             <button
               onClick={handleLogout}
-              className="w-full bg-red-600 py-2 px-4 rounded hover:bg-red-700"
+              className="w-full bg-[#dc3545] text-white py-2 px-3 rounded-md hover:bg-[#c82333] transition-colors"
             >
-              Logout
+              Sign out
             </button>
           </div>
         </aside>

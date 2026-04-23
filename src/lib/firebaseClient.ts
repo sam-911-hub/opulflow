@@ -1,6 +1,6 @@
-﻿import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore, Settings } from 'firebase/firestore';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -25,9 +25,5 @@ export function getFirebaseAuth(): Auth {
 export function getFirebaseDb(): Firestore {
   const app = getFirebaseApp();
   const db = getFirestore(app);
-  const settings = {
-    ignoreUndefinedProperties: true,
-  };
-  db.settings(settings);
   return db;
 }

@@ -13,7 +13,7 @@ export default function LoginPage() {
   var [error, setError] = useState("")
   var router = useRouter()
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError("")
 
@@ -44,41 +44,41 @@ export default function LoginPage() {
       }
 
       router.push("/dashboard")
-    } catch (err) {
-      console.error("Login error:", err)
-      var errorCode = err.code || err.message
+     } catch (err: any) {
+       console.error("Login error:", err)
+       const errorCode = err.code || err.message
 
-      if (errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password" || errorCode === "auth/invalid-login-credentials") {
-        setError("Invalid email or password")
-      } else if (errorCode === "auth/invalid-email") {
-        setError("Invalid email address")
-      } else if (errorCode === "auth/network-request-failed") {
-        setError("Network error. Please check your connection")
-      } else if (errorCode === "auth/too-many-requests") {
-        setError("Too many failed attempts. Please try again later")
-      } else {
-        setError("Login failed. Please check your credentials")
-      }
-    } finally {
-      setLoading(false)
-    }
+       if (errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password" || errorCode === "auth/invalid-login-credentials") {
+         setError("Invalid email or password")
+       } else if (errorCode === "auth/invalid-email") {
+         setError("Invalid email address")
+       } else if (errorCode === "auth/network-request-failed") {
+         setError("Network error. Please check your connection")
+       } else if (errorCode === "auth/too-many-requests") {
+         setError("Too many failed attempts. Please try again later")
+       } else {
+         setError("Login failed. Please check your credentials")
+       }
+     } finally {
+       setLoading(false)
+     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-900 to-orange-800">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">Sign In</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#F6F8FA]">
+      <div className="bg-white border border-[#d1d9e0] p-8 rounded-lg w-full max-w-md shadow-sm">
+        <h1 className="text-2xl font-semibold mb-6 text-center text-[#24292F]">Sign in to OpulFlow</h1>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-[#ffebe9] border border-[#ff8182] text-[#cf222e] px-4 py-3 rounded-md mb-4 text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
+            <label htmlFor="email" className="block text-sm font-medium text-[#24292F] mb-2">
+              Email address
             </label>
             <input
               id="email"
@@ -86,13 +86,13 @@ export default function LoginPage() {
               autoComplete="off"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="block w-full px-3 py-2 border border-[#d1d9e0] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0969DA] focus:border-[#0969DA] bg-white"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="block text-sm font-medium text-[#24292F] mb-2">
               Password
             </label>
             <input
@@ -101,7 +101,7 @@ export default function LoginPage() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="block w-full px-3 py-2 border border-[#d1d9e0] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0969DA] focus:border-[#0969DA] bg-white"
               required
             />
           </div>
@@ -109,17 +109,17 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#24292F] text-white py-2 px-4 rounded-md hover:bg-[#1b1f23] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
-        <div className="mt-4 text-center">
-          <p className="text-gray-600">
-            Don't have an account?{" "}
-            <Link href="/register" className="text-orange-600 hover:text-orange-700 font-medium">
-              Register
+        <div className="mt-6 text-center">
+          <p className="text-[#656d76]">
+            New to OpulFlow?{" "}
+            <Link href="/register" className="text-[#0969DA] hover:text-[#0757c2] font-medium">
+              Create an account
             </Link>
           </p>
         </div>
