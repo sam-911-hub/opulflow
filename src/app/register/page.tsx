@@ -18,7 +18,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     if (!email || !password || !confirmPassword) {
       setError("Please fill in all fields");
       return;
@@ -64,10 +64,10 @@ export default function RegisterPage() {
       });
 
       router.push("/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Registration error:", err);
       const errCode = err.code || err.message;
-      
+
       if (errCode === "auth/email-already-in-use") {
         setError("Email is already registered");
       } else if (errCode === "auth/invalid-email") {
@@ -85,19 +85,19 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F6F8FA]">
-      <div className="bg-white border border-[#d1d9e0] p-8 rounded-lg w-full max-w-md shadow-sm">
-        <h1 className="text-2xl font-semibold mb-6 text-center text-[#24292F]">Create your account</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#0d1117]">
+      <div className="bg-[#161b22] border border-[#30363d] p-8 rounded-md w-full max-w-md">
+        <h1 className="text-2xl font-semibold mb-6 text-center text-[#e6edf3]">Create your account</h1>
 
         {error && (
-          <div className="bg-[#ffebe9] border border-[#ff8182] text-[#cf222e] px-4 py-3 rounded-md mb-4 text-sm">
+          <div className="bg-[#da3633] border border-[#f85149] text-white px-4 py-3 rounded-md mb-4 text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[#24292F] mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-[#e6edf3] mb-2">
               Email address
             </label>
             <input
@@ -106,13 +106,14 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="username"
-              className="block w-full px-3 py-2 border border-[#d1d9e0] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0969DA] focus:border-[#0969DA] bg-white"
+              className="block w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+              placeholder="Enter your email"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[#24292F] mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-[#e6edf3] mb-2">
               Password
             </label>
             <input
@@ -121,13 +122,14 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="new-password"
-              className="block w-full px-3 py-2 border border-[#d1d9e0] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0969DA] focus:border-[#0969DA] bg-white"
+              className="block w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+              placeholder="Create a password"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#24292F] mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#e6edf3] mb-2">
               Confirm password
             </label>
             <input
@@ -136,7 +138,8 @@ export default function RegisterPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               autoComplete="new-password"
-              className="block w-full px-3 py-2 border border-[#d1d9e0] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0969DA] focus:border-[#0969DA] bg-white"
+              className="block w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+              placeholder="Confirm your password"
               required
               minLength={6}
             />
@@ -145,16 +148,16 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#24292F] text-white py-2 px-4 rounded-md hover:bg-[#1b1f23] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="w-full bg-[#238636] hover:bg-[#2ea043] text-white py-2 px-4 rounded-md transition-colors font-medium disabled:opacity-50"
           >
             {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-[#656d76]">
+          <p className="text-[#848d97]">
             Already have an account?{" "}
-            <Link href="/login" className="text-[#0969DA] hover:text-[#0757c2] font-medium">
+            <Link href="/login" className="text-[#2f81f7] hover:text-[#79c0ff] font-medium">
               Sign in
             </Link>
           </p>

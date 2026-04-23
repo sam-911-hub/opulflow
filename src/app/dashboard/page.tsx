@@ -100,14 +100,42 @@ export default function DashboardPage() {
   }
 
   const handleSubmit = async (service: string) => {
-    // Basic validation
-    if (!formData.productName && service !== 'search') {
-      alert('Please fill in all required fields')
-      return
+    // Service-specific validation
+    switch (service) {
+      case 'comment':
+        if (!formData.productName || !formData.platforms || formData.platforms.length === 0 || !formData.quantity) {
+          alert('Please fill in product name, select platforms, and specify quantity')
+          return
+        }
+        break
+      case 'search':
+        if (!formData.productName) {
+          alert('Please enter a product name')
+          return
+        }
+        break
+      case 'influencer':
+        if (!formData.niche || !formData.numInfluencers) {
+          alert('Please fill in niche and number of influencers')
+          return
+        }
+        break
+      case 'review':
+        if (!formData.productName || !formData.platform) {
+          alert('Please fill in product name and select platform')
+          return
+        }
+        break
+      case 'humanization':
+        if (!formData.file || !formData.wordCount) {
+          alert('Please upload a file and specify word count')
+          return
+        }
+        break
     }
 
     const cost = calculateCost(service, formData)
-    if (cost === 0) {
+    if (cost < 0) {
       alert('Invalid order details')
       return
     }
@@ -124,7 +152,7 @@ export default function DashboardPage() {
     router.push('/dashboard/payment')
   }
 
-  const updateFormData = (field: string, value: any) => {
+  const updateFormData = (field: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -410,6 +438,39 @@ export default function DashboardPage() {
                     <div className="text-xs text-[#848d97]">$0.015/word</div>
                   </div>
                 </button>
+              </div>
+            </div>
+
+            {/* Notifications & Messages */}
+            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
+              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">Notifications & Messages</h2>
+              <div className="space-y-3">
+                {orders.length === 0 ? (
+                  <div className="text-center py-6 text-[#848d97]">
+                    <div className="text-3xl mb-2">📬</div>
+                    <div>No notifications yet</div>
+                    <div className="text-sm">Your activity notifications will appear here</div>
+                  </div>
+                ) : (
+                  orders.slice(0, 3).map((order) => (
+                    <div key={order.id} className="flex items-start space-x-3 p-3 bg-[#21262d] rounded-md">
+                      <div className="w-6 h-6 bg-[#2f81f7] rounded-full flex items-center justify-center text-white text-xs mt-0.5">
+                        ✓
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm text-[#e6edf3] font-medium">
+                          {getServiceName(order.service || '')} order processed
+                        </div>
+                        <div className="text-xs text-[#848d97] mt-1">
+                          Order {order.orderId} has been {order.status === 'verified' ? 'verified and is being processed' : order.status === 'paid' ? 'paid successfully' : 'submitted'}
+                        </div>
+                        <div className="text-xs text-[#848d97] mt-1">
+                          {new Date(order.date).toLocaleDateString()} at {new Date(order.date).toLocaleTimeString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 

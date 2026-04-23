@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 export default function LoginPage() {
-  var [email, setEmail] = useState("")
-  var [password, setPassword] = useState("")
-  var [loading, setLoading] = useState(false)
-  var [error, setError] = useState("")
-  var router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -25,15 +25,15 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      var auth = getFirebaseAuth()
+      const auth = getFirebaseAuth()
       await setPersistence(auth, browserLocalPersistence)
 
-      var userCredential = await signInWithEmailAndPassword(auth, email, password)
-      var user = userCredential.user
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
 
-      var idToken = await user.getIdToken()
+      const idToken = await user.getIdToken()
 
-      var response = await fetch("/api/auth/session", {
+      const response = await fetch("/api/auth/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
@@ -44,7 +44,7 @@ export default function LoginPage() {
       }
 
       router.push("/dashboard")
-     } catch (err: any) {
+     } catch (err: unknown) {
        console.error("Login error:", err)
        const errorCode = err.code || err.message
 
@@ -65,19 +65,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F6F8FA]">
-      <div className="bg-white border border-[#d1d9e0] p-8 rounded-lg w-full max-w-md shadow-sm">
-        <h1 className="text-2xl font-semibold mb-6 text-center text-[#24292F]">Sign in to OpulFlow</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#0d1117]">
+      <div className="bg-[#161b22] border border-[#30363d] p-8 rounded-md w-full max-w-md">
+        <h1 className="text-2xl font-semibold mb-6 text-center text-[#e6edf3]">Sign in to OpulFlow</h1>
 
         {error && (
-          <div className="bg-[#ffebe9] border border-[#ff8182] text-[#cf222e] px-4 py-3 rounded-md mb-4 text-sm">
+          <div className="bg-[#da3633] border border-[#f85149] text-white px-4 py-3 rounded-md mb-4 text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[#24292F] mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-[#e6edf3] mb-2">
               Email address
             </label>
             <input
@@ -86,13 +86,14 @@ export default function LoginPage() {
               autoComplete="off"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full px-3 py-2 border border-[#d1d9e0] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0969DA] focus:border-[#0969DA] bg-white"
+              className="block w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+              placeholder="Enter your email"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[#24292F] mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-[#e6edf3] mb-2">
               Password
             </label>
             <input
@@ -101,24 +102,34 @@ export default function LoginPage() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full px-3 py-2 border border-[#d1d9e0] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0969DA] focus:border-[#0969DA] bg-white"
+              className="block w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+              placeholder="Enter your password"
               required
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#24292F] text-white py-2 px-4 rounded-md hover:bg-[#1b1f23] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
+          <div className="flex items-center justify-between">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-[#238636] hover:bg-[#2ea043] text-white py-2 px-6 rounded-md transition-colors font-medium disabled:opacity-50"
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+
+            <Link
+              href="/forgot-password"
+              className="text-[#2f81f7] hover:text-[#79c0ff] text-sm"
+            >
+              Forgot password?
+            </Link>
+          </div>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-[#656d76]">
+          <p className="text-[#848d97]">
             New to OpulFlow?{" "}
-            <Link href="/register" className="text-[#0969DA] hover:text-[#0757c2] font-medium">
+            <Link href="/register" className="text-[#2f81f7] hover:text-[#79c0ff] font-medium">
               Create an account
             </Link>
           </p>
