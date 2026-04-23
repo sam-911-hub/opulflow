@@ -290,6 +290,17 @@ export default function DashboardPage() {
                     {user?.credits || 0} credits remaining
                   </div>
                 </div>
+                {/* Admin Access */}
+                {user?.email === 'samuelomondi288@gmail.com' && (
+                  <div className="pt-2 border-t border-[#30363d]">
+                    <Link
+                      href="/admin/verify-payments"
+                      className="text-[#2f81f7] hover:text-[#79c0ff] text-sm font-medium"
+                    >
+                      Admin Panel →
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>

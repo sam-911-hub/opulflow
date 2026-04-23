@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     // Get request body
     const body = await request.json();
-    const { service, formData, totalCost, paymentMethod, status = 'pending' } = body;
+    const { service, formData, totalCost, paymentMethod, mpesaCode, status = 'pending', orderId } = body;
 
     if (!service || !totalCost || !paymentMethod) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -34,20 +34,21 @@ export async function POST(request: NextRequest) {
     const userData = userDoc.data();
     const userEmail = userData?.email || decodedToken.email;
 
-    // Generate order ID
-    const orderId = `OPF-${Date.now()}-${service.toUpperCase()}`;
+    // Use provided orderId or generate new one
+    const finalOrderId = orderId || `OPF-${Date.now()}-${service.toUpperCase()}`;
     const timestamp = new Date();
 
     // Create order document with service-specific data
-    const orderRef = db.collection('orders').doc(orderId);
+    const orderRef = db.collection('orders').doc(finalOrderId);
     await orderRef.set({
-      orderId,
+      orderId: finalOrderId,
       userId,
       userEmail,
       service,
       formData,
       totalCost,
       paymentMethod,
+      mpesaCode: mpesaCode || null,
       status,
       createdAt: timestamp,
       // Legacy fields for backward compatibility
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      orderId,
+      orderId: finalOrderId,
       message: 'Order placed successfully. We will process your order soon!',
     });
   } catch (error: any) {
