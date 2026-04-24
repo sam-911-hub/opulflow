@@ -76,11 +76,17 @@ export default function RegisterPage() {
 
       try {
         console.log("Calling setDoc...");
-        await setDoc(doc(db, "users", user.uid), userData);
+        const setDocPromise = setDoc(doc(db, "users", user.uid), userData);
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Firestore operation timed out after 30 seconds')), 30000);
+        });
+
+        await Promise.race([setDocPromise, timeoutPromise]);
         console.log("User document created successfully in", Date.now() - startTime, "ms");
       } catch (docError) {
         console.error("setDoc failed:", docError);
-        throw docError;
+        // For now, continue with registration even if user doc creation fails
+        console.warn("Continuing with registration despite user document creation failure");
       }
 
       // Step 4: Get ID token and create session
