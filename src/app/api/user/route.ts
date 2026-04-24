@@ -4,23 +4,23 @@ import { getFirebaseAdminDb } from '@/lib/firebaseAdmin'
 
 export async function GET(request: NextRequest) {
   try {
-    var session = request.cookies.get('session')
+    const session = request.cookies.get('session')
     
     if (!session?.value) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    var decodedToken = await getFirebaseAdminAuth().verifyIdToken(session.value)
-    var userId = decodedToken.uid
+    const decodedToken = await getFirebaseAdminAuth().verifyIdToken(session.value)
+    const userId = decodedToken.uid
 
-    var db = getFirebaseAdminDb()
-    var userDoc = await db.collection('users').doc(userId).get()
+    const db = getFirebaseAdminDb()
+    const userDoc = await db.collection('users').doc(userId).get()
 
     if (!userDoc.exists) {
       return NextResponse.json({ user: { uid: userId, email: decodedToken.email, credits: 10, accountType: 'free' } })
     }
 
-    var userData = userDoc.data()
+    const userData = userDoc.data()
     
     return NextResponse.json({
       user: {

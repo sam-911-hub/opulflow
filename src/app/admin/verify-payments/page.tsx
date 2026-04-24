@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 interface Order {
@@ -9,12 +9,12 @@ interface Order {
   userId: string
   userEmail: string
   service: string
-  formData: any
+  formData: Record<string, unknown>
   totalCost: number
   paymentMethod: string
   mpesaCode?: string
   status: string
-  createdAt: any
+  createdAt: Date
 }
 
 interface UserInfo {
@@ -31,10 +31,6 @@ export default function VerifyPaymentsPage() {
   const [user, setUser] = useState<UserInfo | null>(null)
   const [authLoading, setAuthLoading] = useState(true)
   const router = useRouter()
-
-  useEffect(() => {
-    checkAuthentication()
-  }, [])
 
   const checkAuthentication = async () => {
     try {
@@ -62,6 +58,11 @@ export default function VerifyPaymentsPage() {
       setAuthLoading(false)
     }
   }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    checkAuthentication()
+  }, [])
 
   const fetchPendingOrders = async () => {
     try {
@@ -134,7 +135,7 @@ export default function VerifyPaymentsPage() {
           </div>
           <h1 className="text-2xl font-semibold text-[#e6edf3] mb-4">Access Denied</h1>
           <p className="text-[#848d97] mb-6">
-            You don't have permission to access this admin page.
+            You don&apos;t have permission to access this admin page.
           </p>
           <button
             onClick={() => router.push('/dashboard')}

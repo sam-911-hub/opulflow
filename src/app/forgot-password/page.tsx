@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
       // For now, just show a message that password reset is not implemented
       // In production, you would send a password reset email
       setMessage('Password reset functionality will be available soon. Please contact support at opulflow.inc@gmail.com for assistance.')
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.')
     } finally {
       setLoading(false)

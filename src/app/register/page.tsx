@@ -50,7 +50,7 @@ export default function RegisterPage() {
 
       // Step 2: Update profile and create user document in parallel
       console.log("Updating profile and creating user document...");
-      const [profileUpdate, userDocCreation] = await Promise.all([
+      await Promise.all([
         updateProfile(user, {
           displayName: email.split("@")[0],
         }),
