@@ -59,21 +59,23 @@ export default function RegisterPage() {
 
       // Step 3: Create user document
       console.log("Creating user document...");
-      const setDocPromise = setDoc(doc(db, "users", user.uid), {
+      const userData = {
         uid: user.uid,
         email: user.email,
         displayName: email.split("@")[0],
         createdAt: new Date().toISOString(),
         credits: 10,
         accountType: "free",
-      });
+      };
+      console.log("User data to save:", userData);
 
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database operation timed out. Please check your internet connection.')), 5000);
-      });
-
-      await Promise.race([setDocPromise, timeoutPromise]);
-      console.log("User document created in", Date.now() - startTime, "ms");
+      try {
+        await setDoc(doc(db, "users", user.uid), userData);
+        console.log("User document created successfully in", Date.now() - startTime, "ms");
+      } catch (docError) {
+        console.error("setDoc failed:", docError);
+        throw docError;
+      }
 
       // Step 4: Get ID token and create session
       console.log("Getting ID token and creating session...");
