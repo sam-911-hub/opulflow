@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } f
 import { getFirebaseAuth } from "@/lib/firebaseClient"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { getUserFriendlyErrorMessage } from "@/lib/errorMessages"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -44,21 +45,10 @@ export default function LoginPage() {
       }
 
       router.push("/dashboard")
-     } catch (err: unknown) {
-       console.error("Login error:", err)
-       const errorCode = err.code || err.message
-
-       if (errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password" || errorCode === "auth/invalid-login-credentials") {
-         setError("Invalid email or password")
-       } else if (errorCode === "auth/invalid-email") {
-         setError("Invalid email address")
-       } else if (errorCode === "auth/network-request-failed") {
-         setError("Network error. Please check your connection")
-       } else if (errorCode === "auth/too-many-requests") {
-         setError("Too many failed attempts. Please try again later")
-       } else {
-         setError("Login failed. Please check your credentials")
-       }
+      } catch (err: unknown) {
+        console.error("Login error:", err)
+        const friendlyMessage = getUserFriendlyErrorMessage(err)
+        setError(friendlyMessage)
      } finally {
        setLoading(false)
      }

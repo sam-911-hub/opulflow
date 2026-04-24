@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFirebaseAdminAuth } from '@/lib/firebaseAdmin'
 import { getFirebaseAdminDb } from '@/lib/firebaseAdmin'
+import { getUserFriendlyErrorMessage } from '@/lib/errorMessages'
 
 export async function GET(request: NextRequest) {
   try {
     const session = request.cookies.get('session')
     
     if (!session?.value) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+      return NextResponse.json({ error: 'Please log in to continue.' }, { status: 401 })
     }
 
     const decodedToken = await getFirebaseAdminAuth().verifyIdToken(session.value)
@@ -32,6 +33,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('User fetch error', error)
-    return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 })
+    const friendlyMessage = getUserFriendlyErrorMessage(error)
+    return NextResponse.json({ error: friendlyMessage }, { status: 500 })
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFirebaseAdminAuth } from '@/lib/firebaseAdmin';
 import { getFirebaseAdminDb } from '@/lib/firebaseAdmin';
+import { getUserFriendlyErrorMessage } from '@/lib/errorMessages';
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,7 +34,8 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Session GET error:', error);
-    return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
+    const friendlyMessage = getUserFriendlyErrorMessage(error);
+    return NextResponse.json({ error: friendlyMessage }, { status: 401 });
   }
 }
 
@@ -75,6 +77,7 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error: any) {
     console.error('Session error:', error);
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    const friendlyMessage = getUserFriendlyErrorMessage(error);
+    return NextResponse.json({ error: friendlyMessage }, { status: 401 });
   }
 }

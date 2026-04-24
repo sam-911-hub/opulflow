@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import "@/lib/consoleUtils"; // Initialize console utilities
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -54,7 +56,9 @@ export default function RootLayout({
         <meta name="google-site-verification" content="m5CQznjCXSJfkMqq2f5gMPAIsymc7W2RTFembw8xwyc" />
       </head>
       <body className={inter.className}>
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
         <Footer />
       </body>
     </html>

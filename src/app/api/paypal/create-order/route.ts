@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getUserFriendlyErrorMessage } from '@/lib/errorMessages'
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,6 +81,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('PayPal order creation error:', error)
-    return NextResponse.json({ error: 'Failed to create payment order' }, { status: 500 })
+    const friendlyMessage = getUserFriendlyErrorMessage(error)
+    return NextResponse.json({ error: friendlyMessage }, { status: 500 })
   }
 }

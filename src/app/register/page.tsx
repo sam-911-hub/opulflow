@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
+import { getUserFriendlyErrorMessage } from "@/lib/errorMessages";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -99,19 +100,8 @@ export default function RegisterPage() {
       router.push("/dashboard");
     } catch (err: unknown) {
       console.error("Registration error:", err);
-      const errCode = (err as any)?.code || (err as any)?.message;
-
-      if (errCode === "auth/email-already-in-use") {
-        setError("Email is already registered");
-      } else if (errCode === "auth/invalid-email") {
-        setError("Invalid email address");
-      } else if (errCode === "auth/weak-password") {
-        setError("Password is too weak");
-      } else if (errCode === "auth/network-request-failed") {
-        setError("Network error. Please check your connection and try again");
-      } else {
-        setError("Failed to create account. Please try again");
-      }
+      const friendlyMessage = getUserFriendlyErrorMessage(err);
+      setError(friendlyMessage);
     } finally {
       setLoading(false);
     }
