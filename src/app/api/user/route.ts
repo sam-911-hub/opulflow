@@ -15,19 +15,22 @@ export async function GET(request: NextRequest) {
     const userId = decodedToken.uid
 
     const db = getFirebaseAdminDb()
-    const userDoc = await db.collection('users').doc(userId).get()
-
-    if (!userDoc.exists) {
-      return NextResponse.json({ user: { uid: userId, email: decodedToken.email, credits: 10, accountType: 'free' } })
+    let userData = null;
+    try {
+      const userDoc = await db.collection('users').doc(userId).get()
+      if (userDoc.exists) {
+        userData = userDoc.data();
+      }
+    } catch (firestoreError) {
+      console.error('Firestore read error:', firestoreError);
+      // Continue with default data if Firestore fails
     }
 
-    const userData = userDoc.data()
-    
     return NextResponse.json({
       user: {
         uid: userId,
         email: decodedToken.email,
-        credits: userData?.credits || 0,
+        credits: userData?.credits || 10,
         accountType: userData?.accountType || 'free'
       }
     })

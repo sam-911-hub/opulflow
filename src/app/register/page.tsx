@@ -107,7 +107,9 @@ export default function RegisterPage() {
       }
 
       console.log("Session created, registration completed in", Date.now() - startTime, "ms");
+      console.log("Redirecting to dashboard...");
       router.push("/dashboard");
+      console.log("Router.push called");
     } catch (err: unknown) {
       console.error("Registration error:", err);
       const friendlyMessage = getUserFriendlyErrorMessage(err);
