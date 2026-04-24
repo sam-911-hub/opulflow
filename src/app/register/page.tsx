@@ -46,28 +46,36 @@ export default function RegisterPage() {
       console.log("Creating user account...");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log("User account created in", Date.now() - startTime, "ms");
+      console.log("User account created, UID:", user.uid, "in", Date.now() - startTime, "ms");
 
-      // Step 2: Update profile and create user document in parallel
-      console.log("Updating profile and creating user document...");
-      await Promise.all([
-        updateProfile(user, {
+      // Step 2: Update profile
+      console.log("Updating profile...");
+      try {
+        await updateProfile(user, {
           displayName: email.split("@")[0],
-        }),
-        setDoc(doc(db, "users", user.uid), {
-          uid: user.uid,
-          email: user.email,
-          displayName: email.split("@")[0],
-          createdAt: new Date().toISOString(),
-          credits: 10,
-          accountType: "free",
-        })
-      ]);
-      console.log("Profile and document created in", Date.now() - startTime, "ms");
+        });
+        console.log("Profile updated in", Date.now() - startTime, "ms");
+      } catch (profileError) {
+        console.error("Profile update error:", profileError);
+        // Continue anyway, as profile is optional
+      }
 
-      // Step 3: Get ID token and create session
+      // Step 3: Create user document
+      console.log("Creating user document...");
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: email.split("@")[0],
+        createdAt: new Date().toISOString(),
+        credits: 10,
+        accountType: "free",
+      });
+      console.log("User document created in", Date.now() - startTime, "ms");
+
+      // Step 4: Get ID token and create session
       console.log("Getting ID token and creating session...");
       const idToken = await user.getIdToken();
+      console.log("ID token obtained");
 
       const sessionResponse = await fetch('/api/auth/session', {
         method: 'POST',
@@ -76,10 +84,12 @@ export default function RegisterPage() {
       });
 
       if (!sessionResponse.ok) {
+        const errorText = await sessionResponse.text();
+        console.error("Session creation failed:", sessionResponse.status, errorText);
         throw new Error('Failed to create session');
       }
 
-      console.log("Registration completed in", Date.now() - startTime, "ms");
+      console.log("Session created, registration completed in", Date.now() - startTime, "ms");
       router.push("/dashboard");
     } catch (err: unknown) {
       console.error("Registration error:", err);
