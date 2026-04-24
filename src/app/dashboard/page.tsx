@@ -233,11 +233,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Main Content - Two Column Layout */}
-      <div className="px-8 py-6">
-        <div className="flex gap-6">
+      {/* Main Content - Responsive Layout */}
+      <div className="px-4 md:px-8 py-6">
+        <div className="flex flex-col md:flex-row gap-6">
           {/* Left Sidebar - Navigation */}
-          <div className="w-80 flex-shrink-0">
+          <div className="w-full md:w-80 md:flex-shrink-0">
             {/* Navigation */}
             <nav className="space-y-1 mb-6">
               <Link
