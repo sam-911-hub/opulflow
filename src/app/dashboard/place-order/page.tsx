@@ -25,6 +25,7 @@ export default function PlaceOrderPage() {
   const [insufficientCredits, setInsufficientCredits] = useState(false);
   
   const [productName, setProductName] = useState("");
+  const [productLink, setProductLink] = useState("");
   const [platforms, setPlatforms] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [tone, setTone] = useState("Friendly");
@@ -100,8 +101,8 @@ export default function PlaceOrderPage() {
       return;
     }
 
-    if (quantity < 1 || quantity > 100) {
-      setError("Quantity must be between 1 and 100");
+    if (quantity < 1 || quantity > 1000) {
+      setError("Quantity must be between 1 and 1000");
       return;
     }
 
@@ -123,6 +124,7 @@ export default function PlaceOrderPage() {
           userId: user.uid,
           userEmail: user.email,
           productName,
+          productLink,
           platforms,
           quantity,
           tone,
@@ -192,6 +194,19 @@ export default function PlaceOrderPage() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
             placeholder="Enter your product or service name"
             required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Product Link (Optional)
+          </label>
+          <input
+            type="url"
+            value={productLink}
+            onChange={(e) => setProductLink(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="https://your-product-link.com"
           />
         </div>
 

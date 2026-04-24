@@ -17,47 +17,53 @@ export async function POST(request: NextRequest) {
 
     // Get request body
     const body = await request.json();
-    const { service, formData, totalCost, paymentMethod, mpesaCode, status = 'pending', orderId } = body;
+    const { userId: requestUserId, userEmail, productName, productLink, platforms, quantity, tone, instructions, totalCost } = body;
 
-    if (!service || !totalCost || !paymentMethod) {
+    if (!productName || !platforms || !quantity || !totalCost) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Get user from Firestore to get email
+    // Get user from Firestore to get email (but use provided email as fallback)
     const db = getFirebaseAdminDb();
-    const userRef = db.collection('users').doc(userId);
-    const userDoc = await userRef.get();
+    let userEmailFinal = userEmail || decodedToken.email;
 
-    if (!userDoc.exists) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    // Try to get user from Firestore for updated email
+    try {
+      const userRef = db.collection('users').doc(userId);
+      const userDoc = await userRef.get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        userEmailFinal = userData?.email || userEmailFinal;
+      }
+    } catch (firestoreError) {
+      // Continue with provided email if Firestore fails
+      console.error('User lookup error:', firestoreError);
     }
 
-    const userData = userDoc.data();
-    const userEmail = userData?.email || decodedToken.email;
-
-    // Use provided orderId or generate new one
-    const finalOrderId = orderId || `OPF-${Date.now()}-${service.toUpperCase()}`;
+    // Generate order ID
+    const finalOrderId = `OPF-${Date.now()}-COMMENTS`;
     const timestamp = new Date();
 
-    // Create order document with service-specific data
+    // Create order document
     const orderRef = db.collection('orders').doc(finalOrderId);
     await orderRef.set({
       orderId: finalOrderId,
       userId,
-      userEmail,
-      service,
-      formData,
+      userEmail: userEmailFinal,
+      service: 'comments',
+      formData: {
+        productName,
+        productLink,
+        platforms,
+        quantity,
+        tone,
+        instructions,
+      },
       totalCost,
-      paymentMethod,
-      mpesaCode: mpesaCode || null,
-      status,
+      paymentMethod: 'pending', // Will be updated when payment is confirmed
+      mpesaCode: null,
+      status: 'pending',
       createdAt: timestamp,
-      // Legacy fields for backward compatibility
-      productName: formData.productName || '',
-      platforms: formData.platforms || [],
-      quantity: formData.quantity || formData.numInfluencers || 1,
-      tone: formData.tone || '',
-      instructions: formData.specialInstructions || formData.keyPoints || '',
     });
 
     return NextResponse.json({
