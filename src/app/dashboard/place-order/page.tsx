@@ -139,11 +139,33 @@ export default function PlaceOrderPage() {
         throw new Error(data.error || "Failed to create order");
       }
 
-      setSuccess("Order placed! Check dashboard for details.");
-      
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 3000);
+      if (totalCost === 0) {
+        // Free order - redirect to dashboard
+        setSuccess("Order placed! Check dashboard for details.");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 3000);
+      } else {
+        // Paid order - save to localStorage and redirect to payment
+        const orderForPayment = {
+          service: 'comments',
+          userEmail,
+          formData: {
+            productName,
+            productLink,
+            platforms,
+            quantity,
+            tone,
+            instructions,
+          },
+          totalCost,
+          timestamp: new Date().toISOString(),
+          orderId: data.orderId,
+        };
+
+        localStorage.setItem('pendingOrder', JSON.stringify(orderForPayment));
+        router.push('/dashboard/payment');
+      }
     } catch (err: any) {
       setError(err.message || "Failed to place order");
     } finally {
