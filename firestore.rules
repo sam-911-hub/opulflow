@@ -8,7 +8,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isAuthenticated() && request.auth.token.email == 'samuelomondi288@gmail.com';
+      return isAuthenticated() && request.auth.token.email == 'opulflow.inc@gmail.com';
     }
 
     function isOwner(userId) {
