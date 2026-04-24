@@ -23,11 +23,6 @@ export default function Footer() {
   return (
     <footer className="bg-[#161b22] border-t border-[#30363d] text-[#848d97]">
       <div className="max-w-6xl mx-auto px-4 py-8 md:px-6 md:py-8">
-        {/* Baruch Hashem Adonai - Top */}
-        <div className="text-center mb-8">
-          <p className="text-sm text-[#848d97]">Baruch Hashem Adonai</p>
-        </div>
-
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1: Copyright */}

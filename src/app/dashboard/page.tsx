@@ -338,10 +338,7 @@ export default function DashboardPage() {
                 )}
               </div>
             </div>
-          </div>
 
-          {/* Right Column - Main Content */}
-          <div className="flex-1 space-y-6">
             {/* Recent Activity Feed */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
               <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">Recent Activity</h2>
@@ -381,6 +378,10 @@ export default function DashboardPage() {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Right Column - Main Content */}
+          <div className="flex-1 space-y-6">
 
             {/* Quick Actions */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
@@ -556,12 +557,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="border-t border-[#30363d] mt-12">
-        <div className="px-8 py-4 text-center text-xs text-[#848d97]">
-          Baruch Hashem Adonai
-        </div>
-      </div>
+
 
       {/* Service Request Modal */}
       {activeService && (

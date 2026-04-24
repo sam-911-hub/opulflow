@@ -353,10 +353,7 @@ export default function PaymentPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="border-t border-[#30363d] mt-12">
-        <div className="px-8 py-4 text-center text-xs text-[#848d97]">Baruch Hashem Adonai</div>
-      </div>
+
 
       {/* Payment Confirmation Modal */}
       {showModal && (

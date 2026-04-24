@@ -50,6 +50,7 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^9.31.0",
     "eslint-config-next": "15.3.5",
+    "firebase-tools": "^13.0.0",
     "postcss": "^8.4.31",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5"
