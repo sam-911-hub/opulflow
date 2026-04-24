@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { Toaster } from "@/components/ui/sonner";
 import "@/lib/consoleUtils"; // Initialize console utilities
 
 const inter = Inter({ subsets: ["latin"] });
@@ -60,6 +61,7 @@ export default function RootLayout({
           {children}
         </ErrorBoundary>
         <Footer />
+        <Toaster />
       </body>
     </html>
   );

@@ -1,7 +1,8 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "@/components/ui/toast"
 
 interface Order {
   id: string
@@ -41,7 +42,7 @@ export default function VerifyPaymentsPage() {
 
         // Check if user is admin
         if (userData.user.email !== 'opulflow.inc@gmail.com') {
-          alert('Access denied. Admin privileges required.')
+          toast.error('Access denied. Admin privileges required.')
           router.push('/dashboard')
           return
         }
@@ -92,13 +93,13 @@ export default function VerifyPaymentsPage() {
       if (response.ok) {
         // Refresh orders list
         await fetchPendingOrders()
-        alert('Payment verified successfully!')
+        toast.success('Payment verified successfully!')
       } else {
-        alert('Failed to verify payment')
+        toast.error('Failed to verify payment')
       }
     } catch (error) {
       console.error('Error verifying payment:', error)
-      alert('Error verifying payment')
+      toast.error('Error verifying payment')
     } finally {
       setVerifying(null)
     }

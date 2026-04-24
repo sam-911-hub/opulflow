@@ -1,8 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { onAuthStateChanged } from "firebase/auth"
+import { doc, getDoc } from "firebase/firestore"
+import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
 
 interface UserInfo {
@@ -106,31 +110,31 @@ export default function DashboardPage() {
     switch (service) {
       case 'comment':
         if (!formData.productName || !formData.platforms || formData.platforms.length === 0 || !formData.quantity) {
-          alert('Please fill in product name, select platforms, and specify quantity')
+          toast.error('Please fill in product name, select platforms, and specify quantity')
           return
         }
         break
       case 'search':
         if (!formData.productName) {
-          alert('Please enter a product name')
+          toast.error('Please enter a product name')
           return
         }
         break
       case 'influencer':
         if (!formData.niche || !formData.numInfluencers) {
-          alert('Please fill in niche and number of influencers')
+          toast.error('Please fill in niche and number of influencers')
           return
         }
         break
       case 'review':
         if (!formData.productName || !formData.platform) {
-          alert('Please fill in product name and select platform')
+          toast.error('Please fill in product name and select platform')
           return
         }
         break
       case 'humanization':
         if (!formData.file || !formData.wordCount) {
-          alert('Please upload a file and specify word count')
+          toast.error('Please upload a file and specify word count')
           return
         }
         break
@@ -138,7 +142,7 @@ export default function DashboardPage() {
 
     const cost = calculateCost(service, formData)
     if (cost < 0) {
-      alert('Invalid order details')
+      toast.error('Invalid order details')
       return
     }
 

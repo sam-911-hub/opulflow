@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from "@/components/ui/toast"
 
 interface OrderData {
   service: string
@@ -41,7 +42,8 @@ export default function PaymentPage() {
 
   const handlePaymentConfirmation = async (paymentMethod: string, confirmationCode?: string) => {
     if (!orderData) {
-      alert('Order data not found')
+      toast.error('Order data not found. Please try placing your order again.')
+      router.push('/dashboard')
       return
     }
 
@@ -97,16 +99,16 @@ export default function PaymentPage() {
       localStorage.removeItem('pendingOrder')
 
       if (isFreeService) {
-        alert('Order placed successfully! Your free product search will be processed soon.')
+        toast.success('Order placed successfully! Your free product search will be processed soon.')
       } else {
-        alert('Payment recorded! We\'ll verify within 2 hours and email you when work begins.')
+        toast.success('Payment recorded! We\'ll verify within 2 hours and email you when work begins.')
       }
 
       router.push('/dashboard')
 
     } catch (error) {
       console.error('Payment confirmation error:', error)
-      alert('There was an error processing your payment confirmation. Please contact support.')
+      toast.error('Payment confirmation failed. Our team has been notified. Please contact support if the issue persists.')
     } finally {
       setLoading(false)
       setShowModal(false)
@@ -115,7 +117,7 @@ export default function PaymentPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    alert('Copied to clipboard!')
+    toast.success('Copied to clipboard!')
   }
 
   const orderId = orderData?.orderId || `OPF-${Date.now()}`
@@ -288,7 +290,7 @@ export default function PaymentPage() {
               <button
                 onClick={() => {
                   if (!mpesaCode.trim()) {
-                    alert('Please enter your M-PESA confirmation code')
+                    toast.warning('Please enter your M-PESA confirmation code')
                     return
                   }
                   setModalType('mpesa')
