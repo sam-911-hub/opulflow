@@ -69,10 +69,13 @@ export default function RegisterPage() {
       };
       console.log("User data to save:", userData);
 
+      console.log("Waiting for auth propagation...");
       // Small delay to ensure auth state is propagated
       await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log("Delay completed, attempting setDoc...");
 
       try {
+        console.log("Calling setDoc...");
         await setDoc(doc(db, "users", user.uid), userData);
         console.log("User document created successfully in", Date.now() - startTime, "ms");
       } catch (docError) {
