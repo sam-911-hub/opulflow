@@ -35,38 +35,55 @@ export default function RegisterPage() {
     }
 
     setLoading(true);
+    const startTime = Date.now();
 
     try {
+      console.log("Starting registration process...");
       const auth = getFirebaseAuth();
       const db = getFirebaseDb();
 
+      // Step 1: Create user account
+      console.log("Creating user account...");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      console.log("User account created in", Date.now() - startTime, "ms");
 
-      await updateProfile(user, {
-        displayName: email.split("@")[0],
-      });
+      // Step 2: Update profile and create user document in parallel
+      console.log("Updating profile and creating user document...");
+      const [profileUpdate, userDocCreation] = await Promise.all([
+        updateProfile(user, {
+          displayName: email.split("@")[0],
+        }),
+        setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          email: user.email,
+          displayName: email.split("@")[0],
+          createdAt: new Date().toISOString(),
+          credits: 10,
+          accountType: "free",
+        })
+      ]);
+      console.log("Profile and document created in", Date.now() - startTime, "ms");
 
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        displayName: email.split("@")[0],
-        createdAt: new Date().toISOString(),
-        credits: 10,
-        accountType: "free",
-      });
-
+      // Step 3: Get ID token and create session
+      console.log("Getting ID token and creating session...");
       const idToken = await user.getIdToken();
-      await fetch('/api/auth/session', {
+
+      const sessionResponse = await fetch('/api/auth/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken }),
       });
 
+      if (!sessionResponse.ok) {
+        throw new Error('Failed to create session');
+      }
+
+      console.log("Registration completed in", Date.now() - startTime, "ms");
       router.push("/dashboard");
     } catch (err: unknown) {
       console.error("Registration error:", err);
-      const errCode = err.code || err.message;
+      const errCode = (err as any)?.code || (err as any)?.message;
 
       if (errCode === "auth/email-already-in-use") {
         setError("Email is already registered");
@@ -75,7 +92,7 @@ export default function RegisterPage() {
       } else if (errCode === "auth/weak-password") {
         setError("Password is too weak");
       } else if (errCode === "auth/network-request-failed") {
-        setError("Network error. Please check your connection");
+        setError("Network error. Please check your connection and try again");
       } else {
         setError("Failed to create account. Please try again");
       }
