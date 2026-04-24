@@ -62,7 +62,7 @@ export default function RegisterPage() {
 
       // Step 3: Create user document
       console.log("Creating user document...");
-      await setDoc(doc(db, "users", user.uid), {
+      const setDocPromise = setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         email: user.email,
         displayName: email.split("@")[0],
@@ -70,6 +70,12 @@ export default function RegisterPage() {
         credits: 10,
         accountType: "free",
       });
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Database operation timed out. Please check your internet connection.')), 10000);
+      });
+
+      await Promise.race([setDocPromise, timeoutPromise]);
       console.log("User document created in", Date.now() - startTime, "ms");
 
       // Step 4: Get ID token and create session
