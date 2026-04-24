@@ -269,7 +269,7 @@ export default function PaymentPage() {
               </div>
               <div className="space-y-3 mb-6">
                 <div className="text-sm text-[#848d97]">Business: <span className="font-medium text-[#e6edf3]">OpulFlow</span></div>
-                <div className="text-sm text-[#848d97]">Till Number: <span className="font-mono text-[#e6edf3]">**[Configure in settings]**</span></div>
+                <div className="text-sm text-[#848d97]">Till Number: <span className="font-mono text-[#e6edf3]">coming soon</span></div>
                 <div className="text-sm text-[#848d97]">Amount: <span className="font-medium text-[#e6edf3]">KES {kesAmount.toLocaleString()}</span>
                   <button onClick={() => copyToClipboard(kesAmount.toString())} className="ml-2 text-[#2f81f7] hover:text-[#79c0ff] text-xs">Copy</button>
                 </div>
