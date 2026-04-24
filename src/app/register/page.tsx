@@ -49,17 +49,13 @@ export default function RegisterPage() {
       const user = userCredential.user;
       console.log("User account created, UID:", user.uid, "in", Date.now() - startTime, "ms");
 
-      // Step 2: Update profile
-      console.log("Updating profile...");
-      try {
-        await updateProfile(user, {
-          displayName: email.split("@")[0],
-        });
-        console.log("Profile updated in", Date.now() - startTime, "ms");
-      } catch (profileError) {
+      // Step 2: Update profile (fire-and-forget for speed)
+      updateProfile(user, {
+        displayName: email.split("@")[0],
+      }).catch(profileError => {
         console.error("Profile update error:", profileError);
-        // Continue anyway, as profile is optional
-      }
+        // Profile update is optional, continue
+      });
 
       // Step 3: Create user document
       console.log("Creating user document...");
@@ -73,7 +69,7 @@ export default function RegisterPage() {
       });
 
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database operation timed out. Please check your internet connection.')), 10000);
+        setTimeout(() => reject(new Error('Database operation timed out. Please check your internet connection.')), 5000);
       });
 
       await Promise.race([setDocPromise, timeoutPromise]);

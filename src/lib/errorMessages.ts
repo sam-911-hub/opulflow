@@ -13,6 +13,8 @@ export function getUserFriendlyErrorMessage(error: any): string {
         return 'No account found with this email. Sign up first.';
       case 'auth/wrong-password':
         return 'Wrong password. Please try again.';
+      case 'auth/invalid-login-credentials':
+        return 'Invalid email or password.';
       case 'auth/email-already-in-use':
         return 'Email already exists. Log in instead.';
       case 'auth/invalid-email':
@@ -29,7 +31,7 @@ export function getUserFriendlyErrorMessage(error: any): string {
         return 'Please log in again to continue.';
       default:
         if (code.startsWith('auth/')) {
-          return 'Authentication failed. Please try again.';
+          return 'Login failed. Please check your credentials and try again.';
         }
     }
   }
