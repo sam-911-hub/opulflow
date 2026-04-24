@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
+import Header from "@/components/Header";
 import "@/lib/consoleUtils"; // Initialize console utilities
 
 const inter = Inter({ subsets: ["latin"] });
@@ -57,6 +58,7 @@ export default function RootLayout({
         <meta name="google-site-verification" content="m5CQznjCXSJfkMqq2f5gMPAIsymc7W2RTFembw8xwyc" />
       </head>
       <body className={inter.className}>
+        <Header />
         <ErrorBoundary>
           {children}
         </ErrorBoundary>
