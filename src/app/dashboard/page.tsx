@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
+import OnboardingModal from "@/components/OnboardingModal"
 
 interface UserInfo {
   uid: string
@@ -58,6 +59,7 @@ export default function DashboardPage() {
   const [formData, setFormData] = useState<ServiceFormData>({})
   const [activeNav, setActiveNav] = useState('dashboard')
   const [notificationsExpanded, setNotificationsExpanded] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -70,6 +72,13 @@ export default function DashboardPage() {
         }
         const userData = await userRes.json()
         setUser(userData.user)
+
+        // Check if user should see onboarding
+        const onboardingCompleted = localStorage.getItem('onboardingCompleted')
+        if (!onboardingCompleted && userData.user.credits === 10) {
+          // New user with default credits - show onboarding
+          setTimeout(() => setShowOnboarding(true), 1000) // Small delay for better UX
+        }
 
         const ordersRes = await fetch("/api/orders")
         if (ordersRes.ok) {
@@ -923,6 +932,11 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <OnboardingModal onClose={() => setShowOnboarding(false)} />
       )}
     </div>
   )
