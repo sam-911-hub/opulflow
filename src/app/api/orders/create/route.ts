@@ -34,10 +34,22 @@ export async function POST(request: NextRequest) {
 
     const userData = userDoc.data();
     const userEmailFinal = userData?.email || decodedToken.email;
+    const currentCredits = userData?.credits || 0;
+
+    // Check credits if payment method is credits
+    if (paymentMethod === 'credits' && currentCredits < totalCost) {
+      return NextResponse.json({ error: 'Insufficient credits' }, { status: 400 });
+    }
 
     // Use provided orderId or generate new one
     const finalOrderId = orderId || `OPF-${Date.now()}-${service.toUpperCase()}`;
     const timestamp = new Date();
+
+    // Deduct credits if paying with credits
+    if (paymentMethod === 'credits' && totalCost > 0) {
+      const newCredits = currentCredits - totalCost;
+      await userRef.update({ credits: newCredits });
+    }
 
     // Create order document with service-specific data
     const orderRef = db.collection('orders').doc(finalOrderId);

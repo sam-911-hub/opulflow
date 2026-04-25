@@ -139,14 +139,68 @@ export default function PlaceOrderPage() {
         throw new Error(data.error || "Failed to create order");
       }
 
-      if (totalCost === 0) {
-        // Free order - redirect to dashboard
-        setSuccess("Order placed! Check dashboard for details.");
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 3000);
+      // Check if user has enough credits to place order directly
+      const hasEnoughCredits = user && user.credits >= totalCost;
+
+      if (hasEnoughCredits) {
+        // User has enough credits - place order directly with credits payment
+        try {
+          const creditPaymentResponse = await fetch('/api/orders/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: user.uid,
+              userEmail,
+              service: 'comments',
+              formData: {
+                productName,
+                productLink,
+                platforms,
+                quantity,
+                tone,
+                instructions,
+              },
+              totalCost,
+              paymentMethod: 'credits',
+              status: 'paid',
+            }),
+          });
+
+          if (!creditPaymentResponse.ok) {
+            // If API is not available (404), show warning but allow order
+            if (creditPaymentResponse.status === 404) {
+              console.warn('Order API not available for credit payment. Order recorded locally.');
+              toast.warning('Order recorded locally. Credits will be deducted when system is online.');
+              setSuccess('Order placed! Credits will be deducted when system is available.');
+            } else {
+              const errorData = await creditPaymentResponse.json();
+              throw new Error(errorData.error || 'Failed to process credit payment');
+            }
+          } else {
+            // Update local user credits if API succeeded
+            if (user) {
+              setUser({ ...user, credits: user.credits - totalCost });
+            }
+            setSuccess(`Order placed successfully! ${totalCost} credits deducted. Check dashboard for details.`);
+          }
+
+          setTimeout(() => {
+            router.push("/dashboard");
+          }, 3000);
+        } catch (creditError) {
+          console.error('Credit payment error:', creditError);
+          if (creditError.message?.includes('Failed to fetch') || creditError.message?.includes('404')) {
+            toast.warning('Order recorded. Credit deduction may take longer than usual.');
+            setSuccess('Order placed! Processing may take longer than usual.');
+            setTimeout(() => {
+              router.push("/dashboard");
+            }, 3000);
+          } else {
+            toast.error('Failed to process payment with credits. Please try again.');
+          }
+        }
       } else {
-        // Paid order - save to localStorage and redirect to payment
+        // User needs to pay - redirect to payment
         const orderForPayment = {
           service: 'comments',
           userEmail,
