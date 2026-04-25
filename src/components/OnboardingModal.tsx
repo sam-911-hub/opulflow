@@ -20,7 +20,7 @@ export default function OnboardingModal({ onClose }: OnboardingModalProps) {
             <CheckCircle className="w-8 h-8 text-white" />
           </div>
           <p className="text-gray-600 mb-4">
-            Congratulations! You've successfully created your account and received <span className="font-bold text-green-600">10 FREE comments</span> to get started.
+            Congratulations! You've successfully created your account and received <span className="font-bold text-green-600">20 FREE comments</span> to get started.
           </p>
           <p className="text-sm text-gray-500">
             Let's show you how to make the most of your OpulFlow experience.
@@ -122,7 +122,7 @@ export default function OnboardingModal({ onClose }: OnboardingModalProps) {
           </div>
           <h4 className="font-semibold text-gray-900">Ready to Get Started?</h4>
           <p className="text-gray-600 text-sm">
-            You have <span className="font-bold text-green-600">10 free comments</span> waiting for you.
+            You have <span className="font-bold text-green-600">20 free comments</span> waiting for you.
             Click the button below to place your first order and see OpulFlow in action!
           </p>
           <div className="bg-green-50 p-3 rounded-lg">

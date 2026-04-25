@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       user: {
         uid: userId,
         email: decodedToken.email,
-        credits: userData?.credits || 10,
+        credits: userData?.credits || 20,
         accountType: userData?.accountType || 'free'
       }
     })

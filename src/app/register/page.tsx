@@ -64,7 +64,7 @@ export default function RegisterPage() {
         email: user.email,
         displayName: email.split("@")[0],
         createdAt: new Date().toISOString(),
-        credits: 10,
+        credits: 20,
         accountType: "free",
       };
       console.log("User data to save:", userData);

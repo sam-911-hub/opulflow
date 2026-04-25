@@ -75,7 +75,7 @@ export default function DashboardPage() {
 
         // Check if user should see onboarding
         const onboardingCompleted = localStorage.getItem('onboardingCompleted')
-        if (!onboardingCompleted && userData.user.credits === 10) {
+        if (!onboardingCompleted && userData.user.credits === 20) {
           // New user with default credits - show onboarding
           setTimeout(() => setShowOnboarding(true), 1000) // Small delay for better UX
         }
