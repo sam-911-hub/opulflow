@@ -171,9 +171,17 @@ export default function DashboardPage() {
 
         // Safety fallback: Check if user document exists, create if missing
         try {
+          console.log('Dashboard: Checking Firestore user document')
           const db = getFirebaseDb()
           const userDocRef = doc(db, 'users', userInfo.uid)
-          const userDocSnap = await getDoc(userDocRef)
+
+          // Add timeout to getDoc
+          const getDocPromise = getDoc(userDocRef)
+          const getDocTimeout = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('getDoc timeout')), 5000)
+          )
+
+          const userDocSnap = await Promise.race([getDocPromise, getDocTimeout]) as any
 
           if (!userDocSnap.exists()) {
             console.log('User document missing, creating with defaults...')
@@ -187,7 +195,13 @@ export default function DashboardPage() {
               createdAt: new Date().toISOString(),
             }
 
-            await setDoc(userDocRef, defaultUserData)
+            // Add timeout to setDoc
+            const setDocPromise = setDoc(userDocRef, defaultUserData)
+            const setDocTimeout = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('setDoc timeout')), 5000)
+            )
+
+            await Promise.race([setDocPromise, setDocTimeout])
             console.log('✅ User document created successfully in dashboard')
           } else {
             // Update user info with actual data from Firestore
@@ -197,15 +211,17 @@ export default function DashboardPage() {
               credits: firestoreData?.credits || 20,
               accountType: firestoreData?.accountType || 'free'
             }
+            console.log('Dashboard: User document exists, loaded data')
           }
         } catch (firestoreError) {
           console.warn('Firestore check failed, using default data:', firestoreError)
           // Continue with default data if Firestore is unavailable
           userInfo = { ...userInfo, credits: 20, accountType: 'free' }
+          console.log('Dashboard: Using default user data due to Firestore error')
         }
 
         setUser(userInfo)
-        console.log('Dashboard: User set, checking onboarding')
+        console.log('Dashboard: User set, userInfo:', userInfo)
 
         // Check if user should see onboarding
         const onboardingCompleted = localStorage.getItem('onboardingCompleted')
