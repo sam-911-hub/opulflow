@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
 import Header from "@/components/Header";
-import OfflineStatus from "@/components/OfflineStatus";
+// import OfflineStatus from "@/components/OfflineStatus";
 import "@/lib/consoleUtils"; // Initialize console utilities
 
 const inter = Inter({ subsets: ["latin"] });
@@ -65,7 +65,7 @@ export default function RootLayout({
         </ErrorBoundary>
         <Footer />
         <Toaster />
-        <OfflineStatus />
+        {/* <OfflineStatus /> */}
       </body>
     </html>
   );

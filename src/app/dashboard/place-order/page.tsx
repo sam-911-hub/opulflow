@@ -5,6 +5,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/toast";
+// import { addPendingUserCreation } from "@/lib/offlinePersistence";
 
 interface UserData {
   uid: string;
@@ -150,7 +152,7 @@ export default function PlaceOrderPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               userId: user.uid,
-              userEmail,
+              userEmail: user.email,
               service: 'comments',
               formData: {
                 productName,
@@ -187,9 +189,10 @@ export default function PlaceOrderPage() {
           setTimeout(() => {
             router.push("/dashboard");
           }, 3000);
-        } catch (creditError) {
+        } catch (creditError: unknown) {
           console.error('Credit payment error:', creditError);
-          if (creditError.message?.includes('Failed to fetch') || creditError.message?.includes('404')) {
+          const errorMessage = creditError instanceof Error ? creditError.message : String(creditError)
+          if (errorMessage.includes('Failed to fetch') || errorMessage.includes('404')) {
             toast.warning('Order recorded. Credit deduction may take longer than usual.');
             setSuccess('Order placed! Processing may take longer than usual.');
             setTimeout(() => {
@@ -203,7 +206,7 @@ export default function PlaceOrderPage() {
         // User needs to pay - redirect to payment
         const orderForPayment = {
           service: 'comments',
-          userEmail,
+          userEmail: user.email,
           formData: {
             productName,
             productLink,

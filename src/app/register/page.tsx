@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { getFirebaseAuth } from "@/lib/firebaseClient";
+import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
 import { getUserFriendlyErrorMessage } from "@/lib/errorMessages";
-import { addPendingUserCreation } from "@/lib/offlinePersistence";
+// import { addPendingUserCreation } from "@/lib/offlinePersistence";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -68,9 +68,8 @@ export default function RegisterPage() {
         createdAt: new Date().toISOString(),
       };
 
-      // Add to offline persistence queue - will be processed when online
-      addPendingUserCreation(user.uid, userData);
-      console.log("User document queued for creation with offline persistence");
+      // User document will be created when Firestore becomes available
+      console.log("User account created - document creation will be handled by dashboard");
 
       // Step 4: Get ID token and create session
       console.log("Getting ID token and creating session...");

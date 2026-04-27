@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
 import OnboardingModal from "@/components/OnboardingModal"
 import { getFirebaseDb } from "@/lib/firebaseClient"
-import { addPendingUserCreation } from "@/lib/offlinePersistence"
+// import { addPendingUserCreation } from "@/lib/offlinePersistence"
 
 interface UserInfo {
   uid: string
@@ -90,14 +90,13 @@ export default function DashboardPage() {
             createdAt: new Date().toISOString(),
           }
 
-          // Try to create immediately, fallback to offline persistence
+          // Try to create immediately
           try {
             await setDoc(userDocRef, defaultUserData)
             console.log('User document created successfully')
             userInfo = { ...userInfo, credits: 20, accountType: 'free' }
           } catch (error) {
-            console.warn('Failed to create user document immediately, using offline persistence:', error)
-            addPendingUserCreation(userInfo.uid, defaultUserData)
+            console.warn('Failed to create user document:', error)
             userInfo = { ...userInfo, credits: 20, accountType: 'free' }
           }
         }
