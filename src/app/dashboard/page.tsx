@@ -9,6 +9,9 @@ import Link from "next/link"
 import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
 import OnboardingModal from "@/components/OnboardingModal"
+import { doc, setDoc, getDoc } from "firebase/firestore"
+import { getFirebaseDb } from "@/lib/firebaseClient"
+import { addPendingUserCreation } from "@/lib/offlinePersistence"
 
 interface UserInfo {
   uid: string
@@ -71,11 +74,41 @@ export default function DashboardPage() {
           return
         }
         const userData = await userRes.json()
-        setUser(userData.user)
+        let userInfo = userData.user
+
+        // Check if user document exists in Firestore, create if missing
+        const db = getFirebaseDb()
+        const userDocRef = doc(db, 'users', userInfo.uid)
+        const userDocSnap = await getDoc(userDocRef)
+
+        if (!userDocSnap.exists()) {
+          console.log('User document missing, creating with defaults...')
+          const defaultUserData = {
+            uid: userInfo.uid,
+            email: userInfo.email,
+            displayName: userInfo.email?.split('@')[0] || '',
+            credits: 20,
+            accountType: 'free',
+            createdAt: new Date().toISOString(),
+          }
+
+          // Try to create immediately, fallback to offline persistence
+          try {
+            await setDoc(userDocRef, defaultUserData)
+            console.log('User document created successfully')
+            userInfo = { ...userInfo, credits: 20, accountType: 'free' }
+          } catch (error) {
+            console.warn('Failed to create user document immediately, using offline persistence:', error)
+            addPendingUserCreation(userInfo.uid, defaultUserData)
+            userInfo = { ...userInfo, credits: 20, accountType: 'free' }
+          }
+        }
+
+        setUser(userInfo)
 
         // Check if user should see onboarding
         const onboardingCompleted = localStorage.getItem('onboardingCompleted')
-        if (!onboardingCompleted && userData.user.credits === 20) {
+        if (!onboardingCompleted && userInfo.credits === 20) {
           // New user with default credits - show onboarding
           setTimeout(() => setShowOnboarding(true), 1000) // Small delay for better UX
         }

@@ -64,3 +64,10 @@ export function disableConsole() {
   console.debug = noop;
   console.trace = noop;
 }
+
+// Initialize offline persistence system
+import('./offlinePersistence').then(({ offlinePersistence }) => {
+  console.log('Offline persistence system initialized');
+}).catch(error => {
+  console.error('Failed to initialize offline persistence:', error);
+});

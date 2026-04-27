@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
 import { getUserFriendlyErrorMessage } from "@/lib/errorMessages";
+import { addPendingUserCreation } from "@/lib/offlinePersistence";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -56,8 +57,20 @@ export default function RegisterPage() {
         // Profile update is optional, continue
       });
 
-      // User document creation is now handled by Firebase Cloud Function
-      console.log("User account created - Cloud Function will create user document automatically");
+      // Step 3: Create user document using offline persistence
+      console.log("Creating user document with offline persistence...");
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: email.split("@")[0],
+        credits: 20,
+        accountType: "free",
+        createdAt: new Date().toISOString(),
+      };
+
+      // Add to offline persistence queue - will be processed when online
+      addPendingUserCreation(user.uid, userData);
+      console.log("User document queued for creation with offline persistence");
 
         console.log("User document operation completed in", Date.now() - startTime, "ms");
       } catch (docError: any) {
