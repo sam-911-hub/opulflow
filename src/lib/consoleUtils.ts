@@ -65,6 +65,15 @@ export function disableConsole() {
   console.trace = noop;
 }
 
+// Initialize Firestore early to enable persistence
+import('./firebaseClient').then(({ getFirebaseDb }) => {
+  // Initialize Firestore instance early to enable persistence
+  getFirebaseDb();
+  console.log('Firestore initialized with offline persistence');
+}).catch(error => {
+  console.error('Failed to initialize Firestore:', error);
+});
+
 // Initialize offline persistence system
 // Temporarily disabled to fix build issues
 // import('./offlinePersistence').then(({ offlinePersistence }) => {
