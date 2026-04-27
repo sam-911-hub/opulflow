@@ -114,7 +114,8 @@ export default function PaymentPage() {
       } catch (apiError) {
         console.error('Order API error:', apiError)
         // If network/API error, still allow the flow to continue
-        if (apiError.message?.includes('Failed to fetch') || apiError.message?.includes('404')) {
+        const errorMessage = apiError instanceof Error ? apiError.message : String(apiError)
+        if (errorMessage.includes('Failed to fetch') || errorMessage.includes('404')) {
           toast.warning('Order recorded. Processing may take longer than usual.')
         } else {
           throw apiError

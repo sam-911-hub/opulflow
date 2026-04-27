@@ -235,7 +235,7 @@ export default function VerifyPaymentsPage() {
                       <div>
                         <div className="text-sm text-[#848d97] mb-2">Order Date</div>
                         <div className="text-[#e6edf3]">
-                          {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleString() : 'Unknown'}
+                          {order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Unknown'}
                         </div>
                       </div>
 
@@ -256,23 +256,23 @@ export default function VerifyPaymentsPage() {
                         <>
                           <div>
                             <span className="text-[#848d97]">Product:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.productName}</span>
+                            <span className="ml-2 text-[#e6edf3]">{String(order.formData?.productName || 'N/A')}</span>
                           </div>
                           <div>
                             <span className="text-[#848d97]">Quantity:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.quantity} comments</span>
+                            <span className="ml-2 text-[#e6edf3]">{String(order.formData?.quantity || 0)} comments</span>
                           </div>
                           <div>
                             <span className="text-[#848d97]">Platforms:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.platforms?.join(', ')}</span>
+                            <span className="ml-2 text-[#e6edf3]">{Array.isArray(order.formData?.platforms) ? (order.formData.platforms as string[]).join(', ') : 'N/A'}</span>
                           </div>
                         </>
                       )}
 
-                      {order.service === 'search' && (
+                       {order.service === 'search' && (
                         <div>
                           <span className="text-[#848d97]">Product:</span>
-                          <span className="ml-2 text-[#e6edf3]">{order.formData.productName}</span>
+                          <span className="ml-2 text-[#e6edf3]">{String(order.formData?.productName || 'N/A')}</span>
                         </div>
                       )}
 
@@ -280,11 +280,11 @@ export default function VerifyPaymentsPage() {
                         <>
                           <div>
                             <span className="text-[#848d97]">Niche:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.niche}</span>
+                            <span className="ml-2 text-[#e6edf3]">{String(order.formData?.niche || 'N/A')}</span>
                           </div>
                           <div>
                             <span className="text-[#848d97]">Count:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.numInfluencers}</span>
+                            <span className="ml-2 text-[#e6edf3]">{String(order.formData?.numInfluencers || 0)}</span>
                           </div>
                         </>
                       )}
@@ -293,11 +293,11 @@ export default function VerifyPaymentsPage() {
                         <>
                           <div>
                             <span className="text-[#848d97]">Product:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.productName}</span>
+                            <span className="ml-2 text-[#e6edf3]">{String(order.formData?.productName || 'N/A')}</span>
                           </div>
                           <div>
                             <span className="text-[#848d97]">Platform:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.platform}</span>
+                            <span className="ml-2 text-[#e6edf3]">{String(order.formData?.platform || 'N/A')}</span>
                           </div>
                         </>
                       )}
@@ -306,11 +306,11 @@ export default function VerifyPaymentsPage() {
                         <>
                           <div>
                             <span className="text-[#848d97]">Words:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.wordCount}</span>
+                            <span className="ml-2 text-[#e6edf3]">{String(order.formData?.wordCount || 0)}</span>
                           </div>
                           <div>
                             <span className="text-[#848d97]">File:</span>
-                            <span className="ml-2 text-[#e6edf3]">{order.formData.file?.name || 'Uploaded'}</span>
+                            <span className="ml-2 text-[#e6edf3]">{String((order.formData?.file as any)?.name || 'Uploaded')}</span>
                           </div>
                         </>
                       )}
