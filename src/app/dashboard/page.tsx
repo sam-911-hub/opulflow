@@ -64,50 +64,11 @@ export default function DashboardPage() {
   const [activeNav, setActiveNav] = useState('dashboard')
   const [notificationsExpanded, setNotificationsExpanded] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
-  const [currentTipIndex, setCurrentTipIndex] = useState(0)
-  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0)
-  const [liveActivities, setLiveActivities] = useState<string[]>([])
   const router = useRouter()
 
   const greeting = user ? getPersonalizedGreeting() : "Welcome to OpulFlow"
 
-  const tips = [
-    "💡 Reddit comments get 5x more engagement than other platforms. Try our comment service!",
-    "🚀 Product Hunt launches often need authentic reviews. Our review service can help!",
-    "📈 Influencer partnerships can boost your reach by 300%. Find the perfect match with our research tool.",
-    "✨ AI content can seem robotic - use our humanization service to make it more natural.",
-    "🎯 Target the right platforms: Instagram for visuals, LinkedIn for B2B, Twitter for conversations.",
-    "📊 Track your ROI: Most clients see 2-3x return on investment with our services.",
-    "🔥 Trending: Video reviews on TikTok are converting 40% better than written reviews.",
-    "💰 Pro tip: Bundle services save you 15% - try comment + review combos!"
-  ]
-
-  const testimonials = [
-    {
-      name: "Sarah Chen",
-      role: "SaaS Founder",
-      content: "OpulFlow's comment service boosted our Reddit engagement by 400%. Worth every credit!",
-      rating: 5
-    },
-    {
-      name: "Mike Rodriguez",
-      role: "E-commerce Owner",
-      content: "The product reviews look so authentic. Our Amazon sales increased 25% after using their service.",
-      rating: 5
-    },
-    {
-      name: "Emma Thompson",
-      role: "Content Creator",
-      content: "Finally found influencers that actually fit my brand. The research tool is incredible!",
-      rating: 5
-    },
-    {
-      name: "David Kim",
-      role: "Tech Startup CEO",
-      content: "AI humanization made our blog posts sound human again. Game changer for our content strategy.",
-      rating: 5
-    }
-  ]
+  // Arrays removed to prevent initialization errors
 
   useEffect(() => {
     async function fetchData() {
@@ -237,40 +198,9 @@ export default function DashboardPage() {
     fetchData()
   }, [router])
 
-  // Rotate tips every 8 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTipIndex((prev) => (prev + 1) % tips.length)
-    }, 8000)
-    return () => clearInterval(interval)
-  }, [tips.length])
+  // Rotating effects temporarily disabled to prevent errors
 
-  // Rotate testimonials every 10 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonialIndex((prev) => (prev + 1) % testimonials.length)
-    }, 10000)
-    return () => clearInterval(interval)
-  }, [testimonials.length])
-
-  // Simulate live activities
-  useEffect(() => {
-    const mockActivities = [
-      "🚀 New comment campaign launched on Reddit",
-      "⭐ Product review published on Trustpilot",
-      "👥 Influencer outreach completed for TechCorp",
-      "✨ AI content humanized for BlogMaster",
-      "📈 Engagement metrics updated across platforms",
-      "💬 Customer feedback processed successfully"
-    ]
-
-    const interval = setInterval(() => {
-      const randomActivity = mockActivities[Math.floor(Math.random() * mockActivities.length)]
-      setLiveActivities(prev => [randomActivity, ...prev.slice(0, 4)]) // Keep last 5
-    }, 15000) // Every 15 seconds
-
-    return () => clearInterval(interval)
-  }, [])
+  // Live activities simulation removed
 
   const calculateCost = (service: string, data: ServiceFormData) => {
     switch (service) {
@@ -642,31 +572,20 @@ export default function DashboardPage() {
             {/* Success Stories */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
               <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">🌟 Success Stories</h2>
-              <div className="text-[#e6edf3] transition-opacity duration-500">
+              <div className="text-[#e6edf3]">
                 <blockquote className="text-sm italic mb-3">
-                  "{testimonials[currentTestimonialIndex].content}"
+                  "OpulFlow's comment service boosted our Reddit engagement by 400%. Worth every credit!"
                 </blockquote>
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-[#e6edf3]">{testimonials[currentTestimonialIndex].name}</div>
-                    <div className="text-xs text-[#848d97]">{testimonials[currentTestimonialIndex].role}</div>
+                    <div className="font-medium text-[#e6edf3]">Sarah Chen</div>
+                    <div className="text-xs text-[#848d97]">SaaS Founder</div>
                   </div>
                   <div className="flex">
-                    {[...Array(testimonials[currentTestimonialIndex].rating)].map((_, i) => (
+                    {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-yellow-400">★</span>
                     ))}
                   </div>
-                </div>
-                <div className="flex space-x-1 mt-4">
-                  {testimonials.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentTestimonialIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentTestimonialIndex ? 'bg-[#238636]' : 'bg-[#30363d] hover:bg-[#484f58]'
-                      }`}
-                    />
-                  ))}
                 </div>
               </div>
             </div>
@@ -866,46 +785,22 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {/* Rotating Tips & Insights */}
+            {/* Tips & Insights */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">💡 Tips & Insights</h2>
-              <div className="text-[#e6edf3] transition-opacity duration-500">
-                <p className="mb-2">{tips[currentTipIndex]}</p>
-                <div className="flex space-x-1 mt-3">
-                  {tips.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentTipIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentTipIndex ? 'bg-[#2f81f7]' : 'bg-[#30363d] hover:bg-[#484f58]'
-                      }`}
-                    />
-                  ))}
-                </div>
+              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">💡 Pro Tips</h2>
+              <div className="text-[#e6edf3]">
+                <p className="mb-2">Did you know? Comments on Reddit have 5x higher engagement than other platforms.</p>
+                <p className="text-sm text-[#848d97]">Mix platforms in your campaigns for maximum reach and diverse audience engagement.</p>
               </div>
             </div>
 
-            {/* Live Activity Feed */}
+            {/* Activity Feed */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4 flex items-center">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-                Live Activity Feed
-              </h2>
+              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">📈 Recent Activity</h2>
               <div className="space-y-3">
-                {liveActivities.length === 0 ? (
-                  <div className="text-center py-4 text-[#848d97]">
-                    <div className="animate-spin w-4 h-4 border-2 border-[#2f81f7] border-t-transparent rounded-full mx-auto mb-2"></div>
-                    Monitoring platform activities...
-                  </div>
-                ) : (
-                  liveActivities.map((activity, index) => (
-                    <div key={index} className="flex items-center space-x-3 text-sm">
-                      <div className="w-1.5 h-1.5 bg-[#2f81f7] rounded-full"></div>
-                      <span className="text-[#e6edf3]">{activity}</span>
-                      <span className="text-xs text-[#848d97]">just now</span>
-                    </div>
-                  ))
-                )}
+                <div className="text-center py-4 text-[#848d97]">
+                  Your activity will appear here once you start using our services.
+                </div>
               </div>
             </div>
           </div>
