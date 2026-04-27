@@ -59,8 +59,8 @@ export default function RegisterPage() {
 
       // Step 3: Create user document with robust offline handling
       console.log("Creating user document...");
-      const db = getFirebaseDb();
-      const userDocRef = doc(db, 'users', user.uid);
+      const firestoreDb = getFirebaseDb();
+      const userDocRef = doc(firestoreDb, 'users', user.uid);
 
       const userData = {
         uid: user.uid,
