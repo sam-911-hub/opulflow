@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
 import { getUserFriendlyErrorMessage } from "@/lib/errorMessages";
@@ -75,18 +75,35 @@ export default function RegisterPage() {
       console.log("Delay completed, attempting setDoc...");
 
       try {
-        console.log("Calling setDoc...");
-        const setDocPromise = setDoc(doc(db, "users", user.uid), userData);
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Firestore operation timed out after 30 seconds')), 30000);
-        });
+        console.log("Checking if user document exists...");
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
 
-        await Promise.race([setDocPromise, timeoutPromise]);
-        console.log("User document created successfully in", Date.now() - startTime, "ms");
-      } catch (docError) {
-        console.error("setDoc failed:", docError);
-        // For now, continue with registration even if user doc creation fails
-        console.warn("Continuing with registration despite user document creation failure");
+        if (userDocSnap.exists()) {
+          console.log("User document already exists, updating...");
+          await updateDoc(userDocRef, userData);
+          console.log("User document updated successfully");
+        } else {
+          console.log("Creating new user document...");
+          const setDocPromise = setDoc(userDocRef, userData);
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Firestore operation timed out after 30 seconds')), 30000);
+          });
+
+          await Promise.race([setDocPromise, timeoutPromise]);
+          console.log("User document created successfully");
+        }
+
+        console.log("User document operation completed in", Date.now() - startTime, "ms");
+      } catch (docError: any) {
+        console.error("User document operation failed:", docError);
+        // Check if it's a permission error
+        if (docError.code === 'permission-denied') {
+          console.error("Permission denied - check Firestore security rules");
+          throw new Error('Permission denied. Please contact support.');
+        }
+        // For other errors, continue with registration
+        console.warn("Continuing with registration despite user document creation failure:", docError.message);
       }
 
       // Step 4: Get ID token and create session
