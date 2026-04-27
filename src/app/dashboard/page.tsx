@@ -9,30 +9,9 @@ import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
 import OnboardingModal from "@/components/OnboardingModal"
 import { getFirebaseDb } from "@/lib/firebaseClient"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
-// Typing animation hook
-function useTypingEffect(text: string, speed: number = 50) {
-  const [displayedText, setDisplayedText] = useState('')
-  const [isTyping, setIsTyping] = useState(true)
-
-  useEffect(() => {
-    let i = 0
-    const timer = setInterval(() => {
-      if (i < text.length) {
-        setDisplayedText(text.slice(0, i + 1))
-        i++
-      } else {
-        setIsTyping(false)
-        clearInterval(timer)
-      }
-    }, speed)
-
-    return () => clearInterval(timer)
-  }, [text, speed])
-
-  return { displayedText, isTyping }
-}
+// Typing animation removed to prevent errors
 // import { addPendingUserCreation } from "@/lib/offlinePersistence"
 
 interface UserInfo {
@@ -91,7 +70,6 @@ export default function DashboardPage() {
   const router = useRouter()
 
   const greeting = user ? getPersonalizedGreeting() : "Welcome to OpulFlow"
-  const { displayedText, isTyping } = useTypingEffect(greeting)
 
   const tips = [
     "💡 Reddit comments get 5x more engagement than other platforms. Try our comment service!",
@@ -404,27 +382,7 @@ export default function DashboardPage() {
     return { totalOrders, completedOrders, pendingOrders }
   }
 
-  const getChartData = () => {
-    const statusData = [
-      { name: 'Completed', value: orders.filter(o => o.status === 'completed').length, color: '#238636' },
-      { name: 'Pending', value: orders.filter(o => o.status === 'pending').length, color: '#bb8009' },
-      { name: 'Processing', value: orders.filter(o => o.status === 'processing').length, color: '#2f81f7' },
-    ].filter(item => item.value > 0)
-
-    // Monthly orders data (simplified)
-    const monthlyData = orders.reduce((acc, order) => {
-      const month = new Date(order.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-      acc[month] = (acc[month] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-
-    const barData = Object.entries(monthlyData).map(([month, count]) => ({
-      month,
-      orders: count
-    })).slice(-6) // Last 6 months
-
-    return { statusData, barData }
-  }
+  // const getChartData = () => { ... } // Temporarily removed
 
   const getRecommendations = () => {
     const usedServices = orders.map(o => o.service).filter(Boolean)
@@ -484,7 +442,7 @@ export default function DashboardPage() {
   }
 
   const stats = getStats()
-  const chartData = getChartData()
+  // const chartData = getChartData()
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#e6edf3]">
@@ -499,9 +457,8 @@ export default function DashboardPage() {
               </div>
 
               <div>
-                <h1 className="text-2xl font-semibold text-[#e6edf3] min-h-[2rem]">
-                  {displayedText}
-                  {isTyping && <span className="animate-pulse">|</span>}
+                <h1 className="text-2xl font-semibold text-[#e6edf3]">
+                  {greeting}
                 </h1>
                 <div className="flex items-center space-x-4 mt-1">
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#21262d] text-[#848d97]">
@@ -800,54 +757,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Analytics Dashboard */}
-            {orders.length > 0 && (
+            {/* Analytics Dashboard - Temporarily disabled */}
+            {false && orders.length > 0 && (
               <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
                 <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">📊 Your Performance</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Order Status Pie Chart */}
-                  <div>
-                    <h3 className="text-sm font-medium text-[#e6edf3] mb-3">Order Status Distribution</h3>
-                    <ResponsiveContainer width="100%" height={200}>
-                      <PieChart>
-                        <Pie
-                          data={chartData.statusData}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={60}
-                          fill="#8884d8"
-                          dataKey="value"
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        >
-                          {chartData.statusData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  {/* Monthly Orders Bar Chart */}
-                  <div>
-                    <h3 className="text-sm font-medium text-[#e6edf3] mb-3">Monthly Order Volume</h3>
-                    <ResponsiveContainer width="100%" height={200}>
-                      <BarChart data={chartData.barData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#30363d" />
-                        <XAxis dataKey="month" stroke="#848d97" fontSize={12} />
-                        <YAxis stroke="#848d97" fontSize={12} />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: '#161b22',
-                            border: '1px solid #30363d',
-                            borderRadius: '6px'
-                          }}
-                        />
-                        <Bar dataKey="orders" fill="#2f81f7" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
+                {/* Charts temporarily removed */}
               </div>
             )}
 
