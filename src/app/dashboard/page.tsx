@@ -134,13 +134,23 @@ export default function DashboardPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const userRes = await fetch("/api/user")
+        console.log('Dashboard: Starting data fetch...')
+
+        // Add timeout to user fetch
+        const userFetchPromise = fetch("/api/user")
+        const userTimeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('User fetch timeout')), 10000)
+        )
+
+        const userRes = await Promise.race([userFetchPromise, userTimeoutPromise]) as Response
         if (!userRes.ok) {
+          console.log('Dashboard: User fetch failed, redirecting to login')
           router.push("/login")
           return
         }
         const userData = await userRes.json()
         let userInfo = userData.user
+        console.log('Dashboard: User data loaded')
 
         // Check for pending user document in localStorage (from failed registration)
         const pendingUserDocKey = `pendingUserDoc_${userInfo.uid}`;
@@ -195,6 +205,7 @@ export default function DashboardPage() {
         }
 
         setUser(userInfo)
+        console.log('Dashboard: User set, checking onboarding')
 
         // Check if user should see onboarding
         const onboardingCompleted = localStorage.getItem('onboardingCompleted')
@@ -203,15 +214,42 @@ export default function DashboardPage() {
           setTimeout(() => setShowOnboarding(true), 1000) // Small delay for better UX
         }
 
-        const ordersRes = await fetch("/api/orders")
-        if (ordersRes.ok) {
-          const odata = await ordersRes.json()
-          setOrders(odata.orders || [])
+        // Add timeout to orders fetch
+        const ordersFetchPromise = fetch("/api/orders")
+        const ordersTimeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Orders fetch timeout')), 5000)
+        )
+
+        try {
+          const ordersRes = await Promise.race([ordersFetchPromise, ordersTimeoutPromise]) as Response
+          if (ordersRes.ok) {
+            const odata = await ordersRes.json()
+            setOrders(odata.orders || [])
+            console.log('Dashboard: Orders loaded')
+          }
+        } catch (ordersError) {
+          console.warn('Orders fetch failed, continuing without orders:', ordersError)
+          setOrders([])
         }
+
+        console.log('Dashboard: Data fetch completed successfully')
       } catch (e) {
-        console.error("Error", e)
+        console.error("Dashboard: Error in fetchData", e)
+        // If it's a timeout or network error, still allow access with default data
+        if (e.message?.includes('timeout') || e.message?.includes('fetch')) {
+          console.log('Dashboard: Network error, using default user data')
+          setUser({
+            uid: 'unknown',
+            email: 'unknown@example.com',
+            credits: 20,
+            accountType: 'free'
+          })
+        } else {
+          router.push("/login")
+        }
       } finally {
         setLoading(false)
+        console.log('Dashboard: Loading set to false')
       }
     }
     fetchData()
