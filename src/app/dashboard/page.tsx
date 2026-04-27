@@ -133,9 +133,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function fetchData() {
-      try {
-        console.log('Dashboard: Starting data fetch...')
+      console.log('Dashboard: Starting data fetch...')
 
+      // Set loading to false immediately to prevent hang
+      setLoading(false)
+
+      try {
         // Add timeout to user fetch
         const userFetchPromise = fetch("/api/user")
         const userTimeoutPromise = new Promise((_, reject) =>
@@ -157,68 +160,59 @@ export default function DashboardPage() {
         const pendingUserDoc = localStorage.getItem(pendingUserDocKey);
 
         if (pendingUserDoc) {
-          try {
-            const userData = JSON.parse(pendingUserDoc);
-            const db = getFirebaseDb();
-            const userDocRef = doc(db, 'users', userInfo.uid);
-            await setDoc(userDocRef, userData);
-            console.log('✅ Pending user document created from localStorage');
-            localStorage.removeItem(pendingUserDocKey);
-          } catch (error) {
-            console.warn('Failed to create pending user document:', error);
-          }
+          // Firestore sync in background, don't wait
+          setTimeout(async () => {
+            try {
+              const userData = JSON.parse(pendingUserDoc);
+              const db = getFirebaseDb();
+              const userDocRef = doc(db, 'users', userInfo.uid);
+              await setDoc(userDocRef, userData);
+              console.log('✅ Pending user document created from localStorage');
+              localStorage.removeItem(pendingUserDocKey);
+            } catch (error) {
+              console.warn('Failed to create pending user document:', error);
+            }
+          }, 100)
         }
 
         // Safety fallback: Check if user document exists, create if missing
-        try {
-          console.log('Dashboard: Checking Firestore user document')
-          const db = getFirebaseDb()
-          const userDocRef = doc(db, 'users', userInfo.uid)
+        // Do this in background
+        setTimeout(async () => {
+          try {
+            console.log('Dashboard: Checking Firestore user document')
+            const db = getFirebaseDb()
+            const userDocRef = doc(db, 'users', userInfo.uid)
 
-          // Add timeout to getDoc
-          const getDocPromise = getDoc(userDocRef)
-          const getDocTimeout = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('getDoc timeout')), 5000)
-          )
+            const userDocSnap = await getDoc(userDocRef)
 
-          const userDocSnap = await Promise.race([getDocPromise, getDocTimeout]) as any
+            if (!userDocSnap.exists()) {
+              console.log('User document missing, creating with defaults...')
+              const defaultUserData = {
+                uid: userInfo.uid,
+                email: userInfo.email,
+                displayName: userInfo.email?.split('@')[0] || '',
+                credits: 20,
+                freeCreditsGiven: true,
+                accountType: 'free',
+                createdAt: new Date().toISOString(),
+              }
 
-          if (!userDocSnap.exists()) {
-            console.log('User document missing, creating with defaults...')
-            const defaultUserData = {
-              uid: userInfo.uid,
-              email: userInfo.email,
-              displayName: userInfo.email?.split('@')[0] || '',
-              credits: 20,
-              freeCreditsGiven: true,
-              accountType: 'free',
-              createdAt: new Date().toISOString(),
+              await setDoc(userDocRef, defaultUserData)
+              console.log('✅ User document created successfully in dashboard')
+            } else {
+              // Update user info with actual data from Firestore
+              const firestoreData = userDocSnap.data()
+              setUser(prev => ({
+                ...prev,
+                credits: firestoreData?.credits || 20,
+                accountType: firestoreData?.accountType || 'free'
+              }))
+              console.log('Dashboard: User document exists, updated data')
             }
-
-            // Add timeout to setDoc
-            const setDocPromise = setDoc(userDocRef, defaultUserData)
-            const setDocTimeout = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('setDoc timeout')), 5000)
-            )
-
-            await Promise.race([setDocPromise, setDocTimeout])
-            console.log('✅ User document created successfully in dashboard')
-          } else {
-            // Update user info with actual data from Firestore
-            const firestoreData = userDocSnap.data()
-            userInfo = {
-              ...userInfo,
-              credits: firestoreData?.credits || 20,
-              accountType: firestoreData?.accountType || 'free'
-            }
-            console.log('Dashboard: User document exists, loaded data')
+          } catch (firestoreError) {
+            console.warn('Firestore check failed:', firestoreError)
           }
-        } catch (firestoreError) {
-          console.warn('Firestore check failed, using default data:', firestoreError)
-          // Continue with default data if Firestore is unavailable
-          userInfo = { ...userInfo, credits: 20, accountType: 'free' }
-          console.log('Dashboard: Using default user data due to Firestore error')
-        }
+        }, 200)
 
         setUser(userInfo)
         console.log('Dashboard: User set, userInfo:', userInfo)
@@ -230,42 +224,36 @@ export default function DashboardPage() {
           setTimeout(() => setShowOnboarding(true), 1000) // Small delay for better UX
         }
 
-        // Add timeout to orders fetch
-        const ordersFetchPromise = fetch("/api/orders")
-        const ordersTimeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Orders fetch timeout')), 5000)
-        )
-
-        try {
-          const ordersRes = await Promise.race([ordersFetchPromise, ordersTimeoutPromise]) as Response
-          if (ordersRes.ok) {
-            const odata = await ordersRes.json()
-            setOrders(odata.orders || [])
-            console.log('Dashboard: Orders loaded')
+        // Load orders in background
+        setTimeout(async () => {
+          try {
+            const ordersRes = await fetch("/api/orders")
+            if (ordersRes.ok) {
+              const odata = await ordersRes.json()
+              setOrders(odata.orders || [])
+              console.log('Dashboard: Orders loaded')
+            }
+          } catch (ordersError) {
+            console.warn('Orders fetch failed:', ordersError)
+            setOrders([])
           }
-        } catch (ordersError) {
-          console.warn('Orders fetch failed, continuing without orders:', ordersError)
-          setOrders([])
-        }
+        }, 300)
 
-        console.log('Dashboard: Data fetch completed successfully')
+        console.log('Dashboard: Data fetch initiated, UI should load now')
       } catch (e) {
         console.error("Dashboard: Error in fetchData", e)
         // If it's a timeout or network error, still allow access with default data
         if (e.message?.includes('timeout') || e.message?.includes('fetch')) {
           console.log('Dashboard: Network error, using default user data')
           setUser({
-            uid: 'unknown',
-            email: 'unknown@example.com',
+            uid: 'guest',
+            email: 'guest@example.com',
             credits: 20,
             accountType: 'free'
           })
         } else {
           router.push("/login")
         }
-      } finally {
-        setLoading(false)
-        console.log('Dashboard: Loading set to false')
       }
     }
     fetchData()
