@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
+import { getFirebaseAuth } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
 import { getUserFriendlyErrorMessage } from "@/lib/errorMessages";
 import Link from "next/link";
@@ -57,42 +56,8 @@ export default function RegisterPage() {
         // Profile update is optional, continue
       });
 
-      // Step 3: Create user document
-      console.log("Creating user document...");
-      const userData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: email.split("@")[0],
-        createdAt: new Date().toISOString(),
-        credits: 20,
-        accountType: "free",
-      };
-      console.log("User data to save:", userData);
-
-      console.log("Waiting for auth propagation...");
-      // Small delay to ensure auth state is propagated
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Delay completed, attempting setDoc...");
-
-      try {
-        console.log("Checking if user document exists...");
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (userDocSnap.exists()) {
-          console.log("User document already exists, updating...");
-          await updateDoc(userDocRef, userData);
-          console.log("User document updated successfully");
-        } else {
-          console.log("Creating new user document...");
-          const setDocPromise = setDoc(userDocRef, userData);
-          const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Firestore operation timed out after 30 seconds')), 30000);
-          });
-
-          await Promise.race([setDocPromise, timeoutPromise]);
-          console.log("User document created successfully");
-        }
+      // User document creation is now handled by Firebase Cloud Function
+      console.log("User account created - Cloud Function will create user document automatically");
 
         console.log("User document operation completed in", Date.now() - startTime, "ms");
       } catch (docError: any) {
