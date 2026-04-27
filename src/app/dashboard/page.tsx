@@ -9,6 +9,30 @@ import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
 import OnboardingModal from "@/components/OnboardingModal"
 import { getFirebaseDb } from "@/lib/firebaseClient"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+
+// Typing animation hook
+function useTypingEffect(text: string, speed: number = 50) {
+  const [displayedText, setDisplayedText] = useState('')
+  const [isTyping, setIsTyping] = useState(true)
+
+  useEffect(() => {
+    let i = 0
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        setDisplayedText(text.slice(0, i + 1))
+        i++
+      } else {
+        setIsTyping(false)
+        clearInterval(timer)
+      }
+    }, speed)
+
+    return () => clearInterval(timer)
+  }, [text, speed])
+
+  return { displayedText, isTyping }
+}
 // import { addPendingUserCreation } from "@/lib/offlinePersistence"
 
 interface UserInfo {
@@ -61,7 +85,51 @@ export default function DashboardPage() {
   const [activeNav, setActiveNav] = useState('dashboard')
   const [notificationsExpanded, setNotificationsExpanded] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [currentTipIndex, setCurrentTipIndex] = useState(0)
+  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0)
+  const [liveActivities, setLiveActivities] = useState<string[]>([])
   const router = useRouter()
+
+  const greeting = user ? getPersonalizedGreeting() : "Welcome to OpulFlow"
+  const { displayedText, isTyping } = useTypingEffect(greeting)
+
+  const tips = [
+    "💡 Reddit comments get 5x more engagement than other platforms. Try our comment service!",
+    "🚀 Product Hunt launches often need authentic reviews. Our review service can help!",
+    "📈 Influencer partnerships can boost your reach by 300%. Find the perfect match with our research tool.",
+    "✨ AI content can seem robotic - use our humanization service to make it more natural.",
+    "🎯 Target the right platforms: Instagram for visuals, LinkedIn for B2B, Twitter for conversations.",
+    "📊 Track your ROI: Most clients see 2-3x return on investment with our services.",
+    "🔥 Trending: Video reviews on TikTok are converting 40% better than written reviews.",
+    "💰 Pro tip: Bundle services save you 15% - try comment + review combos!"
+  ]
+
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "SaaS Founder",
+      content: "OpulFlow's comment service boosted our Reddit engagement by 400%. Worth every credit!",
+      rating: 5
+    },
+    {
+      name: "Mike Rodriguez",
+      role: "E-commerce Owner",
+      content: "The product reviews look so authentic. Our Amazon sales increased 25% after using their service.",
+      rating: 5
+    },
+    {
+      name: "Emma Thompson",
+      role: "Content Creator",
+      content: "Finally found influencers that actually fit my brand. The research tool is incredible!",
+      rating: 5
+    },
+    {
+      name: "David Kim",
+      role: "Tech Startup CEO",
+      content: "AI humanization made our blog posts sound human again. Game changer for our content strategy.",
+      rating: 5
+    }
+  ]
 
   useEffect(() => {
     async function fetchData() {
@@ -148,6 +216,41 @@ export default function DashboardPage() {
     }
     fetchData()
   }, [router])
+
+  // Rotate tips every 8 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTipIndex((prev) => (prev + 1) % tips.length)
+    }, 8000)
+    return () => clearInterval(interval)
+  }, [tips.length])
+
+  // Rotate testimonials every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonialIndex((prev) => (prev + 1) % testimonials.length)
+    }, 10000)
+    return () => clearInterval(interval)
+  }, [testimonials.length])
+
+  // Simulate live activities
+  useEffect(() => {
+    const mockActivities = [
+      "🚀 New comment campaign launched on Reddit",
+      "⭐ Product review published on Trustpilot",
+      "👥 Influencer outreach completed for TechCorp",
+      "✨ AI content humanized for BlogMaster",
+      "📈 Engagement metrics updated across platforms",
+      "💬 Customer feedback processed successfully"
+    ]
+
+    const interval = setInterval(() => {
+      const randomActivity = mockActivities[Math.floor(Math.random() * mockActivities.length)]
+      setLiveActivities(prev => [randomActivity, ...prev.slice(0, 4)]) // Keep last 5
+    }, 15000) // Every 15 seconds
+
+    return () => clearInterval(interval)
+  }, [])
 
   const calculateCost = (service: string, data: ServiceFormData) => {
     switch (service) {
@@ -259,6 +362,77 @@ export default function DashboardPage() {
     return { totalOrders, completedOrders, pendingOrders }
   }
 
+  const getChartData = () => {
+    const statusData = [
+      { name: 'Completed', value: orders.filter(o => o.status === 'completed').length, color: '#238636' },
+      { name: 'Pending', value: orders.filter(o => o.status === 'pending').length, color: '#bb8009' },
+      { name: 'Processing', value: orders.filter(o => o.status === 'processing').length, color: '#2f81f7' },
+    ].filter(item => item.value > 0)
+
+    // Monthly orders data (simplified)
+    const monthlyData = orders.reduce((acc, order) => {
+      const month = new Date(order.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      acc[month] = (acc[month] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    const barData = Object.entries(monthlyData).map(([month, count]) => ({
+      month,
+      orders: count
+    })).slice(-6) // Last 6 months
+
+    return { statusData, barData }
+  }
+
+  const getRecommendations = () => {
+    const usedServices = orders.map(o => o.service).filter(Boolean)
+    const recommendations = []
+
+    if (!usedServices.includes('comment')) {
+      recommendations.push({
+        service: 'comment',
+        title: 'Start with Comments',
+        reason: 'Comments drive engagement and build community around your product.'
+      })
+    }
+    if (!usedServices.includes('review') && usedServices.length > 0) {
+      recommendations.push({
+        service: 'review',
+        title: 'Add Product Reviews',
+        reason: 'Reviews build trust and improve your online reputation.'
+      })
+    }
+    if (!usedServices.includes('influencer') && usedServices.includes('comment')) {
+      recommendations.push({
+        service: 'influencer',
+        title: 'Expand Reach with Influencers',
+        reason: 'Influencers can amplify your message to larger audiences.'
+      })
+    }
+    if (!usedServices.includes('humanization') && usedServices.length > 2) {
+      recommendations.push({
+        service: 'humanization',
+        title: 'Perfect Your Content',
+        reason: 'Make AI-generated content sound more natural and engaging.'
+      })
+    }
+
+    return recommendations.slice(0, 2) // Max 2 recommendations
+  }
+
+  const getPersonalizedGreeting = () => {
+    const name = user?.email?.split('@')[0] || 'there'
+    const stats = getStats()
+
+    if (stats.totalOrders === 0) {
+      return `Welcome to OpulFlow, ${name}! Ready to boost your online presence? 🚀`
+    } else if (stats.completedOrders > 0) {
+      return `Welcome back, ${name}! ${stats.completedOrders} campaigns completed - you're crushing it! 💪`
+    } else {
+      return `Hey ${name}, ${stats.pendingOrders} campaigns in progress. Let's make them shine! ✨`
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
@@ -268,6 +442,7 @@ export default function DashboardPage() {
   }
 
   const stats = getStats()
+  const chartData = getChartData()
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-[#e6edf3]">
@@ -282,7 +457,10 @@ export default function DashboardPage() {
               </div>
 
               <div>
-                <h1 className="text-2xl font-semibold text-[#e6edf3]">Welcome back, {user?.email?.split('@')[0]}</h1>
+                <h1 className="text-2xl font-semibold text-[#e6edf3] min-h-[2rem]">
+                  {displayedText}
+                  {isTyping && <span className="animate-pulse">|</span>}
+                </h1>
                 <div className="flex items-center space-x-4 mt-1">
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#21262d] text-[#848d97]">
                     🔖 {user?.credits || 0} credits available
@@ -407,6 +585,22 @@ export default function DashboardPage() {
               </div>
             </div>
 
+            {/* Personalized Recommendations */}
+            {getRecommendations().length > 0 && (
+              <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4">
+                <h3 className="text-sm font-semibold text-[#e6edf3] mb-3">🎯 Recommended for You</h3>
+                <div className="space-y-3">
+                  {getRecommendations().map((rec, index) => (
+                    <div key={index} className="p-3 bg-[#21262d] rounded-md hover:bg-[#30363d] transition-colors cursor-pointer"
+                         onClick={() => setActiveService(rec.service)}>
+                      <div className="font-medium text-[#e6edf3] text-sm">{rec.title}</div>
+                      <div className="text-xs text-[#848d97] mt-1">{rec.reason}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Recent Activity Feed */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
               <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">Recent Activity</h2>
@@ -442,11 +636,43 @@ export default function DashboardPage() {
                     <div className="text-4xl mb-2">📝</div>
                     <div>No recent activity</div>
                     <div className="text-sm">Your order history will appear here</div>
+                </div>
+              )}
+            </div>
+
+            {/* Success Stories */}
+            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
+              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">🌟 Success Stories</h2>
+              <div className="text-[#e6edf3] transition-opacity duration-500">
+                <blockquote className="text-sm italic mb-3">
+                  "{testimonials[currentTestimonialIndex].content}"
+                </blockquote>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-[#e6edf3]">{testimonials[currentTestimonialIndex].name}</div>
+                    <div className="text-xs text-[#848d97]">{testimonials[currentTestimonialIndex].role}</div>
                   </div>
-                )}
+                  <div className="flex">
+                    {[...Array(testimonials[currentTestimonialIndex].rating)].map((_, i) => (
+                      <span key={i} className="text-yellow-400">★</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex space-x-1 mt-4">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTestimonialIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        index === currentTestimonialIndex ? 'bg-[#238636]' : 'bg-[#30363d] hover:bg-[#484f58]'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
           {/* Right Column - Main Content */}
           <div className="flex-1 space-y-6">
@@ -457,60 +683,131 @@ export default function DashboardPage() {
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                 <button
                   onClick={() => setActiveService('comment')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left"
+                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left group"
+                  title="Generate authentic comments for Reddit, Twitter, and other platforms to boost engagement"
                 >
                   <span className="text-lg mr-3">💬</span>
                   <div>
                     <div className="text-sm font-medium text-[#e6edf3]">Comment Writing</div>
                     <div className="text-xs text-[#848d97]">$0.30 each</div>
                   </div>
+                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  </div>
                 </button>
 
                 <button
                   onClick={() => setActiveService('search')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left"
+                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left group"
+                  title="Find trending discussions and opportunities for your product mentions"
                 >
                   <span className="text-lg mr-3">🔍</span>
                 <div>
                   <div className="text-sm font-medium text-[#e6edf3]">Product Search</div>
                   <div className="text-xs text-[#848d97]">Free</div>
                 </div>
+                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  </div>
                 </button>
 
                 <button
                   onClick={() => setActiveService('influencer')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left"
+                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left group"
+                  title="Research and identify perfect influencers for your niche and budget"
                 >
                   <span className="text-lg mr-3">👥</span>
                   <div>
                     <div className="text-sm font-medium text-[#e6edf3]">Influencer Research</div>
                     <div className="text-xs text-[#848d97]">$0.30 each</div>
                   </div>
+                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  </div>
                 </button>
 
                 <button
                   onClick={() => setActiveService('review')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left"
+                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left group"
+                  title="Generate authentic reviews for app stores, Amazon, and review sites"
                 >
                   <span className="text-lg mr-3">⭐</span>
                   <div>
                     <div className="text-sm font-medium text-[#e6edf3]">Product Reviews</div>
                     <div className="text-xs text-[#848d97]">$1.00 each</div>
                   </div>
+                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  </div>
                 </button>
 
                 <button
                   onClick={() => setActiveService('humanization')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left col-span-2 lg:col-span-1"
+                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left col-span-2 lg:col-span-1 group"
+                  title="Transform AI-generated content into natural, human-sounding text"
                 >
                   <span className="text-lg mr-3">✨</span>
                   <div>
                     <div className="text-sm font-medium text-[#e6edf3]">AI Humanization</div>
                     <div className="text-xs text-[#848d97]">$0.015/word</div>
                   </div>
+                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  </div>
                 </button>
               </div>
             </div>
+
+            {/* Analytics Dashboard */}
+            {orders.length > 0 && (
+              <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
+                <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">📊 Your Performance</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Order Status Pie Chart */}
+                  <div>
+                    <h3 className="text-sm font-medium text-[#e6edf3] mb-3">Order Status Distribution</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <PieChart>
+                        <Pie
+                          data={chartData.statusData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={60}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {chartData.statusData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Monthly Orders Bar Chart */}
+                  <div>
+                    <h3 className="text-sm font-medium text-[#e6edf3] mb-3">Monthly Order Volume</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <BarChart data={chartData.barData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#30363d" />
+                        <XAxis dataKey="month" stroke="#848d97" fontSize={12} />
+                        <YAxis stroke="#848d97" fontSize={12} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: '#161b22',
+                            border: '1px solid #30363d',
+                            borderRadius: '6px'
+                          }}
+                        />
+                        <Bar dataKey="orders" fill="#2f81f7" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Notifications & Messages */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-md">
@@ -613,12 +910,46 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {/* Pro Tip Section */}
+            {/* Rotating Tips & Insights */}
             <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">💡 Pro Tip</h2>
-              <div className="text-[#e6edf3]">
-                <p className="mb-2">Did you know? Comments on Reddit have 5x higher engagement than other platforms.</p>
-                <p className="text-sm text-[#848d97]">Mix platforms in your campaigns for maximum reach and diverse audience engagement.</p>
+              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">💡 Tips & Insights</h2>
+              <div className="text-[#e6edf3] transition-opacity duration-500">
+                <p className="mb-2">{tips[currentTipIndex]}</p>
+                <div className="flex space-x-1 mt-3">
+                  {tips.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTipIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        index === currentTipIndex ? 'bg-[#2f81f7]' : 'bg-[#30363d] hover:bg-[#484f58]'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Live Activity Feed */}
+            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
+              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4 flex items-center">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                Live Activity Feed
+              </h2>
+              <div className="space-y-3">
+                {liveActivities.length === 0 ? (
+                  <div className="text-center py-4 text-[#848d97]">
+                    <div className="animate-spin w-4 h-4 border-2 border-[#2f81f7] border-t-transparent rounded-full mx-auto mb-2"></div>
+                    Monitoring platform activities...
+                  </div>
+                ) : (
+                  liveActivities.map((activity, index) => (
+                    <div key={index} className="flex items-center space-x-3 text-sm">
+                      <div className="w-1.5 h-1.5 bg-[#2f81f7] rounded-full"></div>
+                      <span className="text-[#e6edf3]">{activity}</span>
+                      <span className="text-xs text-[#848d97]">just now</span>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
