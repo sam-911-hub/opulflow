@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { onAuthStateChanged } from "firebase/auth"
-import { doc, getDoc } from "firebase/firestore"
-import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { doc, setDoc, getDoc } from "firebase/firestore"
 import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
 import OnboardingModal from "@/components/OnboardingModal"
-import { doc, setDoc, getDoc } from "firebase/firestore"
 import { getFirebaseDb } from "@/lib/firebaseClient"
 import { addPendingUserCreation } from "@/lib/offlinePersistence"
 

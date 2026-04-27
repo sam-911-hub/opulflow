@@ -72,18 +72,6 @@ export default function RegisterPage() {
       addPendingUserCreation(user.uid, userData);
       console.log("User document queued for creation with offline persistence");
 
-        console.log("User document operation completed in", Date.now() - startTime, "ms");
-      } catch (docError: any) {
-        console.error("User document operation failed:", docError);
-        // Check if it's a permission error
-        if (docError.code === 'permission-denied') {
-          console.error("Permission denied - check Firestore security rules");
-          throw new Error('Permission denied. Please contact support.');
-        }
-        // For other errors, continue with registration
-        console.warn("Continuing with registration despite user document creation failure:", docError.message);
-      }
-
       // Step 4: Get ID token and create session
       console.log("Getting ID token and creating session...");
       const idToken = await user.getIdToken();
