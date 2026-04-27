@@ -9,7 +9,6 @@ import Link from "next/link"
 import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
 import OnboardingModal from "@/components/OnboardingModal"
-import FirestoreTest from "@/components/FirestoreTest"
 
 interface UserInfo {
   uid: string
@@ -245,11 +244,6 @@ export default function DashboardPage() {
             </Link>
           </div>
         </div>
-      </div>
-
-      {/* Firestore Debug Test - Remove after debugging */}
-      <div className="px-8 py-4">
-        <FirestoreTest />
       </div>
 
       {/* Main Content - Responsive Layout */}
