@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
 import { getUserFriendlyErrorMessage } from "@/lib/errorMessages";
-// import { addPendingUserCreation } from "@/lib/offlinePersistence";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -49,7 +49,7 @@ export default function RegisterPage() {
       const user = userCredential.user;
       console.log("User account created, UID:", user.uid, "in", Date.now() - startTime, "ms");
 
-      // Step 2: Update profile (fire-and-forget for speed)
+      // Step 2: Update profile (optional)
       updateProfile(user, {
         displayName: email.split("@")[0],
       }).catch(profileError => {
@@ -57,19 +57,31 @@ export default function RegisterPage() {
         // Profile update is optional, continue
       });
 
-      // Step 3: Create user document using offline persistence
-      console.log("Creating user document with offline persistence...");
+      // Step 3: Create user document with robust offline handling
+      console.log("Creating user document...");
+      const db = getFirebaseDb();
+      const userDocRef = doc(db, 'users', user.uid);
+
       const userData = {
         uid: user.uid,
         email: user.email,
         displayName: email.split("@")[0],
         credits: 20,
+        freeCreditsGiven: true,
         accountType: "free",
         createdAt: new Date().toISOString(),
       };
 
-      // User document will be created when Firestore becomes available
-      console.log("User account created - document creation will be handled by dashboard");
+      // Use Firestore's offline persistence - this will work even when offline
+      try {
+        await setDoc(userDocRef, userData);
+        console.log("✅ User document created successfully");
+      } catch (firestoreError: any) {
+        console.warn("⚠️ Firestore write failed, but user can still use the app:", firestoreError.message);
+        // Store the user data in localStorage as backup
+        localStorage.setItem(`pendingUserDoc_${user.uid}`, JSON.stringify(userData));
+        // Don't throw error - let user proceed
+      }
 
       // Step 4: Get ID token and create session
       console.log("Getting ID token and creating session...");

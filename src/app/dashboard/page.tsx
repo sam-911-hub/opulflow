@@ -74,31 +74,56 @@ export default function DashboardPage() {
         const userData = await userRes.json()
         let userInfo = userData.user
 
-        // Check if user document exists in Firestore, create if missing
-        const db = getFirebaseDb()
-        const userDocRef = doc(db, 'users', userInfo.uid)
-        const userDocSnap = await getDoc(userDocRef)
+        // Check for pending user document in localStorage (from failed registration)
+        const pendingUserDocKey = `pendingUserDoc_${userInfo.uid}`;
+        const pendingUserDoc = localStorage.getItem(pendingUserDocKey);
 
-        if (!userDocSnap.exists()) {
-          console.log('User document missing, creating with defaults...')
-          const defaultUserData = {
-            uid: userInfo.uid,
-            email: userInfo.email,
-            displayName: userInfo.email?.split('@')[0] || '',
-            credits: 20,
-            accountType: 'free',
-            createdAt: new Date().toISOString(),
-          }
-
-          // Try to create immediately
+        if (pendingUserDoc) {
           try {
-            await setDoc(userDocRef, defaultUserData)
-            console.log('User document created successfully')
-            userInfo = { ...userInfo, credits: 20, accountType: 'free' }
+            const userData = JSON.parse(pendingUserDoc);
+            const db = getFirebaseDb();
+            const userDocRef = doc(db, 'users', userInfo.uid);
+            await setDoc(userDocRef, userData);
+            console.log('✅ Pending user document created from localStorage');
+            localStorage.removeItem(pendingUserDocKey);
           } catch (error) {
-            console.warn('Failed to create user document:', error)
-            userInfo = { ...userInfo, credits: 20, accountType: 'free' }
+            console.warn('Failed to create pending user document:', error);
           }
+        }
+
+        // Safety fallback: Check if user document exists, create if missing
+        try {
+          const db = getFirebaseDb()
+          const userDocRef = doc(db, 'users', userInfo.uid)
+          const userDocSnap = await getDoc(userDocRef)
+
+          if (!userDocSnap.exists()) {
+            console.log('User document missing, creating with defaults...')
+            const defaultUserData = {
+              uid: userInfo.uid,
+              email: userInfo.email,
+              displayName: userInfo.email?.split('@')[0] || '',
+              credits: 20,
+              freeCreditsGiven: true,
+              accountType: 'free',
+              createdAt: new Date().toISOString(),
+            }
+
+            await setDoc(userDocRef, defaultUserData)
+            console.log('✅ User document created successfully in dashboard')
+          } else {
+            // Update user info with actual data from Firestore
+            const firestoreData = userDocSnap.data()
+            userInfo = {
+              ...userInfo,
+              credits: firestoreData?.credits || 20,
+              accountType: firestoreData?.accountType || 'free'
+            }
+          }
+        } catch (firestoreError) {
+          console.warn('Firestore check failed, using default data:', firestoreError)
+          // Continue with default data if Firestore is unavailable
+          userInfo = { ...userInfo, credits: 20, accountType: 'free' }
         }
 
         setUser(userInfo)
