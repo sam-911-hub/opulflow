@@ -74,10 +74,16 @@ export default function RegisterPage() {
 
       // Use Firestore's offline persistence - this will work even when offline
       try {
-        await setDoc(userDocRef, userData);
+        // Add timeout to prevent hanging
+        const firestorePromise = setDoc(userDocRef, userData);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Firestore operation timed out')), 10000)
+        );
+
+        await Promise.race([firestorePromise, timeoutPromise]);
         console.log("✅ User document created successfully");
       } catch (firestoreError: any) {
-        console.warn("⚠️ Firestore write failed, but user can still use the app:", firestoreError.message);
+        console.warn("⚠️ Firestore write failed or timed out, but user can still use the app:", firestoreError.message);
         // Store the user data in localStorage as backup
         localStorage.setItem(`pendingUserDoc_${user.uid}`, JSON.stringify(userData));
         // Don't throw error - let user proceed
@@ -85,22 +91,29 @@ export default function RegisterPage() {
 
       // Step 4: Get ID token and create session
       console.log("Getting ID token and creating session...");
-      const idToken = await user.getIdToken();
-      console.log("ID token obtained");
+      try {
+        const idToken = await user.getIdToken();
+        console.log("ID token obtained");
 
-      const sessionResponse = await fetch('/api/auth/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken }),
-      });
+        const sessionResponse = await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken }),
+        });
 
-      if (!sessionResponse.ok) {
-        const errorText = await sessionResponse.text();
-        console.error("Session creation failed:", sessionResponse.status, errorText);
-        throw new Error('Failed to create session');
+        if (!sessionResponse.ok) {
+          const errorText = await sessionResponse.text();
+          console.error("Session creation failed:", sessionResponse.status, errorText);
+          throw new Error('Failed to create session');
+        }
+
+        console.log("Session created successfully");
+      } catch (sessionError) {
+        console.warn("Session creation failed, but user account is created:", sessionError);
+        // Continue to dashboard - the dashboard will handle auth checks
       }
 
-      console.log("Session created, registration completed in", Date.now() - startTime, "ms");
+      console.log("Registration completed in", Date.now() - startTime, "ms");
       console.log("Redirecting to dashboard...");
       router.push("/dashboard");
       console.log("Router.push called");

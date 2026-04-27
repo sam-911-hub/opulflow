@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getFirestore, Firestore, initializeFirestore, persistentLocalCache } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -37,20 +37,10 @@ let firestoreInstance: Firestore | null = null;
 export function getFirebaseDb(): Firestore {
   if (!firestoreInstance) {
     const app = getFirebaseApp();
-    firestoreInstance = getFirestore(app);
-
-    // Enable offline persistence for reliable offline writes
-    // This must be done before any other Firestore operations
-    enableIndexedDbPersistence(firestoreInstance).catch((err) => {
-      if (err.code === 'failed-precondition') {
-        // Multiple tabs open, persistence can only be enabled in one tab at a time
-        console.warn('Firestore persistence failed: Multiple tabs open');
-      } else if (err.code === 'unavailable') {
-        // The current browser doesn't support persistence
-        console.warn('Firestore persistence unavailable in this browser');
-      } else {
-        console.error('Firestore persistence error:', err);
-      }
+    firestoreInstance = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        // Configure cache size and other settings as needed
+      }),
     });
   }
 
