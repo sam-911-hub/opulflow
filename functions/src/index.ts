@@ -4,15 +4,15 @@ import { onRequest } from 'firebase-functions/v2/https';
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { beforeUserCreated, beforeUserSignedIn, HttpsError } from 'firebase-functions/v2/identity';
 import { onDocumentCreated as onUserDocCreated } from 'firebase-functions/v2/firestore';
-import { onUserCreated } from 'firebase-functions/v2/auth';
+import { user } from 'firebase-functions/v1/auth';
 import * as admin from 'firebase-admin';
 
 admin.initializeApp();
 
 // Cloud Function triggered when a new user is created in Firebase Auth
-export const createUserDocument = onUserCreated(async (event) => {
+export const createUserDocument = user().onCreate(async (userRecord: any, context: any) => {
   try {
-    const user = event.data;
+    const user = userRecord;
     console.log('Creating user document for:', user.uid, user.email);
 
     const userData = {
