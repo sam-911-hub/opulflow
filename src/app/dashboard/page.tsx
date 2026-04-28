@@ -7,7 +7,6 @@ import Link from "next/link"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { toast } from "@/components/ui/toast"
 import { ChevronRightIcon } from "lucide-react"
-import OnboardingModal from "@/components/OnboardingModal"
 import { getFirebaseDb } from "@/lib/firebaseClient"
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
@@ -63,7 +62,6 @@ export default function DashboardPage() {
   const [formData, setFormData] = useState<ServiceFormData>({})
   const [activeNav, setActiveNav] = useState('dashboard')
   const [notificationsExpanded, setNotificationsExpanded] = useState(false)
-  const [showOnboarding, setShowOnboarding] = useState(false)
   const router = useRouter()
 
   const getStats = () => {
@@ -179,8 +177,9 @@ export default function DashboardPage() {
         // Check if user should see onboarding
         const onboardingCompleted = localStorage.getItem('onboardingCompleted')
         if (!onboardingCompleted && userInfo.credits === 20) {
-          // New user with default credits - show onboarding
-          setTimeout(() => setShowOnboarding(true), 1000) // Small delay for better UX
+          // New user with default credits - redirect to onboarding
+          router.push('/onboarding')
+          return
         }
 
         // Load orders in background
@@ -1171,10 +1170,6 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Onboarding Modal */}
-      {showOnboarding && (
-        <OnboardingModal onClose={() => setShowOnboarding(false)} />
-      )}
     </div>
   )
 }
