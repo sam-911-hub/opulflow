@@ -66,6 +66,26 @@ export default function DashboardPage() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const router = useRouter()
 
+  const getStats = () => {
+    const totalOrders = orders.length
+    const completedOrders = orders.filter(o => o.status === 'completed').length
+    const pendingOrders = orders.filter(o => o.status === 'pending').length
+    return { totalOrders, completedOrders, pendingOrders }
+  }
+
+  const getPersonalizedGreeting = () => {
+    const name = user?.email?.split('@')[0] || 'there'
+    const stats = getStats()
+
+    if (stats.totalOrders === 0) {
+      return `Welcome to OpulFlow, ${name}! Ready to boost your online presence? 🚀`
+    } else if (stats.completedOrders > 0) {
+      return `Welcome back, ${name}! ${stats.completedOrders} campaigns completed - you're crushing it! 💪`
+    } else {
+      return `Hey ${name}, ${stats.pendingOrders} campaigns in progress. Let's make them shine! ✨`
+    }
+  }
+
   const greeting = user ? getPersonalizedGreeting() : "Welcome to OpulFlow"
 
   // Arrays removed to prevent initialization errors
@@ -141,11 +161,11 @@ export default function DashboardPage() {
             } else {
               // Update user info with actual data from Firestore
               const firestoreData = userDocSnap.data()
-              setUser(prev => ({
+              setUser(prev => prev ? {
                 ...prev,
                 credits: firestoreData?.credits || 20,
                 accountType: firestoreData?.accountType || 'free'
-              }))
+              } : prev)
               console.log('Dashboard: User document exists, updated data')
             }
           } catch (firestoreError) {
@@ -182,7 +202,7 @@ export default function DashboardPage() {
       } catch (e) {
         console.error("Dashboard: Error in fetchData", e)
         // If it's a timeout or network error, still allow access with default data
-        if (e.message?.includes('timeout') || e.message?.includes('fetch')) {
+        if (e instanceof Error && (e.message?.includes('timeout') || e.message?.includes('fetch'))) {
           console.log('Dashboard: Network error, using default user data')
           setUser({
             uid: 'guest',
@@ -305,13 +325,6 @@ export default function DashboardPage() {
     return email.split('@')[0].substring(0, 2).toUpperCase()
   }
 
-  const getStats = () => {
-    const totalOrders = orders.length
-    const completedOrders = orders.filter(o => o.status === 'completed').length
-    const pendingOrders = orders.filter(o => o.status === 'pending').length
-    return { totalOrders, completedOrders, pendingOrders }
-  }
-
   // const getChartData = () => { ... } // Temporarily removed
 
   const getRecommendations = () => {
@@ -348,19 +361,6 @@ export default function DashboardPage() {
     }
 
     return recommendations.slice(0, 2) // Max 2 recommendations
-  }
-
-  const getPersonalizedGreeting = () => {
-    const name = user?.email?.split('@')[0] || 'there'
-    const stats = getStats()
-
-    if (stats.totalOrders === 0) {
-      return `Welcome to OpulFlow, ${name}! Ready to boost your online presence? 🚀`
-    } else if (stats.completedOrders > 0) {
-      return `Welcome back, ${name}! ${stats.completedOrders} campaigns completed - you're crushing it! 💪`
-    } else {
-      return `Hey ${name}, ${stats.pendingOrders} campaigns in progress. Let's make them shine! ✨`
-    }
   }
 
   if (loading) {

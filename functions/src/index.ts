@@ -1,7 +1,10 @@
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { onCall } from 'firebase-functions/v2/https';
 import { onRequest } from 'firebase-functions/v2/https';
-import { onUserCreated } from 'firebase-functions/v2/identity';
+import { onDocumentWritten } from 'firebase-functions/v2/firestore';
+import { beforeUserCreated, beforeUserSignedIn, HttpsError } from 'firebase-functions/v2/identity';
+import { onDocumentCreated as onUserDocCreated } from 'firebase-functions/v2/firestore';
+import { onUserCreated } from 'firebase-functions/v2/auth';
 import * as admin from 'firebase-admin';
 
 admin.initializeApp();

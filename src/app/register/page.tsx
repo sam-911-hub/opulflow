@@ -77,7 +77,7 @@ export default function RegisterPage() {
         // Add timeout to prevent hanging
         const firestorePromise = setDoc(userDocRef, userData);
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Firestore operation timed out')), 10000)
+          setTimeout(() => reject(new Error('Firestore operation timed out')), 30000)
         );
 
         await Promise.race([firestorePromise, timeoutPromise]);
