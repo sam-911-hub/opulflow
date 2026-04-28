@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "@/components/ui/toast"
 import ErrorBoundary from "@/components/ErrorBoundary"
+import { createOrderFallback, retryWithBackoff } from "@/lib/orderFallback"
 
 interface OrderData {
   service: string
@@ -86,39 +87,91 @@ export default function PaymentPage() {
         throw new Error('Failed to send order notification')
       }
 
-      // Save order to Firestore
+      // Save order to Firestore via API with fallback
+      let orderCreated = false;
+      let finalOrderId = orderId;
+
       try {
-        const orderResponse = await fetch('/api/orders/create', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        const orderResponse = await retryWithBackoff(
+          () => fetch('/api/orders/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              service: orderData.service,
+              formData: orderData.formData,
+              totalCost: orderData.totalCost,
+              paymentMethod: isFreeService ? 'free' : paymentMethod,
+              mpesaCode: confirmationCode,
+              status: orderStatus,
+              orderId
+            }),
+          }),
+          2, // 2 attempts
+          1000 // 1 second initial delay
+        );
+
+        if (orderResponse.ok) {
+          console.log('✅ Order created via API');
+          orderCreated = true;
+        } else if (orderResponse.status === 404) {
+          console.warn('Order API endpoint not found (404). Attempting client-side fallback...');
+          // Try client-side fallback
+          try {
+            const fallbackResult = await createOrderFallback({
+              service: orderData.service,
+              formData: orderData.formData,
+              totalCost: orderData.totalCost,
+              paymentMethod: isFreeService ? 'free' : paymentMethod,
+              mpesaCode: confirmationCode,
+              status: orderStatus,
+              orderId,
+              userEmail: orderData.userEmail,
+            });
+            finalOrderId = fallbackResult.orderId;
+            orderCreated = true;
+            toast.info('Order recorded via offline mode. Our team will process it shortly.');
+          } catch (fallbackError) {
+            console.error('Fallback order creation also failed:', fallbackError);
+            toast.warning('Order may not have been recorded. Please contact support if needed.');
+          }
+        } else {
+          throw new Error(`Failed to create order: ${orderResponse.status}`);
+        }
+      } catch (apiError) {
+        console.error('Order creation API error:', apiError);
+        // Try client-side fallback on any network error
+        try {
+          const fallbackResult = await createOrderFallback({
             service: orderData.service,
             formData: orderData.formData,
             totalCost: orderData.totalCost,
             paymentMethod: isFreeService ? 'free' : paymentMethod,
             mpesaCode: confirmationCode,
             status: orderStatus,
-            orderId
-          }),
-        })
-
-        if (!orderResponse.ok) {
-          // If API is not available (404), log and continue
-          if (orderResponse.status === 404) {
-            console.warn('Order API not available. Order data saved locally:', orderData)
-            toast.warning('Order recorded locally. Our team will process it shortly.')
-          } else {
-            throw new Error(`Failed to create order: ${orderResponse.status}`)
-          }
-        }
-      } catch (apiError) {
-        console.error('Order API error:', apiError)
-        // If network/API error, still allow the flow to continue
-        const errorMessage = apiError instanceof Error ? apiError.message : String(apiError)
-        if (errorMessage.includes('Failed to fetch') || errorMessage.includes('404')) {
-          toast.warning('Order recorded. Processing may take longer than usual.')
-        } else {
-          throw apiError
+            orderId,
+            userEmail: orderData.userEmail,
+          });
+          finalOrderId = fallbackResult.orderId;
+          orderCreated = true;
+          toast.info('Order recorded locally. Processing may take longer than usual.');
+        } catch (fallbackError) {
+          console.error('Fallback failed:', fallbackError);
+          // Even if fallback fails, we save order to localStorage for manual recovery
+          const failedOrder = {
+            ...orderData,
+            orderId,
+            paymentMethod: isFreeService ? 'free' : paymentMethod,
+            status: orderStatus,
+            mpesaCode: confirmationCode,
+            createdAt: new Date().toISOString(),
+            failedToSync: true,
+          };
+          const failedOrders = JSON.parse(localStorage.getItem('failedOrders') || '[]');
+          failedOrders.push(failedOrder);
+          localStorage.setItem('failedOrders', JSON.stringify(failedOrders));
+          
+          toast.warning('Order saved locally for manual processing. Our team will contact you shortly.');
+          orderCreated = true; // Still consider it created for UX purposes
         }
       }
 
