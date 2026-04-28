@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore, initializeFirestore, persistentLocalCache } from 'firebase/firestore';
+import { getFirestore, Firestore, initializeFirestore, memoryLocalCache } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -37,10 +37,9 @@ let firestoreInstance: Firestore | null = null;
 export function getFirebaseDb(): Firestore {
   if (!firestoreInstance) {
     const app = getFirebaseApp();
+    // Use memory cache to avoid IndexedDB conflicts across tabs
     firestoreInstance = initializeFirestore(app, {
-      localCache: persistentLocalCache({
-        // Configure cache size and other settings as needed
-      }),
+      localCache: memoryLocalCache(),
     });
   }
 
