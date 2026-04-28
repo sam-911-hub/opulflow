@@ -1,0 +1,98 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
+		},
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
+		},
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
+		},
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
+		},
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
+		},
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
+		},
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
+		},
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "npm run build",
+			"group": "build"
+		},
+		{
+			"label": "Parse Dashboard TSX",
+			"type": "shell",
+			"command": "node -e \"const fs = require('fs'); const ts = require('typescript'); const src = fs.readFileSync('src/app/dashboard/page.tsx','utf8'); try { const res = ts.transpileModule(src, { compilerOptions: { jsx: ts.JsxEmit.Preserve, target: ts.ScriptTarget.ESNext, module: ts.ModuleKind.ESNext } }); console.log('ok'); } catch (err) { console.error(err.toString()); process.exit(1); }\""
+		},
+		{
+			"label": "Parse Dashboard TSX Quick",
+			"type": "shell",
+			"command": "node -e \"const fs=require('fs');const ts=require('typescript');const src=fs.readFileSync('src/app/dashboard/page.tsx','utf8');const res=ts.transpileModule(src,{compilerOptions:{jsx:ts.JsxEmit.Preserve,target:ts.ScriptTarget.ESNext,module:ts.ModuleKind.ESNext}});console.log('ok');\""
+		},
+		{
+			"label": "Parse Dashboard TSX Quick",
+			"type": "shell",
+			"command": "node -e 'const fs=require(\"fs\"); const ts=require(\"typescript\"); const src=fs.readFileSync(\"src/app/dashboard/page.tsx\",\"utf8\"); const res=ts.transpileModule(src,{compilerOptions:{jsx:ts.JsxEmit.Preserve,target:ts.ScriptTarget.ESNext,module:ts.ModuleKind.ESNext}}); console.log(\"ok\");'"
+		},
+		{
+			"label": "Run Temp Parse",
+			"type": "shell",
+			"command": "node temp-parse.js"
+		},
+		{
+			"label": "Run TypeScript Check",
+			"type": "shell",
+			"command": "npx tsc --noEmit"
+		},
+		{
+			"label": "Count JSX Tags",
+			"type": "shell",
+			"command": "node temp-count.js"
+		},
+		{
+			"label": "Find Missing Div",
+			"type": "shell",
+			"command": "node - <<'NODE'\nconst fs = require('fs');\nconst src = fs.readFileSync('src/app/dashboard/page.tsx','utf8').split('\\n');\nconst startLine = src.findIndex(line => line.includes('return ('));\nlet balance = 0;\nfor (let i = startLine; i < src.length; i++) {\n  const line = src[i];\n  const opens = (line.match(/<div\\b/g) || []).length;\n  const closes = (line.match(/<\\/div>/g) || []).length;\n  balance += opens - closes;\n  if (balance === 1 && line.includes('className=\"grid grid-cols-1')) {\n    console.log('interesting at', i+1, line);\n  }\n  if (opens || closes) {\n    console.log(i+1, 'opens', opens, 'closes', closes, 'balance', balance, line.trim().slice(0,120));\n  }\n}\nconsole.log('final balance', balance);\nNODE"
+		},
+		{
+			"label": "Run Balance",
+			"type": "shell",
+			"command": "node temp-balance.js"
+		},
+		{
+			"label": "Print Dashboard Lines",
+			"type": "shell",
+			"command": "node -e \"require('fs').readFileSync('src/app/dashboard/page.tsx','utf8').split('\\n').slice(540,590).forEach((l,i)=>console.log(541+i+': '+l));\""
+		}
+	]
+}
