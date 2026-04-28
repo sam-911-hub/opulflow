@@ -38,9 +38,14 @@ export function getFirebaseDb(): Firestore {
   if (!firestoreInstance) {
     const app = getFirebaseApp();
     try {
-      // Try to use persistent local cache
+      // Try to use persistent local cache with multi-tab synchronization enabled
       firestoreInstance = initializeFirestore(app, {
-        localCache: persistentLocalCache(),
+        localCache: persistentLocalCache({
+          tabManager: {
+            // Enable multi-tab synchronization to prevent conflicts
+            forceOwnership: false,
+          },
+        }),
       });
     } catch (error: any) {
       // If persistence layer fails (e.g., due to multi-tab conflict), fall back to memory cache
