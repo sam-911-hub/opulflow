@@ -165,7 +165,7 @@ export default function DashboardPage() {
                 ...prev,
                 credits: firestoreData?.credits || 20,
                 accountType: firestoreData?.accountType || 'free'
-              } : prev)
+              } : null)
               console.log('Dashboard: User document exists, updated data')
             }
           } catch (firestoreError) {
