@@ -1,7 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth"
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth"
 import { getFirebaseAuth } from "@/lib/firebaseClient"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -45,13 +51,48 @@ export default function LoginPage() {
       }
 
       router.push("/dashboard")
-      } catch (err: unknown) {
-        console.error("Login error:", err)
-        const friendlyMessage = getUserFriendlyErrorMessage(err)
-        setError(friendlyMessage)
-     } finally {
-       setLoading(false)
-     }
+    } catch (err: unknown) {
+      console.error("Login error:", err)
+      const friendlyMessage = getUserFriendlyErrorMessage(err)
+      setError(friendlyMessage)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    setError("")
+    setLoading(true)
+
+    try {
+      const auth = getFirebaseAuth()
+      await setPersistence(auth, browserLocalPersistence)
+
+      const provider = new GoogleAuthProvider()
+      provider.setCustomParameters({ prompt: "select_account" })
+
+      const userCredential = await signInWithPopup(auth, provider)
+      const user = userCredential.user
+      const idToken = await user.getIdToken()
+
+      const response = await fetch("/api/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to create session")
+      }
+
+      router.push("/dashboard")
+    } catch (err: unknown) {
+      console.error("Google login error:", err)
+      const friendlyMessage = getUserFriendlyErrorMessage(err)
+      setError(friendlyMessage)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -114,6 +155,15 @@ export default function LoginPage() {
               Forgot password?
             </Link>
           </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full mt-4 border border-[#30363d] bg-[#0d1117] text-[#e6edf3] py-2 px-4 rounded-md transition-colors hover:border-[#8b949e] disabled:opacity-50"
+          >
+            {loading ? "Please wait..." : "Sign in with Google"}
+          </button>
         </form>
 
         <div className="mt-6 text-center">

@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
@@ -126,6 +133,43 @@ export default function RegisterPage() {
     }
   };
 
+  const handleGoogleSignUp = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const auth = getFirebaseAuth();
+      await setPersistence(auth, browserLocalPersistence);
+
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+
+      const userCredential = await signInWithPopup(auth, provider);
+      const user = userCredential.user;
+      const idToken = await user.getIdToken();
+
+      const sessionResponse = await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!sessionResponse.ok) {
+        const errorText = await sessionResponse.text();
+        console.error('Session creation failed:', sessionResponse.status, errorText);
+        throw new Error('Failed to create session');
+      }
+
+      router.push('/dashboard');
+    } catch (err: unknown) {
+      console.error('Google sign-up error:', err);
+      const friendlyMessage = getUserFriendlyErrorMessage(err);
+      setError(friendlyMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0d1117]">
       <div className="bg-[#161b22] border border-[#30363d] p-8 rounded-md w-full max-w-md">
@@ -193,6 +237,15 @@ export default function RegisterPage() {
             className="w-full bg-[#238636] hover:bg-[#2ea043] text-white py-2 px-4 rounded-md transition-colors font-medium disabled:opacity-50"
           >
             {loading ? "Creating account..." : "Create account"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={loading}
+            className="w-full mt-3 border border-[#30363d] bg-[#0d1117] text-[#e6edf3] py-2 px-4 rounded-md transition-colors hover:border-[#8b949e] disabled:opacity-50"
+          >
+            {loading ? "Please wait..." : "Sign up with Google"}
           </button>
         </form>
 
