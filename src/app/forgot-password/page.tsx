@@ -27,56 +27,64 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0d1117]">
-      <div className="bg-[#161b22] border border-[#30363d] p-8 rounded-md w-full max-w-md">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-semibold text-[#e6edf3] mb-2">Reset your password</h1>
-          <p className="text-[#848d97] text-sm">
-            Enter your email address and we'll send you instructions to reset your password.
-          </p>
-        </div>
-
-        {error && (
-          <div className="bg-[#da3633] border border-[#f85149] text-white px-4 py-3 rounded-md mb-4 text-sm">
-            {error}
-          </div>
-        )}
-
-        {message && (
-          <div className="bg-[#238636] border border-[#2ea043] text-white px-4 py-3 rounded-md mb-4 text-sm">
-            {message}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[#e6edf3] mb-2">
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="block w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
-              placeholder="Enter your email"
-              required
-            />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md">
+        <div className="bg-white shadow-xl border border-slate-200 rounded-[2rem] p-8">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-gradient-to-r from-blue-600 to-purple-600 text-white text-2xl font-bold mx-auto mb-4">
+              OP
+            </div>
+            <h1 className="text-3xl font-semibold text-slate-900 mb-2">Reset your password</h1>
+            <p className="text-slate-600">Enter your email below to receive password reset instructions.</p>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#238636] hover:bg-[#2ea043] text-white py-2 px-4 rounded-md transition-colors font-medium disabled:opacity-50"
-          >
-            {loading ? "Sending..." : "Send reset instructions"}
-          </button>
-        </form>
+          {error && (
+            <div className="rounded-3xl border border-red-200 bg-red-50 p-4 mb-6 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
-        <div className="mt-6 text-center">
-          <Link href="/login" className="text-[#2f81f7] hover:text-[#79c0ff] text-sm">
-            ← Back to sign in
-          </Link>
+          {message && (
+            <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 mb-6 text-sm text-emerald-700">
+              {message}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="block w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-3xl bg-gradient-to-r from-blue-600 to-purple-600 px-5 py-3 text-white font-semibold shadow-lg shadow-blue-200/20 transition hover:shadow-xl disabled:opacity-50"
+            >
+              {loading ? 'Sending...' : 'Send reset instructions'}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-slate-500">
+            <p>
+              Prefer direct help? Email <a href="mailto:opulflow.inc@gmail.com" className="font-medium text-blue-600 hover:text-blue-700">opulflow.inc@gmail.com</a>
+            </p>
+            <p className="mt-3">
+              <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                ← Back to sign in
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ import Link from "next/link";
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,7 +22,10 @@ export default function OnboardingPage() {
           return;
         }
         const data = await res.json();
-        const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+        setUserId(data.user.uid);
+
+        const onboardingCompletedKey = `onboardingCompleted_${data.user.uid}`;
+        const onboardingCompleted = localStorage.getItem(onboardingCompletedKey);
 
         if (onboardingCompleted) {
           router.push('/dashboard');
@@ -239,13 +243,15 @@ export default function OnboardingPage() {
   };
 
   const handleComplete = () => {
-    localStorage.setItem('onboardingCompleted', 'true');
+    const onboardingKey = userId ? `onboardingCompleted_${userId}` : 'onboardingCompleted';
+    localStorage.setItem(onboardingKey, 'true');
     toast.success('Welcome to OpulFlow! Ready to place your first order?');
     router.push('/dashboard');
   };
 
   const handleSkip = () => {
-    localStorage.setItem('onboardingCompleted', 'true');
+    const onboardingKey = userId ? `onboardingCompleted_${userId}` : 'onboardingCompleted';
+    localStorage.setItem(onboardingKey, 'true');
     router.push('/dashboard');
   };
 
@@ -263,10 +269,10 @@ export default function OnboardingPage() {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">O</span>
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-lg">OP</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">OpulFlow</span>
+            <span className="text-xl font-bold text-slate-900">OpulFlow</span>
           </div>
           <button
             onClick={handleSkip}

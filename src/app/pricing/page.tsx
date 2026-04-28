@@ -2,160 +2,131 @@ import Link from "next/link";
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-[#F6F8FA]">
-      {/* Navigation Bar */}
-      <nav className="bg-white border-b border-[#d1d9e0] px-4 py-3">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-8">
-            <Link href="/" className="text-xl font-semibold text-[#24292F]">
-              OpulFlow
-            </Link>
-            <div className="hidden md:flex space-x-6">
-              <Link href="/pricing" className="text-[#0969DA] font-medium">
-                Pricing
-              </Link>
-              <Link href="/product" className="text-[#24292F] hover:text-[#0969DA] transition-colors">
-                Product
-              </Link>
-              <Link href="/blog" className="text-[#24292F] hover:text-[#0969DA] transition-colors">
-                Blog
-              </Link>
-              <Link href="/how-it-works" className="text-[#24292F] hover:text-[#0969DA] transition-colors">
-                How it works
-              </Link>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto flex flex-col gap-4 px-4 py-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow-lg">
+              OP
+            </div>
+            <div>
+              <Link href="/" className="text-xl font-semibold text-slate-900">OpulFlow</Link>
+              <p className="text-sm text-slate-500">Modern human-powered engagement services</p>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Link href="/login" className="text-[#24292F] hover:text-[#0969DA] transition-colors">
-              Log in
-            </Link>
-            <Link
-              href="/register"
-              className="bg-[#24292F] text-white px-4 py-2 rounded-md hover:bg-[#1b1f23] transition-colors"
-            >
-              Sign up
-            </Link>
+          <div className="flex flex-wrap gap-3 text-sm font-medium">
+            <Link href="/pricing" className="rounded-full bg-blue-600 px-4 py-2 text-white shadow-sm hover:bg-blue-700 transition">Pricing</Link>
+            <Link href="/product" className="rounded-full px-4 py-2 text-slate-700 hover:bg-slate-100 transition">Product</Link>
+            <Link href="/blog" className="rounded-full px-4 py-2 text-slate-700 hover:bg-slate-100 transition">Blog</Link>
+            <Link href="/how-it-works" className="rounded-full px-4 py-2 text-slate-700 hover:bg-slate-100 transition">How it works</Link>
+            <Link href="/login" className="rounded-full px-4 py-2 text-slate-700 hover:bg-slate-100 transition">Log in</Link>
+            <Link href="/register" className="rounded-full border border-slate-200 px-4 py-2 text-slate-900 hover:bg-slate-100 transition">Sign up</Link>
           </div>
         </div>
-      </nav>
+      </header>
 
-      {/* Pricing Content */}
       <main className="max-w-6xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-[#24292F] mb-4">Simple, Transparent Pricing</h1>
-          <p className="text-xl text-[#656d76] max-w-2xl mx-auto">
-            Pay only for qualified leads that engage with your product.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-white border border-[#d1d9e0] rounded-lg p-6">
-            <h2 className="text-2xl font-semibold text-[#24292F] mb-4">Pay-Per-Use Pricing</h2>
-            <p className="text-[#656d76] mb-6">No subscriptions, pay only for what you use</p>
-            <ul className="space-y-4 mb-6">
-              <li className="flex items-start text-[#656d76]">
-                <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <div>
-                  <span className="font-medium text-[#24292F]">$0.30 per human-written comment</span>
-                  <br />
-                  <span className="text-sm">(discounts applicable for bulk orders)</span>
-                </div>
-              </li>
-              <li className="flex items-start text-[#656d76]">
-                <div className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <div>
-                  <span className="font-medium text-green-800">FREE - Manual product search</span>
-                  <br />
-                  <span className="text-sm">Get demand estimates for your product</span>
-                </div>
-              </li>
-              <li className="flex items-start text-[#656d76]">
-                <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <div>
-                  <span className="font-medium text-[#24292F]">$1.00 per product review</span>
-                </div>
-              </li>
-              <li className="flex items-start text-[#656d76]">
-                <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <div>
-                  <span className="font-medium text-[#24292F]">$1.00 per influencer information searched</span>
-                </div>
-              </li>
-              <li className="flex items-start text-[#656d76]">
-                <div className="w-2 h-2 bg-[#0969DA] rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <div>
-                  <span className="font-medium text-[#24292F]">$0.015 per word for AI content humanization</span>
-                </div>
-              </li>
-            </ul>
-            <div className="bg-[#f6f8fa] p-4 rounded-md mb-6">
-              <h3 className="font-medium text-[#24292F] mb-2">Example Costs:</h3>
-              <ul className="text-sm text-[#656d76] space-y-1">
-                <li>• 10 comments = $3.00</li>
-                <li>• Product search = FREE</li>
-                <li>• 5 product reviews = $5.00</li>
-                <li>• 20 influencer searches = $20.00</li>
-                <li>• 1,000 words humanization = $15.00</li>
-              </ul>
+        <section className="rounded-[2rem] bg-white p-10 shadow-xl border border-slate-200 mb-12">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] text-blue-600 font-semibold mb-4">Transparent pricing</p>
+              <h1 className="text-4xl font-bold text-slate-900 sm:text-5xl">Simple pricing that scales with your growth</h1>
+              <p className="mt-6 text-lg text-slate-600 max-w-2xl">
+                Pay only for real human-powered services. No surprise fees, no subscriptions, just clear credit-based pricing for every comment, review, search, and influencer order.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link href="/register" className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3 text-white font-semibold shadow-lg hover:bg-blue-700 transition">
+                  Start free
+                </Link>
+                <Link href="/product" className="inline-flex items-center justify-center rounded-full border border-slate-200 px-6 py-3 text-slate-700 hover:bg-slate-100 transition">
+                  Learn more
+                </Link>
+              </div>
             </div>
-            <Link
-              href="/register"
-              className="w-full bg-[#24292F] text-white py-2 px-4 rounded-md hover:bg-[#1b1f23] transition-colors font-medium text-center block"
-            >
-              Get Started
-            </Link>
-          </div>
-
-          <div className="bg-white border-2 border-[#0969DA] rounded-lg p-6 relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-[#0969DA] text-white px-3 py-1 rounded-full text-sm font-medium">Buy Credits</span>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-3xl bg-blue-50 p-6">
+                <p className="text-sm text-blue-700">Best for fast engagement</p>
+                <p className="mt-2 text-3xl font-semibold text-slate-900">$0.30</p>
+                <p className="mt-1 text-slate-600">per comment</p>
+              </div>
+              <div className="rounded-3xl bg-emerald-50 p-6">
+                <p className="text-sm text-emerald-700">Always free</p>
+                <p className="mt-2 text-3xl font-semibold text-slate-900">FREE</p>
+                <p className="mt-1 text-slate-600">product search</p>
+              </div>
+              <div className="rounded-3xl bg-purple-50 p-6">
+                <p className="text-sm text-purple-700">Human review service</p>
+                <p className="mt-2 text-3xl font-semibold text-slate-900">$1.00</p>
+                <p className="mt-1 text-slate-600">per review</p>
+              </div>
+              <div className="rounded-3xl bg-pink-50 p-6">
+                <p className="text-sm text-pink-700">Content humanization</p>
+                <p className="mt-2 text-3xl font-semibold text-slate-900">$0.015</p>
+                <p className="mt-1 text-slate-600">per word</p>
+              </div>
             </div>
-            <h2 className="text-2xl font-semibold text-[#24292F] mb-4">Credit System</h2>
-            <p className="text-[#656d76] mb-6">Purchase credits and use them for any service</p>
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                PayPal & M-Pesa payments
-              </li>
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Credits never expire
-              </li>
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Real-time balance tracking
-              </li>
-              <li className="flex items-center text-[#656d76]">
-                <svg className="w-5 h-5 text-[#0969DA] mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                Instant order processing
-              </li>
-            </ul>
-            <Link
-              href="/register"
-              className="w-full bg-[#0969DA] text-white py-2 px-4 rounded-md hover:bg-[#0757c2] transition-colors font-medium text-center block"
-            >
-              Create Account
-            </Link>
           </div>
-        </div>
+        </section>
 
-        <div className="text-center">
-          <p className="text-[#656d76] mb-4">All plans include our core features and 24/7 support.</p>
-          <Link
-            href="/register"
-            className="text-[#0969DA] hover:text-[#0757c2] font-medium"
-          >
-            Start your free trial →
-          </Link>
-        </div>
+        <section className="grid gap-6 lg:grid-cols-3 mb-12">
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4">Flexible usage</h2>
+            <p className="text-slate-600 mb-6">Use credits when you need them and never pay for inactivity.</p>
+            <ul className="space-y-3 text-slate-600">
+              <li>• No subscription fees</li>
+              <li>• Buy credits anytime</li>
+              <li>• Use any service with the same balance</li>
+            </ul>
+          </div>
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4">Clear service rates</h2>
+            <p className="text-slate-600 mb-6">Every service is priced clearly so you can estimate costs before ordering.</p>
+            <ul className="space-y-3 text-slate-600">
+              <li>• Comment writing: $0.30 each</li>
+              <li>• Product research: FREE</li>
+              <li>• Influencer lists: $0.30 each</li>
+              <li>• Reviews: $1.00 each</li>
+            </ul>
+          </div>
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4">Transparent credits</h2>
+            <p className="text-slate-600 mb-6">Credits never expire and balance updates instantly in your dashboard.</p>
+            <ul className="space-y-3 text-slate-600">
+              <li>• Real-time credit balance</li>
+              <li>• No hidden fees</li>
+              <li>• Easy top-ups</li>
+            </ul>
+          </div>
+        </section>
+
+        <section className="rounded-[2rem] bg-white p-10 shadow-xl border border-slate-200">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] text-slate-500 font-semibold mb-4">Example costs</p>
+              <div className="space-y-4 text-slate-600">
+                <div className="rounded-3xl bg-slate-50 p-5">
+                  <p className="font-semibold text-slate-900">10 comments</p>
+                  <p>$3.00</p>
+                </div>
+                <div className="rounded-3xl bg-slate-50 p-5">
+                  <p className="font-semibold text-slate-900">Product search</p>
+                  <p>FREE</p>
+                </div>
+                <div className="rounded-3xl bg-slate-50 p-5">
+                  <p className="font-semibold text-slate-900">5 reviews</p>
+                  <p>$5.00</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-3xl bg-blue-600 p-8 text-white">
+              <h3 className="text-2xl font-semibold mb-4">Start smarter today</h3>
+              <p className="text-slate-100 mb-6">Create an account, top up credits, and launch your first campaign with confidence.</p>
+              <Link href="/register" className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-blue-700 hover:bg-slate-100 transition">
+                Create account
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );

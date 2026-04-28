@@ -12,39 +12,27 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "OpulFlow - Sales Intelligence Platform",
-  description: "Next-gen sales tools for modern teams",
+  description: "Modern sales intelligence with beautiful onboarding, auth, and analytics.",
   verification: {
     google: "google8c17f0e170a2d62b.html",
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
     apple: "/apple-touch-icon.png",
     other: [
       {
         rel: "icon",
-        type: "image/png",
-        sizes: "16x16",
-        url: "/favicon-16x16.png",
-      },
-      {
-        rel: "icon",
-        type: "image/png",
-        sizes: "32x32",
-        url: "/favicon-32x32.png",
-      },
-      {
-        rel: "icon",
-        type: "image/png",
-        sizes: "64x64",
-        url: "/favicon-64x64.png",
+        type: "image/svg+xml",
+        sizes: "any",
+        url: "/favicon.svg",
       },
     ],
   },
   openGraph: {
     title: "OpulFlow",
     description: "AI-powered business and CRM platform",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.svg"],
   },
 };
 

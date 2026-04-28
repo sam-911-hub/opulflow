@@ -174,10 +174,13 @@ export default function DashboardPage() {
         setUser(userInfo)
         console.log('Dashboard: User set, userInfo:', userInfo)
 
-        // Check if user should see onboarding
-        const onboardingCompleted = localStorage.getItem('onboardingCompleted')
+        // Check if user should see onboarding for this specific account
+        const onboardingCompletedKey = `onboardingCompleted_${userInfo.uid}`
+        const onboardingCompleted = localStorage.getItem(onboardingCompletedKey)
+        console.log('Dashboard: onboarding check', { onboardingCompletedKey, onboardingCompleted, credits: userInfo.credits })
         if (!onboardingCompleted && userInfo.credits === 20) {
           // New user with default credits - redirect to onboarding
+          console.log('Dashboard: redirecting new user to onboarding')
           router.push('/onboarding')
           return
         }
@@ -364,8 +367,11 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
-        <div className="text-[#848d97] text-xl">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 text-lg">Loading your dashboard...</p>
+        </div>
       </div>
     )
   }
@@ -374,144 +380,153 @@ export default function DashboardPage() {
   // const chartData = getChartData()
 
   return (
-    <div className="min-h-screen bg-[#0d1117] text-[#e6edf3]">
-      {/* Header Section - GitHub Style */}
-      <div className="border-b border-[#30363d] bg-[#161b22]">
-        <div className="px-8 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Modern Header */}
+      <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              {/* User Avatar */}
-              <div className="w-16 h-16 bg-[#238636] rounded-full flex items-center justify-center text-white font-semibold text-lg">
+            <div className="flex items-center space-x-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
                 {getUserInitials(user?.email || '')}
               </div>
-
               <div>
-                <h1 className="text-2xl font-semibold text-[#e6edf3]">
+                <h1 className="text-2xl font-bold text-slate-900">
                   {greeting}
                 </h1>
-                <div className="flex items-center space-x-4 mt-1">
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#21262d] text-[#848d97]">
-                    🔖 {user?.credits || 0} credits available
-                  </span>
-                  <span className="text-sm text-[#848d97]">
-                    {stats.totalOrders} orders • {stats.completedOrders} completed • {stats.pendingOrders} pending
-                  </span>
+                <div className="flex items-center space-x-4 mt-2">
+                  <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                    {user?.credits || 0} credits available
+                  </div>
+                  <div className="text-sm text-slate-600">
+                    {stats.totalOrders} orders • {stats.completedOrders} completed
+                  </div>
                 </div>
               </div>
             </div>
-
-            <Link href="/" className="text-[#2f81f7] hover:text-[#79c0ff] text-sm">
-              ← Back to Homepage
-            </Link>
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/dashboard/buy-credits"
+                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Buy Credits
+              </Link>
+              <Link href="/" className="text-slate-600 hover:text-slate-900 transition-colors">
+                ← Back to Homepage
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content - Responsive Layout */}
-      <div className="px-4 md:px-8 py-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Left Sidebar - Navigation */}
-          <div className="w-full md:w-80 md:flex-shrink-0">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
             {/* Navigation */}
-            <nav className="space-y-1 mb-6">
-              <Link
-                href="/dashboard"
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeNav === 'dashboard'
-                    ? 'bg-[#21262d] text-[#e6edf3] border-l-2 border-[#2f81f7]'
-                    : 'text-[#848d97] hover:text-[#e6edf3] hover:bg-[#21262d]'
-                }`}
-                onClick={() => setActiveNav('dashboard')}
-              >
-                <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h2a2 2 0 012 2v2H8V5z" />
-                </svg>
-                Dashboard
-              </Link>
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+              <nav className="space-y-2">
+                <Link
+                  href="/dashboard"
+                  className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    activeNav === 'dashboard'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                  onClick={() => setActiveNav('dashboard')}
+                >
+                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h2a2 2 0 012 2v2H8V5z" />
+                  </svg>
+                  Dashboard
+                </Link>
 
-              <Link
-                href="/dashboard/orders"
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeNav === 'orders'
-                    ? 'bg-[#21262d] text-[#e6edf3] border-l-2 border-[#2f81f7]'
-                    : 'text-[#848d97] hover:text-[#e6edf3] hover:bg-[#21262d]'
-                }`}
-                onClick={() => setActiveNav('orders')}
-              >
-                <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                My Orders
-              </Link>
+                <Link
+                  href="/dashboard/orders"
+                  className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    activeNav === 'orders'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                  onClick={() => setActiveNav('orders')}
+                >
+                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  My Orders
+                </Link>
 
-              <Link
-                href="/dashboard/buy-credits"
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeNav === 'credits'
-                    ? 'bg-[#21262d] text-[#e6edf3] border-l-2 border-[#2f81f7]'
-                    : 'text-[#848d97] hover:text-[#e6edf3] hover:bg-[#21262d]'
-                }`}
-                onClick={() => setActiveNav('credits')}
-              >
-                <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
-                Buy Credits
-              </Link>
+                <Link
+                  href="/dashboard/settings"
+                  className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    activeNav === 'settings'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                  onClick={() => setActiveNav('settings')}
+                >
+                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Settings
+                </Link>
+              </nav>
+            </div>
 
-              <Link
-                href="/dashboard/settings"
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  activeNav === 'settings'
-                    ? 'bg-[#21262d] text-[#e6edf3] border-l-2 border-[#2f81f7]'
-                    : 'text-[#848d97] hover:text-[#e6edf3] hover:bg-[#21262d]'
-                }`}
-                onClick={() => setActiveNav('settings')}
-              >
-                <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Settings
-              </Link>
-            </nav>
-
-            {/* User Profile Card */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 bg-[#238636] rounded-full flex items-center justify-center text-white font-semibold">
-                  {getUserInitials(user?.email || '')}
+            {/* Quick Stats */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Stats</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Total Orders</span>
+                  <span className="font-semibold text-slate-900">{stats.totalOrders}</span>
                 </div>
-                <div>
-                  <div className="font-medium text-[#e6edf3]">{user?.email?.split('@')[0]}</div>
-                  <div className="text-xs text-[#848d97]">{user?.email}</div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Completed</span>
+                  <span className="font-semibold text-green-600">{stats.completedOrders}</span>
                 </div>
-              </div>
-              <div className="space-y-2 text-sm text-[#848d97]">
-                <div>Account: {user?.accountType}</div>
-                <div>Joined: {new Date().toLocaleDateString()}</div>
-                <div className="pt-2 border-t border-[#30363d]">
-                  <div className="text-[#e6edf3] font-medium">Quick Stats</div>
-                  <div className="text-xs mt-1">
-                    {stats.totalOrders} total orders<br />
-                    {stats.completedOrders} completed<br />
-                    {user?.credits || 0} credits remaining
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">In Progress</span>
+                  <span className="font-semibold text-blue-600">{stats.pendingOrders}</span>
                 </div>
-                {/* Admin Access */}
-                {user?.email === 'opulflow.inc@gmail.com' && (
-                  <div className="pt-2 border-t border-[#30363d]">
-                    <Link
-                      href="/admin/verify-payments"
-                      className="text-[#2f81f7] hover:text-[#79c0ff] text-sm font-medium"
-                    >
-                      Admin Panel →
-                    </Link>
-                  </div>
-                )}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Credits</span>
+                  <span className="font-semibold text-purple-600">{user?.credits || 0}</span>
+                </div>
               </div>
             </div>
+
+            {/* Tips */}
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border border-blue-200 p-6">
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">💡 Pro Tip</h3>
+              <p className="text-sm text-slate-700 mb-3">
+                Comments on Reddit have 5x higher engagement than other platforms. Try our comment writing service to boost your visibility!
+              </p>
+              <button
+                onClick={() => setActiveService('comment')}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+              >
+                Try it now →
+              </button>
+            </div>
+
+            {/* Admin Access */}
+            {user?.email === 'opulflow.inc@gmail.com' && (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <Link
+                  href="/admin/verify-payments"
+                  className="inline-flex items-center px-4 py-2 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition-colors"
+                >
+                  Admin Panel →
+                </Link>
+              </div>
+            )}
 
             {/* Personalized Recommendations */}
             {getRecommendations().length > 0 && (
@@ -589,87 +604,114 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-        </div>
 
-          {/* Right Column - Main Content */}
-          <div className="flex-1 space-y-6">
+          {/* Main Content Area */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Welcome Hero */}
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-3xl p-8 text-white relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/10"></div>
+              <div className="relative z-10">
+                <h2 className="text-3xl font-bold mb-4">Ready to amplify your online presence?</h2>
+                <p className="text-blue-100 mb-6 max-w-2xl">
+                  Choose from our suite of AI-powered services to generate authentic content, find influencers, and boost your brand visibility across platforms.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => setActiveService('comment')}
+                    className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl text-white font-medium hover:bg-white/30 transition-all duration-200"
+                  >
+                    <span className="mr-2">💬</span>
+                    Start with Comments
+                  </button>
+                  <button
+                    onClick={() => setActiveService('influencer')}
+                    className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl text-white font-medium hover:bg-white/30 transition-all duration-200"
+                  >
+                    <span className="mr-2">👥</span>
+                    Find Influencers
+                  </button>
+                </div>
+              </div>
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 rounded-full"></div>
+            </div>
 
             {/* Quick Actions */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">Quick Actions</h2>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-6">Choose Your Service</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <button
                   onClick={() => setActiveService('comment')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left group"
-                  title="Generate authentic comments for Reddit, Twitter, and other platforms to boost engagement"
+                  className="group p-6 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
-                  <span className="text-lg mr-3">💬</span>
-                  <div>
-                    <div className="text-sm font-medium text-[#e6edf3]">Comment Writing</div>
-                    <div className="text-xs text-[#848d97]">$0.30 each</div>
+                  <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-xl">💬</span>
                   </div>
-                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  <h4 className="font-semibold text-slate-900 mb-2">Comment Writing</h4>
+                  <p className="text-sm text-slate-600 mb-3">Generate authentic comments for Reddit, Twitter, and more platforms.</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-blue-600">$0.30 each</span>
+                    <span className="text-blue-500 group-hover:translate-x-1 transition-transform">→</span>
                   </div>
                 </button>
 
                 <button
                   onClick={() => setActiveService('search')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left group"
-                  title="Find trending discussions and opportunities for your product mentions"
+                  className="group p-6 bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
-                  <span className="text-lg mr-3">🔍</span>
-                <div>
-                  <div className="text-sm font-medium text-[#e6edf3]">Product Search</div>
-                  <div className="text-xs text-[#848d97]">Free</div>
-                </div>
-                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-xl">🔍</span>
+                  </div>
+                  <h4 className="font-semibold text-slate-900 mb-2">Product Search</h4>
+                  <p className="text-sm text-slate-600 mb-3">Find trending discussions and opportunities for your product.</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-green-600">Free</span>
+                    <span className="text-green-500 group-hover:translate-x-1 transition-transform">→</span>
                   </div>
                 </button>
 
                 <button
                   onClick={() => setActiveService('influencer')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left group"
-                  title="Research and identify perfect influencers for your niche and budget"
+                  className="group p-6 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
-                  <span className="text-lg mr-3">👥</span>
-                  <div>
-                    <div className="text-sm font-medium text-[#e6edf3]">Influencer Research</div>
-                    <div className="text-xs text-[#848d97]">$0.30 each</div>
+                  <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-xl">👥</span>
                   </div>
-                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  <h4 className="font-semibold text-slate-900 mb-2">Influencer Research</h4>
+                  <p className="text-sm text-slate-600 mb-3">Discover perfect influencers for your niche and budget.</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-purple-600">$0.30 each</span>
+                    <span className="text-purple-500 group-hover:translate-x-1 transition-transform">→</span>
                   </div>
                 </button>
 
                 <button
                   onClick={() => setActiveService('review')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left group"
-                  title="Generate authentic reviews for app stores, Amazon, and review sites"
+                  className="group p-6 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
-                  <span className="text-lg mr-3">⭐</span>
-                  <div>
-                    <div className="text-sm font-medium text-[#e6edf3]">Product Reviews</div>
-                    <div className="text-xs text-[#848d97]">$1.00 each</div>
+                  <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-xl">⭐</span>
                   </div>
-                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  <h4 className="font-semibold text-slate-900 mb-2">Product Reviews</h4>
+                  <p className="text-sm text-slate-600 mb-3">Generate authentic reviews for app stores and marketplaces.</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-orange-600">$1.00 each</span>
+                    <span className="text-orange-500 group-hover:translate-x-1 transition-transform">→</span>
                   </div>
                 </button>
 
                 <button
                   onClick={() => setActiveService('humanization')}
-                  className="flex items-center p-3 bg-[#21262d] hover:bg-[#30363d] rounded-md transition-colors border border-[#30363d] text-left col-span-2 lg:col-span-1 group"
-                  title="Transform AI-generated content into natural, human-sounding text"
+                  className="group p-6 bg-gradient-to-br from-pink-50 to-pink-100 border border-pink-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
-                  <span className="text-lg mr-3">✨</span>
-                  <div>
-                    <div className="text-sm font-medium text-[#e6edf3]">AI Humanization</div>
-                    <div className="text-xs text-[#848d97]">$0.015/word</div>
+                  <div className="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
+                    <span className="text-xl">✨</span>
                   </div>
-                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs text-[#2f81f7]">Learn more →</span>
+                  <h4 className="font-semibold text-slate-900 mb-2">AI Humanization</h4>
+                  <p className="text-sm text-slate-600 mb-3">Transform AI content into natural, human-sounding text.</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-pink-600">$0.015/word</span>
+                    <span className="text-pink-500 group-hover:translate-x-1 transition-transform">→</span>
                   </div>
                 </button>
               </div>
@@ -683,122 +725,86 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* Notifications & Messages */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md">
-              <button
-                onClick={() => setNotificationsExpanded(!notificationsExpanded)}
-                className="w-full flex items-center justify-between p-6 hover:bg-[#21262d] transition-colors rounded-md"
-              >
-                <h2 className="text-lg font-semibold text-[#e6edf3]">Notifications & Messages</h2>
-                <ChevronRightIcon
-                  className={`w-5 h-5 text-[#848d97] transition-transform ${notificationsExpanded ? 'rotate-90' : ''}`}
-                />
-              </button>
-              {notificationsExpanded && (
-                <div className="px-6 pb-6">
-                  <div className="space-y-3">
-                    {orders.length === 0 ? (
-                      <div className="text-center py-6 text-[#848d97]">
-                        <div className="text-3xl mb-2">📬</div>
-                        <div>No notifications yet</div>
-                        <div className="text-sm">Your activity notifications will appear here</div>
-                      </div>
-                    ) : (
-                      orders.slice(0, 3).map((order) => (
-                        <div key={order.id} className="flex items-start space-x-3 p-3 bg-[#21262d] rounded-md">
-                          <div className="w-6 h-6 bg-[#2f81f7] rounded-full flex items-center justify-center text-white text-xs mt-0.5">
-                            ✓
-                          </div>
-                          <div className="flex-1">
-                            <div className="text-sm text-[#e6edf3] font-medium">
-                              {getServiceName(order.service || '')} order processed
-                            </div>
-                            <div className="text-xs text-[#848d97] mt-1">
-                              Order {order.orderId} has been {order.status === 'verified' ? 'verified and is being processed' : order.status === 'paid' ? 'paid successfully' : 'submitted'}
-                            </div>
-                            <div className="text-xs text-[#848d97] mt-1">
-                              {new Date(order.date).toLocaleDateString()} at {new Date(order.date).toLocaleTimeString()}
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Recent Orders Table */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">Your Recent Orders</h2>
-              {orders.length === 0 ? (
-                <div className="text-center py-8 text-[#848d97]">
-                  <div className="text-4xl mb-2">📦</div>
-                  <div>No orders yet</div>
-                  <div className="text-sm">Start your first campaign above</div>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-[#30363d]">
-                        <th className="text-left py-2 px-3 text-[#848d97] font-medium">Order ID</th>
-                        <th className="text-left py-2 px-3 text-[#848d97] font-medium">Service</th>
-                        <th className="text-left py-2 px-3 text-[#848d97] font-medium">Status</th>
-                        <th className="text-left py-2 px-3 text-[#848d97] font-medium">Date</th>
-                        <th className="text-left py-2 px-3 text-[#848d97] font-medium">Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {orders.slice(0, 5).map((order) => (
-                        <tr key={order.id} className="border-b border-[#30363d] hover:bg-[#21262d] transition-colors">
-                          <td className="py-3 px-3">
-                            <Link href={`/dashboard/orders/${order.id}`} className="text-[#2f81f7] hover:text-[#79c0ff] font-medium">
-                              {order.orderId}
-                            </Link>
-                          </td>
-                          <td className="py-3 px-3 text-[#e6edf3]">{getServiceName(order.service || '')}</td>
-                          <td className="py-3 px-3">
-                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                              order.status === 'completed' ? 'bg-[#238636] text-white' :
-                              order.status === 'pending' ? 'bg-[#bb8009] text-white' :
-                              'bg-[#6e7681] text-white'
-                            }`}>
-                              {order.status}
-                            </span>
-                          </td>
-                          <td className="py-3 px-3 text-[#848d97]">{new Date(order.date).toLocaleDateString()}</td>
-                          <td className="py-3 px-3 text-[#e6edf3]">${order.totalCost?.toFixed(2) || order.amount?.toFixed(2) || '0.00'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-              {orders.length > 5 && (
-                <div className="text-center mt-4">
-                  <Link href="/dashboard/orders" className="text-[#2f81f7] hover:text-[#79c0ff] text-sm font-medium">
-                    View all orders →
+            {/* Recent Orders */}
+            {orders.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-slate-900">Recent Orders</h3>
+                  <Link href="/dashboard/orders" className="text-blue-600 hover:text-blue-700 font-medium">
+                    View all →
                   </Link>
                 </div>
-              )}
-            </div>
-
-            {/* Tips & Insights */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">💡 Pro Tips</h2>
-              <div className="text-[#e6edf3]">
-                <p className="mb-2">Did you know? Comments on Reddit have 5x higher engagement than other platforms.</p>
-                <p className="text-sm text-[#848d97]">Mix platforms in your campaigns for maximum reach and diverse audience engagement.</p>
+                <div className="space-y-4">
+                  {orders.slice(0, 3).map((order) => (
+                    <div key={order.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <span className="text-blue-600">{getServiceIcon(order.service || '')}</span>
+                        </div>
+                        <div>
+                          <Link href={`/dashboard/orders/${order.id}`} className="font-medium text-slate-900 hover:text-blue-600">
+                            Order {order.orderId}
+                          </Link>
+                          <p className="text-sm text-slate-600">{getServiceName(order.service || '')}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                          order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-slate-100 text-slate-800'
+                        }`}>
+                          {order.status}
+                        </div>
+                        <p className="text-sm text-slate-600 mt-1">${order.totalCost?.toFixed(2) || '0.00'}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Activity Feed */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-              <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">📈 Recent Activity</h2>
-              <div className="space-y-3">
-                <div className="text-center py-4 text-[#848d97]">
-                  Your activity will appear here once you start using our services.
+            {/* Success Stories */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border border-green-200 p-8">
+              <h3 className="text-2xl font-bold text-slate-900 mb-6">Success Stories</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <div className="flex items-center space-x-1 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-yellow-400">★</span>
+                    ))}
+                  </div>
+                  <blockquote className="text-slate-700 mb-4">
+                    "OpulFlow's comment service boosted our Reddit engagement by 400%. Worth every credit!"
+                  </blockquote>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                      S
+                    </div>
+                    <div>
+                      <p className="font-medium text-slate-900">Sarah Chen</p>
+                      <p className="text-sm text-slate-600">SaaS Founder</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <div className="flex items-center space-x-1 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-yellow-400">★</span>
+                    ))}
+                  </div>
+                  <blockquote className="text-slate-700 mb-4">
+                    "Found amazing influencers for our niche. The research quality is outstanding!"
+                  </blockquote>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                      M
+                    </div>
+                    <div>
+                      <p className="font-medium text-slate-900">Mike Johnson</p>
+                      <p className="text-sm text-slate-600">Marketing Director</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
