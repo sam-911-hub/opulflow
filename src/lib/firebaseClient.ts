@@ -1,6 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore, initializeFirestore, memoryLocalCache } from 'firebase/firestore';
+import { getFirestore, Firestore, initializeFirestore, persistentLocalCache } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -37,10 +37,21 @@ let firestoreInstance: Firestore | null = null;
 export function getFirebaseDb(): Firestore {
   if (!firestoreInstance) {
     const app = getFirebaseApp();
-    // Use memory cache to avoid IndexedDB conflicts across tabs
-    firestoreInstance = initializeFirestore(app, {
-      localCache: memoryLocalCache(),
-    });
+    try {
+      // Try to use persistent local cache
+      firestoreInstance = initializeFirestore(app, {
+        localCache: persistentLocalCache(),
+      });
+    } catch (error: any) {
+      // If persistence layer fails (e.g., due to multi-tab conflict), fall back to memory cache
+      console.warn('Firestore persistent cache initialization failed, using memory cache:', error?.message);
+      try {
+        firestoreInstance = getFirestore(app);
+      } catch (fallbackError) {
+        console.error('Firestore initialization failed completely:', fallbackError);
+        throw fallbackError;
+      }
+    }
   }
 
   return firestoreInstance;

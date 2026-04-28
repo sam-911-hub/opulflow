@@ -72,21 +72,21 @@ export default function RegisterPage() {
         createdAt: new Date().toISOString(),
       };
 
-      // Use Firestore's offline persistence - this will work even when offline
+      // Store in localStorage immediately as backup
+      localStorage.setItem(`pendingUserDoc_${user.uid}`, JSON.stringify(userData));
+
+      // Try to write to Firestore with timeout, but don't block registration
       try {
-        // Add timeout to prevent hanging
-        const firestorePromise = setDoc(userDocRef, userData);
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Firestore operation timed out')), 30000)
+          setTimeout(() => reject(new Error('Firestore operation timed out')), 60000)
         );
 
-        await Promise.race([firestorePromise, timeoutPromise]);
+        await Promise.race([setDoc(userDocRef, userData), timeoutPromise]);
         console.log("✅ User document created successfully");
+        localStorage.removeItem(`pendingUserDoc_${user.uid}`);
       } catch (firestoreError: any) {
         console.warn("⚠️ Firestore write failed or timed out, but user can still use the app:", firestoreError.message);
-        // Store the user data in localStorage as backup
-        localStorage.setItem(`pendingUserDoc_${user.uid}`, JSON.stringify(userData));
-        // Don't throw error - let user proceed
+        // Keep the backup in localStorage - it will be synced by the dashboard
       }
 
       // Step 4: Get ID token and create session
