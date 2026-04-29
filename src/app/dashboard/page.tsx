@@ -528,6 +528,291 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* Service Order Form - Appears when service is selected */}
+          {activeService && (
+            <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6 animate-fade-in">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">{getServiceName(activeService)}</h3>
+                  <p className="text-gray-600 mt-1">Complete the details below to place your order</p>
+                </div>
+                <button
+                  onClick={() => { setActiveService(null); setFormData({}) }}
+                  className="text-gray-400 hover:text-gray-600 text-xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {activeService === 'comment' && (
+                  <div className="grid gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Product/Service Name *</label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="Enter your product or service name"
+                        onChange={(e) => updateFormData('productName', e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-3">Platforms *</label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {[
+                          'Twitter/X', 'Reddit', 'LinkedIn', 'Instagram', 'Facebook',
+                          'TikTok', 'Quora', 'YouTube', 'Discord', 'Telegram'
+                        ].map(platform => (
+                          <label key={platform} className="flex items-center space-x-2 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors">
+                            <input
+                              type="checkbox"
+                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                              onChange={(e) => {
+                                const current = formData.platforms || []
+                                if (e.target.checked) {
+                                  updateFormData('platforms', [...current, platform])
+                                } else {
+                                  updateFormData('platforms', current.filter(p => p !== platform))
+                                }
+                              }}
+                            />
+                            <span className="text-sm text-gray-700">{platform}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Comment Type</label>
+                        <select
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          onChange={(e) => updateFormData('commentType', e.target.value)}
+                        >
+                          <option value="">Select type</option>
+                          <option value="question">Question/Help Request</option>
+                          <option value="recommendation">Recommendation Request</option>
+                          <option value="complaint">Complaint/Issue</option>
+                          <option value="praise">Praise/Positive Feedback</option>
+                          <option value="comparison">Comparison Request</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Quantity (1-100) *</label>
+                        <input
+                          type="number"
+                          min="1"
+                          max="100"
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          onChange={(e) => updateFormData('quantity', parseInt(e.target.value))}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Special Instructions</label>
+                      <textarea
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                        rows={4}
+                        placeholder="Any specific requirements or preferences..."
+                        onChange={(e) => updateFormData('specialInstructions', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {activeService === 'search' && (
+                  <div className="grid gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="Enter your product name"
+                        onChange={(e) => updateFormData('productName', e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Target Keywords (Optional)</label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="e.g., best, reviews, alternatives"
+                        onChange={(e) => updateFormData('targetKeywords', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {activeService === 'influencer' && (
+                  <div className="grid gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Niche *</label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="e.g., fitness, SaaS, beauty, gaming"
+                        onChange={(e) => updateFormData('niche', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Influencer Size</label>
+                        <select
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          onChange={(e) => updateFormData('influencerSize', e.target.value)}
+                        >
+                          <option value="">Any size</option>
+                          <option value="nano">Nano (1K-10K)</option>
+                          <option value="micro">Micro (10K-100K)</option>
+                          <option value="mid">Mid-tier (100K-500K)</option>
+                          <option value="macro">Macro (500K-1M)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Number of Influencers (1-50) *</label>
+                        <input
+                          type="number"
+                          min="1"
+                          max="50"
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          onChange={(e) => updateFormData('numInfluencers', parseInt(e.target.value))}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range (Optional)</label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="e.g., $500-$2000 per post"
+                        onChange={(e) => updateFormData('budgetRange', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {activeService === 'review' && (
+                  <div className="grid gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="Enter your product name"
+                        onChange={(e) => updateFormData('productName', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Platform *</label>
+                        <select
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          onChange={(e) => updateFormData('platform', e.target.value)}
+                        >
+                          <option value="">Select platform</option>
+                          <option value="App Store">App Store</option>
+                          <option value="Google Play">Google Play</option>
+                          <option value="Amazon">Amazon</option>
+                          <option value="Trustpilot">Trustpilot</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Rating Preference *</label>
+                        <select
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          onChange={(e) => updateFormData('ratingPreference', e.target.value)}
+                        >
+                          <option value="">Select preference</option>
+                          <option value="5-star focused">5-star focused</option>
+                          <option value="4-star positive">4-star positive</option>
+                          <option value="authentic honest">Authentic honest</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Key Points to Mention</label>
+                      <textarea
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                        rows={4}
+                        placeholder="Specific features or benefits to highlight in the review"
+                        onChange={(e) => updateFormData('keyPoints', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {activeService === 'humanization' && (
+                  <div className="grid gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Upload AI Content *</label>
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                        <input
+                          type="file"
+                          accept=".txt,.docx,.pdf"
+                          className="hidden"
+                          id="file-upload"
+                          onChange={(e) => updateFormData('file', e.target.files?.[0])}
+                        />
+                        <label htmlFor="file-upload" className="cursor-pointer">
+                          <div className="text-4xl text-gray-400 mb-2">📄</div>
+                          <p className="text-gray-600">Click to upload or drag and drop</p>
+                          <p className="text-sm text-gray-500 mt-1">Supported formats: .txt, .docx, .pdf</p>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Word Count *</label>
+                        <input
+                          type="number"
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          placeholder="Enter word count"
+                          onChange={(e) => updateFormData('wordCount', parseInt(e.target.value))}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
+                        <input
+                          type="datetime-local"
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          onChange={(e) => updateFormData('deadline', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                  <button
+                    onClick={() => handleSubmit(activeService)}
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  >
+                    Continue to Payment →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setActiveService(null); setFormData({}) }}
+                    className="px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Recent Activity */}
           <div className="mt-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
