@@ -50,12 +50,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch user information' }, { status: 500 });
     }
 
+    let userData;
     if (!userDoc.exists) {
-      console.warn('Order creation: User document not found:', userId);
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      console.log('Order creation: User document not found, creating default:', userId);
+      // Create default user document
+      const defaultUserData = {
+        uid: userId,
+        email: decodedToken.email,
+        displayName: decodedToken.email?.split('@')[0] || '',
+        credits: 20,
+        freeCreditsGiven: true,
+        accountType: 'free',
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        await userRef.set(defaultUserData);
+        console.log('✅ User document created in order API');
+        userData = defaultUserData;
+      } catch (createError) {
+        console.error('Order creation: Failed to create user document:', createError);
+        return NextResponse.json({ error: 'Failed to create user profile' }, { status: 500 });
+      }
+    } else {
+      userData = userDoc.data();
     }
 
-    const userData = userDoc.data();
     const userEmailFinal = userData?.email || decodedToken.email;
 
     // Use provided orderId or generate new one

@@ -169,7 +169,7 @@ export default function DashboardPage() {
             // Add timeout to Firestore operations
             const firestorePromise = getDoc(userDocRef)
             const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Firestore timeout')), 10000)
+              setTimeout(() => reject(new Error('Firestore timeout')), 15000)
             )
 
             const userDocSnap = await Promise.race([firestorePromise, timeoutPromise])
@@ -188,7 +188,7 @@ export default function DashboardPage() {
 
               const createPromise = setDoc(userDocRef, defaultUserData)
               const createTimeout = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Create timeout')), 10000)
+                setTimeout(() => reject(new Error('Create timeout')), 15000)
               )
 
               await Promise.race([createPromise, createTimeout])
@@ -232,14 +232,19 @@ export default function DashboardPage() {
             )
 
             const ordersRes = await Promise.race([ordersPromise, timeoutPromise]) as Response
+            let apiOrders = [];
             if (ordersRes.ok) {
               const odata = await ordersRes.json()
-              setOrders(odata.orders || [])
+              apiOrders = odata.orders || []
               console.log('Dashboard: Orders loaded')
             } else {
               console.warn('Orders API returned error:', ordersRes.status)
-              setOrders([])
             }
+
+            // Load local orders
+            const localOrders = JSON.parse(localStorage.getItem('localOrders') || '[]');
+            const allOrders = [...apiOrders, ...localOrders];
+            setOrders(allOrders)
           } catch (ordersError) {
             console.warn('Orders fetch failed (normal for offline/network issues):', ordersError.message)
             setOrders([])

@@ -199,6 +199,18 @@ export default function PaymentPage() {
         }
       }
 
+      // Save to local orders for immediate display
+      const localOrder = {
+        id: finalOrderId,
+        orderId: finalOrderId,
+        status: orderStatus,
+        date: new Date().toISOString(),
+        service: orderData.service,
+        totalCost: orderData.totalCost
+      };
+      const existingLocalOrders = JSON.parse(localStorage.getItem('localOrders') || '[]');
+      localStorage.setItem('localOrders', JSON.stringify([...existingLocalOrders, localOrder]));
+
       localStorage.removeItem('pendingOrder')
 
       if (isFreeService) {
