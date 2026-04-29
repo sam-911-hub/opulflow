@@ -1,12 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getFirebaseAdminAuth } from '@/lib/firebaseAdmin'
+import { getFirebaseAdminDb } from '@/lib/firebaseAdmin'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { service, userEmail, formData, totalCost, paymentMethod, timestamp, orderId, mpesaCode, paypalTransactionId } = body
+    let { service, userEmail, formData, totalCost, paymentMethod, timestamp, orderId, mpesaCode, paypalTransactionId } = body
 
-    if (!service || !userEmail || !totalCost || !paymentMethod) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    // Validate required fields
+    if (!service || totalCost === undefined || totalCost === null || !paymentMethod) {
+      console.error('Email API: Missing required fields', { service, userEmail, totalCost, paymentMethod })
+      return NextResponse.json({
+        error: 'Missing required fields',
+        details: { service: !!service, userEmail: !!userEmail, totalCost: totalCost !== undefined, paymentMethod: !!paymentMethod }
+      }, { status: 400 })
+    }
+
+    // If userEmail not provided, get from session
+    if (!userEmail) {
+      const session = request.cookies.get('session')
+      if (session?.value) {
+        try {
+          const decodedToken = await getFirebaseAdminAuth().verifyIdToken(session.value)
+          const userId = decodedToken.uid
+          const db = getFirebaseAdminDb()
+          const userDoc = await db.collection('users').doc(userId).get()
+          if (userDoc.exists) {
+            const userData = userDoc.data()
+            userEmail = userData?.email || decodedToken.email
+          } else {
+            userEmail = decodedToken.email
+          }
+        } catch (authError) {
+          console.error('Email API: Failed to get userEmail from session:', authError)
+          return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+        }
+      } else {
+        console.error('Email API: No userEmail and no session')
+        return NextResponse.json({ error: 'User email required' }, { status: 400 })
+      }
+    }
+
+    // Check Mailjet configuration
+    if (!process.env.MAILJET_API_KEY || !process.env.MAILJET_SECRET_KEY) {
+      console.error('Email API: Mailjet API keys not configured')
+      return NextResponse.json({ error: 'Email service not configured' }, { status: 500 })
     }
 
     // Get service name

@@ -169,7 +169,7 @@ export default function DashboardPage() {
             // Add timeout to Firestore operations
             const firestorePromise = getDoc(userDocRef)
             const timeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Firestore timeout')), 5000)
+              setTimeout(() => reject(new Error('Firestore timeout')), 10000)
             )
 
             const userDocSnap = await Promise.race([firestorePromise, timeoutPromise])
@@ -188,7 +188,7 @@ export default function DashboardPage() {
 
               const createPromise = setDoc(userDocRef, defaultUserData)
               const createTimeout = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Create timeout')), 5000)
+                setTimeout(() => reject(new Error('Create timeout')), 10000)
               )
 
               await Promise.race([createPromise, createTimeout])
@@ -616,8 +616,8 @@ export default function DashboardPage() {
                   <p className="text-gray-600 mt-1">Complete the details below to place your order</p>
                 </div>
                 <button
-                  onClick={() => { setActiveService(null); setFormData({}) }}
-                  className="text-gray-400 hover:text-gray-600 text-xl"
+                  onClick={() => router.push('/dashboard/place-order?service=humanization')}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200 md:col-span-2 lg:col-span-1"
                 >
                   ✕
                 </button>

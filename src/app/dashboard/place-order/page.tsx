@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/toast";
-// import { addPendingUserCreation } from "@/lib/offlinePersistence";
 
 interface UserData {
   uid: string;
@@ -14,9 +14,12 @@ interface UserData {
   credits: number;
 }
 
-const PLATFORMS = ["Twitter", "Reddit", "LinkedIn", "Instagram", "Facebook", "TikTok", "Quora"];
-const TONNES = ["Friendly", "Professional", "Enthusiastic"];
+const PLATFORMS = ["Twitter/X", "Reddit", "LinkedIn", "Instagram", "Facebook", "TikTok", "Quora", "YouTube"];
+const TONES = ["Friendly", "Professional", "Enthusiastic", "Helpful", "Casual"];
 const PRICE_PER_COMMENT = 0.30;
+const PRICE_PER_INFLUENCER = 0.30;
+const PRICE_PER_REVIEW = 1.00;
+const PRICE_PER_WORD = 0.015;
 
 export default function PlaceOrderPage() {
   const [user, setUser] = useState<UserData | null>(null);

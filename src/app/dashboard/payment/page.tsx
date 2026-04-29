@@ -66,25 +66,31 @@ export default function PaymentPage() {
       const isFreeService = orderData.totalCost === 0
       const orderStatus = isFreeService ? 'paid' : 'pending_verification'
 
-      // Send email notification
-      const emailResponse = await fetch('/api/send-order-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service: orderData.service,
-          userEmail: orderData.userEmail,
-          formData: orderData.formData,
-          totalCost: orderData.totalCost,
-          paymentMethod,
-          mpesaCode: paymentMethod === 'mpesa' ? confirmationCode : undefined,
-          paypalTransactionId: paymentMethod === 'paypal' ? paypalTransactionId : undefined,
-          timestamp: orderData.timestamp,
-          orderId: orderId
-        }),
-      })
+      // Send email notification (non-blocking)
+      try {
+        const emailResponse = await fetch('/api/send-order-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service: orderData.service,
+            userEmail: orderData.userEmail,
+            formData: orderData.formData,
+            totalCost: orderData.totalCost,
+            paymentMethod,
+            mpesaCode: paymentMethod === 'mpesa' ? confirmationCode : undefined,
+            paypalTransactionId: paymentMethod === 'paypal' ? paypalTransactionId : undefined,
+            timestamp: orderData.timestamp,
+            orderId: orderId
+          }),
+        })
 
-      if (!emailResponse.ok) {
-        throw new Error('Failed to send order notification')
+        if (!emailResponse.ok) {
+          // Email failed, but continue silently
+        } else {
+          console.log('Order notification email sent successfully')
+        }
+      } catch (emailError) {
+        // Email sending failed, continue silently
       }
 
       // Save order to Firestore via API with fallback
