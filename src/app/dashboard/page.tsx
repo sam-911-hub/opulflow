@@ -70,7 +70,25 @@ export default function DashboardPage() {
   const [formData, setFormData] = useState<ServiceFormData>({})
   const [activeNav, setActiveNav] = useState('dashboard')
   const [notificationsExpanded, setNotificationsExpanded] = useState(false)
+  const [isOnline, setIsOnline] = useState(true)
   const router = useRouter()
+
+  // Monitor online status
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    // Set initial status
+    setIsOnline(navigator.onLine)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
 
   const getStats = () => {
     const totalOrders = orders.length
@@ -324,7 +342,44 @@ export default function DashboardPage() {
     }
 
     localStorage.setItem('pendingOrder', JSON.stringify(orderData))
-    router.push('/dashboard/payment')
+
+    // Show success message immediately
+    toast.success('Order details saved! Redirecting to payment...', {
+      duration: 3000,
+    })
+
+    // Try to navigate to payment page with retry logic for offline scenarios
+    const attemptNavigation = async (retries = 3) => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          // Check if we're online before attempting navigation
+          if (!navigator.onLine) {
+            throw new Error('Offline')
+          }
+
+          await router.push('/dashboard/payment')
+          return // Success, exit the function
+        } catch (error) {
+          console.warn(`Navigation attempt ${i + 1} failed:`, error)
+          if (i < retries - 1) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))) // Exponential backoff
+          }
+        }
+      }
+
+      // If all retries failed, show offline message but keep order data
+      toast.success('Order saved offline! Payment will be available when connection is restored.', {
+        duration: 8000,
+      })
+
+      // Close the form after showing the message
+      setTimeout(() => {
+        setActiveService(null)
+        setFormData({})
+      }, 2000)
+    }
+
+    attemptNavigation()
   }
 
   const updateFormData = (field: string, value: unknown) => {
@@ -425,8 +480,20 @@ export default function DashboardPage() {
 
             {/* User Menu */}
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
-                {stats.totalOrders} boards • {stats.completedOrders} completed
+              <div className="flex items-center space-x-2 text-sm">
+                <div className="text-gray-600">
+                  {stats.totalOrders} boards • {stats.completedOrders} completed
+                </div>
+                <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${
+                  isOnline
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-red-100 text-red-700'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${
+                    isOnline ? 'bg-green-500' : 'bg-red-500'
+                  }`}></div>
+                  <span>{isOnline ? 'Online' : 'Offline'}</span>
+                </div>
               </div>
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm cursor-pointer hover:shadow-lg transition-shadow">
                 {getUserInitials(user?.email || '')}
@@ -795,11 +862,20 @@ export default function DashboardPage() {
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                  {!isOnline && (
+                    <div className="w-full bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                      <div className="flex items-center space-x-2 text-yellow-800 text-sm">
+                        <span>⚠️</span>
+                        <span>You're currently offline. Order will be saved locally and you can complete payment when connection is restored.</span>
+                      </div>
+                    </div>
+                  )}
                   <button
                     onClick={() => handleSubmit(activeService)}
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    disabled={!isOnline && !navigator.onLine}
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
                   >
-                    Continue to Payment →
+                    {isOnline ? 'Continue to Payment →' : 'Save Order (Offline)'}
                   </button>
                   <button
                     type="button"
