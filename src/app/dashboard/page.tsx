@@ -16,7 +16,6 @@ import { getFirebaseDb } from "@/lib/firebaseClient"
 interface UserInfo {
   uid: string
   email: string
-  credits: number
   accountType: string
 }
 
@@ -158,8 +157,6 @@ export default function DashboardPage() {
                 uid: userInfo.uid,
                 email: userInfo.email,
                 displayName: userInfo.email?.split('@')[0] || '',
-                credits: 20,
-                freeCreditsGiven: true,
                 accountType: 'free',
                 createdAt: new Date().toISOString(),
               }
@@ -171,7 +168,6 @@ export default function DashboardPage() {
               const firestoreData = userDocSnap.data()
               setUser(prev => prev ? {
                 ...prev,
-                credits: firestoreData?.credits || 20,
                 accountType: firestoreData?.accountType || 'free'
               } : null)
               console.log('Dashboard: User document exists, updated data')
@@ -187,9 +183,9 @@ export default function DashboardPage() {
         // Check if user should see onboarding for this specific account
         const onboardingCompletedKey = `onboardingCompleted_${userInfo.uid}`
         const onboardingCompleted = localStorage.getItem(onboardingCompletedKey)
-        console.log('Dashboard: onboarding check', { onboardingCompletedKey, onboardingCompleted, credits: userInfo.credits })
-        if (!onboardingCompleted && userInfo.credits === 20) {
-          // New user with default credits - redirect to onboarding
+        console.log('Dashboard: onboarding check', { onboardingCompletedKey, onboardingCompleted })
+        if (!onboardingCompleted) {
+          // New user - redirect to onboarding
           console.log('Dashboard: redirecting new user to onboarding')
           router.push('/onboarding')
           return
@@ -234,13 +230,33 @@ export default function DashboardPage() {
 
   // Live activities simulation removed
 
+  const getCommentCount = (): number => {
+    const totalComments = orders
+      .filter(o => o.service === 'comment')
+      .reduce((sum, o) => sum + (o.totalCost ? Math.round(o.totalCost / 0.30) : 0), 0)
+    return totalComments
+  }
+
   const calculateCost = (service: string, data: ServiceFormData) => {
     switch (service) {
       case 'comment':
         const quantity = data.quantity || 0
-        if (quantity >= 100) return quantity * 0.30 * 0.8
-        if (quantity >= 50) return quantity * 0.30 * 0.9
-        return quantity * 0.30
+        const currentComments = getCommentCount()
+        
+        // First 20 comments are free
+        if (currentComments >= 20) {
+          // All paid at regular rate
+          if (quantity >= 100) return quantity * 0.30 * 0.8
+          if (quantity >= 50) return quantity * 0.30 * 0.9
+          return quantity * 0.30
+        }
+        
+        const freeRemaining = Math.max(0, 20 - currentComments)
+        const chargeable = Math.max(0, quantity - freeRemaining)
+        
+        if (chargeable >= 100) return chargeable * 0.30 * 0.8
+        if (chargeable >= 50) return chargeable * 0.30 * 0.9
+        return chargeable * 0.30
       case 'search':
         return 0.00
       case 'influencer':
@@ -409,10 +425,6 @@ export default function DashboardPage() {
                   {greeting}
                 </h1>
                 <div className="flex items-center space-x-4 mt-2">
-                  <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                    {user?.credits || 0} credits available
-                  </div>
                   <div className="text-sm text-slate-600">
                     {stats.totalOrders} orders • {stats.completedOrders} completed
                   </div>
@@ -420,15 +432,6 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Link
-                href="/dashboard/buy-credits"
-                className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Buy Credits
-              </Link>
               <Link href="/" className="text-slate-600 hover:text-slate-900 transition-colors">
                 ← Back to Homepage
               </Link>
@@ -510,10 +513,7 @@ export default function DashboardPage() {
                   <span className="text-sm text-slate-600">In Progress</span>
                   <span className="font-semibold text-blue-600">{stats.pendingOrders}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Credits</span>
-                  <span className="font-semibold text-purple-600">{user?.credits || 0}</span>
-                </div>
+
               </div>
             </div>
 
@@ -527,7 +527,7 @@ export default function DashboardPage() {
                 onClick={() => setActiveService('comment')}
                 className="text-blue-600 hover:text-blue-700 font-medium text-sm"
               >
-                Try it now →
+                Get started →
               </button>
             </div>
 
