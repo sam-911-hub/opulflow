@@ -411,40 +411,36 @@ export default function DashboardPage() {
   // const chartData = getChartData()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Modern Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-40">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
                 {getUserInitials(user?.email || '')}
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">
+                <h1 className="text-xl font-bold text-gray-900">
                   {greeting}
                 </h1>
-                <div className="flex items-center space-x-4 mt-2">
-                  <div className="text-sm text-slate-600">
-                    {stats.totalOrders} orders • {stats.completedOrders} completed
-                  </div>
-                </div>
+                <p className="text-sm text-gray-600">
+                  {stats.totalOrders} orders • {stats.completedOrders} completed
+                </p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="text-slate-600 hover:text-slate-900 transition-colors">
-                ← Back to Homepage
-              </Link>
-            </div>
+            <Link href="/" className="text-gray-600 hover:text-gray-900">
+              ← Back to Homepage
+            </Link>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-8 max-w-screen-2xl mx-auto">
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
-          {/* Sidebar */}
-          <div className="xl:col-span-1 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Sidebar */}
+            <div className="lg:col-span-1 space-y-6">
             {/* Navigation */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
               <nav className="space-y-2">
@@ -620,249 +616,98 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Main Content Area */}
-          <div className="xl:col-span-4 space-y-8">
-            {/* Welcome Hero */}
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-3xl p-6 lg:p-8 text-white relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/10"></div>
-              <div className="relative z-10">
-                <h2 className="text-2xl lg:text-3xl font-bold mb-4">Ready to amplify your online presence?</h2>
-                <p className="text-blue-100 mb-6 max-w-2xl text-sm lg:text-base">
-                  Choose from our suite of AI-powered services to generate authentic content, find influencers, and boost your brand visibility across platforms.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={() => setActiveService('comment')}
-                    className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl text-white font-medium hover:bg-white/30 transition-all duration-200"
-                  >
-                    <span className="mr-2">💬</span>
-                    Start with Comments
-                  </button>
-                  <button
-                    onClick={() => setActiveService('influencer')}
-                    className="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl text-white font-medium hover:bg-white/30 transition-all duration-200"
-                  >
-                    <span className="mr-2">👥</span>
-                    Find Influencers
-                  </button>
-                </div>
-              </div>
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
-              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 rounded-full"></div>
+            {/* Main Content Area */}
+            <div className="lg:col-span-3 space-y-8">
+            {/* Welcome Section */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to OpulFlow!</h2>
+              <p className="text-gray-600 mb-4">Ready to amplify your online presence? Choose from our AI-powered services below.</p>
             </div>
 
-            {/* Quick Actions - Enhanced Visibility */}
-            <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-3xl shadow-xl border border-blue-200 p-6 lg:p-10 relative overflow-hidden">
-              {/* Background decorative elements */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full -translate-y-16 translate-x-16"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-pink-200/30 to-blue-200/30 rounded-full translate-y-12 -translate-x-12"></div>
+            {/* Quick Actions */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Choose Your Service</h3>
+              <p className="text-gray-600 mb-6">Select from our premium services to boost your online presence</p>
 
-              {/* Popular badge */}
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold rounded-full mb-4 shadow-lg">
-                <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
-                Most Popular Services
-              </div>
-
-              {/* CTA Banner */}
-              <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white p-4 lg:p-6 rounded-2xl mb-6 lg:mb-8 relative z-10 shadow-2xl">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                  <div>
-                    <h2 className="text-xl lg:text-2xl font-bold mb-2">🎯 Ready to Boost Your Online Presence?</h2>
-                    <p className="text-blue-100 text-sm lg:text-base">Get started with our professional services - results guaranteed!</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="flex -space-x-2">
-                      <div className="w-6 h-6 lg:w-8 lg:h-8 bg-white/20 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">✓</div>
-                      <div className="w-6 h-6 lg:w-8 lg:h-8 bg-white/20 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">✓</div>
-                      <div className="w-6 h-6 lg:w-8 lg:h-8 bg-white/20 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">✓</div>
-                    </div>
-                    <span className="text-xs lg:text-sm text-blue-100 ml-2">1000+ satisfied customers</span>
-                  </div>
-                </div>
-              </div>
-
-              <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3 relative z-10">🚀 Choose Your Service</h3>
-              <p className="text-slate-600 mb-6 lg:mb-8 text-base lg:text-lg relative z-10">Select from our premium services to boost your online presence</p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 <button
                   onClick={() => { setActiveService('comment'); setFormData({}) }}
-                  className="group relative p-4 lg:p-8 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-150 border-2 border-blue-200 rounded-2xl hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
+                  className="p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
                 >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                  {/* Popular badge for this service */}
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                    ⭐ TOP
-                  </div>
-
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white mb-4 lg:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                    <span className="text-lg lg:text-2xl">💬</span>
-                  </div>
-
-                  <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-base lg:text-lg group-hover:text-blue-700 transition-colors relative z-10">Comment Writing</h4>
-                  <p className="text-slate-600 mb-3 lg:mb-4 leading-relaxed text-sm lg:text-base relative z-10">Generate authentic comments for Reddit, Twitter, and more platforms to boost engagement.</p>
-
-                  <div className="flex items-center justify-between relative z-10">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl font-bold text-green-600">$0.30</span>
-                      <span className="text-sm text-slate-500">each</span>
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <span className="text-xl">💬</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-blue-600 font-semibold group-hover:translate-x-2 transition-transform">
-                      <span>Start Now</span>
-                      <span className="text-xl">→</span>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Comment Writing</h4>
+                      <p className="text-sm text-gray-500">$0.30 each</p>
                     </div>
                   </div>
-
-                  {/* Hover effect overlay */}
-                  <div className="absolute inset-0 border-2 border-blue-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <p className="text-gray-600 text-sm">Generate authentic comments for Reddit, Twitter, and more platforms.</p>
                 </button>
 
                 <button
                   onClick={() => { setActiveService('search'); setFormData({}) }}
-                  className="group relative p-4 lg:p-8 bg-gradient-to-br from-green-50 via-green-100 to-emerald-150 border-2 border-green-200 rounded-2xl hover:shadow-2xl hover:shadow-green-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
+                  className="p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
                 >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-emerald-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                  {/* Free badge */}
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                    🆓 FREE
-                  </div>
-
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white mb-4 lg:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                    <span className="text-xl lg:text-3xl">🔍</span>
-                  </div>
-
-                  <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-base lg:text-lg group-hover:text-green-700 transition-colors relative z-10">Product Search</h4>
-                  <p className="text-slate-600 mb-3 lg:mb-4 leading-relaxed text-sm lg:text-base relative z-10">Find trending discussions and opportunities for your product mentions.</p>
-
-                  <div className="flex items-center justify-between relative z-10">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl font-bold text-green-600">FREE</span>
-                      <span className="text-sm text-slate-500">unlimited</span>
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <span className="text-xl">🔍</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-green-600 font-semibold group-hover:translate-x-2 transition-transform">
-                      <span>Discover</span>
-                      <span className="text-xl">→</span>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Product Search</h4>
+                      <p className="text-sm text-gray-500">Free</p>
                     </div>
                   </div>
-
-                  {/* Hover effect overlay */}
-                  <div className="absolute inset-0 border-2 border-green-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <p className="text-gray-600 text-sm">Find trending discussions and opportunities for your product.</p>
                 </button>
 
                 <button
                   onClick={() => { setActiveService('influencer'); setFormData({}) }}
-                  className="group relative p-4 lg:p-8 bg-gradient-to-br from-purple-50 via-purple-100 to-violet-150 border-2 border-purple-200 rounded-2xl hover:shadow-2xl hover:shadow-purple-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
+                  className="p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
                 >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400/10 to-violet-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                  {/* Trending badge */}
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-purple-500 to-violet-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                    🔥 HOT
-                  </div>
-
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center text-white mb-4 lg:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                    <span className="text-xl lg:text-3xl">👥</span>
-                  </div>
-
-                  <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-base lg:text-lg group-hover:text-purple-700 transition-colors relative z-10">Influencer Research</h4>
-                  <p className="text-slate-600 mb-3 lg:mb-4 leading-relaxed text-sm lg:text-base relative z-10">Discover perfect influencers for your niche and budget with detailed analytics.</p>
-
-                  <div className="flex items-center justify-between relative z-10">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl font-bold text-green-600">$0.30</span>
-                      <span className="text-sm text-slate-500">per influencer</span>
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <span className="text-xl">👥</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-purple-600 font-semibold group-hover:translate-x-2 transition-transform">
-                      <span>Find Now</span>
-                      <span className="text-xl">→</span>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Influencer Research</h4>
+                      <p className="text-sm text-gray-500">$0.30 per influencer</p>
                     </div>
                   </div>
-
-                  {/* Hover effect overlay */}
-                  <div className="absolute inset-0 border-2 border-purple-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <p className="text-gray-600 text-sm">Discover perfect influencers for your niche and budget.</p>
                 </button>
 
                 <button
                   onClick={() => { setActiveService('review'); setFormData({}) }}
-                  className="group relative p-4 lg:p-8 bg-gradient-to-br from-orange-50 via-orange-100 to-red-150 border-2 border-orange-200 rounded-2xl hover:shadow-2xl hover:shadow-orange-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
+                  className="p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left"
                 >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-orange-400/10 to-red-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                  {/* Premium badge */}
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                    💎 PREMIUM
-                  </div>
-
-                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center text-white mb-4 lg:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                    <span className="text-xl lg:text-3xl">⭐</span>
-                  </div>
-
-                  <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-base lg:text-lg group-hover:text-orange-700 transition-colors relative z-10">Product Reviews</h4>
-                  <p className="text-slate-600 mb-3 lg:mb-4 leading-relaxed text-sm lg:text-base relative z-10">Generate authentic reviews for app stores, Amazon, and marketplaces.</p>
-
-                  <div className="flex items-center justify-between relative z-10">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl font-bold text-green-600">$1.00</span>
-                      <span className="text-sm text-slate-500">per review</span>
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <span className="text-xl">⭐</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-orange-600 font-semibold group-hover:translate-x-2 transition-transform">
-                      <span>Get Reviews</span>
-                      <span className="text-xl">→</span>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Product Reviews</h4>
+                      <p className="text-sm text-gray-500">$1.00 per review</p>
                     </div>
                   </div>
-
-                  {/* Hover effect overlay */}
-                  <div className="absolute inset-0 border-2 border-orange-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <p className="text-gray-600 text-sm">Generate authentic reviews for app stores and marketplaces.</p>
                 </button>
 
                 <button
                   onClick={() => { setActiveService('humanization'); setFormData({}) }}
-                  className="group relative p-6 lg:p-8 bg-gradient-to-br from-pink-50 via-pink-100 to-rose-150 border-2 border-pink-200 rounded-2xl hover:shadow-2xl hover:shadow-pink-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden sm:col-span-2 xl:col-span-3 2xl:col-span-4"
+                  className="p-6 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow text-left md:col-span-2"
                 >
-                  {/* Animated background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-400/10 to-rose-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                  {/* New badge */}
-                  <div className="absolute top-3 right-3 bg-gradient-to-r from-pink-500 to-rose-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                    ✨ NEW
-                  </div>
-
-                  <div className="flex items-center justify-center mb-4 lg:mb-6">
-                    <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-pink-500 to-rose-600 rounded-3xl flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                      <span className="text-2xl lg:text-4xl">✨</span>
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
+                      <span className="text-xl">✨</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">AI Content Humanization</h4>
+                      <p className="text-sm text-gray-500">$0.015 per word</p>
                     </div>
                   </div>
-
-                  <div className="text-center">
-                    <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-lg lg:text-xl group-hover:text-pink-700 transition-colors relative z-10">AI Content Humanization</h4>
-                    <p className="text-slate-600 mb-4 lg:mb-6 leading-relaxed max-w-2xl mx-auto text-sm lg:text-base relative z-10">Transform robotic AI-generated content into natural, engaging, human-sounding text that resonates with readers.</p>
-
-                    <div className="flex flex-col lg:flex-row items-center justify-center space-y-4 lg:space-y-0 lg:space-x-6 xl:space-x-8 relative z-10">
-                      <div className="text-center">
-                        <div className="text-2xl lg:text-3xl font-bold text-green-600">$0.015</div>
-                        <div className="text-xs lg:text-sm text-slate-500">per word</div>
-                      </div>
-                      <div className="hidden lg:block w-px h-10 lg:h-12 bg-slate-300"></div>
-                      <div className="text-center">
-                        <div className="text-base lg:text-lg font-semibold text-slate-900">Unlimited Projects</div>
-                        <div className="text-xs lg:text-sm text-slate-500">No monthly limits</div>
-                      </div>
-                      <div className="hidden lg:block w-px h-10 lg:h-12 bg-slate-300"></div>
-                      <div className="flex items-center space-x-1 text-pink-600 font-semibold group-hover:translate-x-2 transition-transform cursor-pointer">
-                        <span className="text-base lg:text-lg">Humanize Now</span>
-                        <span className="text-xl lg:text-2xl">→</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hover effect overlay */}
-                  <div className="absolute inset-0 border-2 border-pink-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <p className="text-gray-600 text-sm">Transform AI content into natural, human-sounding text.</p>
                 </button>
               </div>
             </div>
