@@ -651,83 +651,218 @@ export default function DashboardPage() {
               <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 rounded-full"></div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-              <h3 className="text-2xl font-bold text-slate-900 mb-6">Choose Your Service</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Quick Actions - Enhanced Visibility */}
+            <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-3xl shadow-xl border border-blue-200 p-10 relative overflow-hidden">
+              {/* Background decorative elements */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-pink-200/30 to-blue-200/30 rounded-full translate-y-12 -translate-x-12"></div>
+
+              {/* Popular badge */}
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold rounded-full mb-4 shadow-lg">
+                <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
+                Most Popular Services
+              </div>
+
+              {/* CTA Banner */}
+              <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white p-6 rounded-2xl mb-8 relative z-10 shadow-2xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-2">🎯 Ready to Boost Your Online Presence?</h2>
+                    <p className="text-blue-100">Get started with our professional services - results guaranteed!</p>
+                  </div>
+                  <div className="hidden md:flex items-center space-x-2">
+                    <div className="flex -space-x-2">
+                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">✓</div>
+                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">✓</div>
+                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">✓</div>
+                    </div>
+                    <span className="text-sm text-blue-100 ml-2">1000+ satisfied customers</span>
+                  </div>
+                </div>
+              </div>
+
+              <h3 className="text-3xl font-bold text-slate-900 mb-3 relative z-10">🚀 Choose Your Service</h3>
+              <p className="text-slate-600 mb-8 text-lg relative z-10">Select from our premium services to boost your online presence</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
                 <button
                   onClick={() => { setActiveService('comment'); setFormData({}) }}
-                  className="group p-6 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
+                  className="group relative p-8 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-150 border-2 border-blue-200 rounded-2xl hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
                 >
-                  <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
-                    <span className="text-xl">C</span>
+                  {/* Animated background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  {/* Popular badge for this service */}
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    ⭐ TOP
                   </div>
-                  <h4 className="font-semibold text-slate-900 mb-2">Comment Writing</h4>
-                  <p className="text-sm text-slate-600 mb-3">Generate authentic comments for Reddit, Twitter, and more platforms.</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-blue-600">$0.30 each</span>
-                    <span className="text-blue-500 group-hover:translate-x-1 transition-transform">&gt;</span>
+
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                    <span className="text-2xl">💬</span>
                   </div>
+
+                  <h4 className="font-bold text-slate-900 mb-3 text-lg group-hover:text-blue-700 transition-colors relative z-10">Comment Writing</h4>
+                  <p className="text-slate-600 mb-4 leading-relaxed relative z-10">Generate authentic comments for Reddit, Twitter, and more platforms to boost engagement.</p>
+
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl font-bold text-green-600">$0.30</span>
+                      <span className="text-sm text-slate-500">each</span>
+                    </div>
+                    <div className="flex items-center space-x-1 text-blue-600 font-semibold group-hover:translate-x-2 transition-transform">
+                      <span>Start Now</span>
+                      <span className="text-xl">→</span>
+                    </div>
+                  </div>
+
+                  {/* Hover effect overlay */}
+                  <div className="absolute inset-0 border-2 border-blue-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </button>
 
                 <button
                   onClick={() => { setActiveService('search'); setFormData({}) }}
-                  className="group p-6 bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
+                  className="group relative p-8 bg-gradient-to-br from-green-50 via-green-100 to-emerald-150 border-2 border-green-200 rounded-2xl hover:shadow-2xl hover:shadow-green-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
                 >
-                  <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
-                    <span className="text-xl">🔍</span>
+                  {/* Animated background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-emerald-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  {/* Free badge */}
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    🆓 FREE
                   </div>
-                  <h4 className="font-semibold text-slate-900 mb-2">Product Search</h4>
-                  <p className="text-sm text-slate-600 mb-3">Find trending discussions and opportunities for your product.</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-green-600">Free</span>
-                    <span className="text-green-500 group-hover:translate-x-1 transition-transform">→</span>
+
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                    <span className="text-3xl">🔍</span>
                   </div>
+
+                  <h4 className="font-bold text-slate-900 mb-3 text-lg group-hover:text-green-700 transition-colors relative z-10">Product Search</h4>
+                  <p className="text-slate-600 mb-4 leading-relaxed relative z-10">Find trending discussions and opportunities for your product mentions.</p>
+
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl font-bold text-green-600">FREE</span>
+                      <span className="text-sm text-slate-500">unlimited</span>
+                    </div>
+                    <div className="flex items-center space-x-1 text-green-600 font-semibold group-hover:translate-x-2 transition-transform">
+                      <span>Discover</span>
+                      <span className="text-xl">→</span>
+                    </div>
+                  </div>
+
+                  {/* Hover effect overlay */}
+                  <div className="absolute inset-0 border-2 border-green-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </button>
 
                 <button
                   onClick={() => { setActiveService('influencer'); setFormData({}) }}
-                  className="group p-6 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
+                  className="group relative p-8 bg-gradient-to-br from-purple-50 via-purple-100 to-violet-150 border-2 border-purple-200 rounded-2xl hover:shadow-2xl hover:shadow-purple-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
                 >
-                  <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
-                    <span className="text-xl">👥</span>
+                  {/* Animated background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400/10 to-violet-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  {/* Trending badge */}
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-purple-500 to-violet-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    🔥 HOT
                   </div>
-                  <h4 className="font-semibold text-slate-900 mb-2">Influencer Research</h4>
-                  <p className="text-sm text-slate-600 mb-3">Discover perfect influencers for your niche and budget.</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-purple-600">$0.30 each</span>
-                    <span className="text-purple-500 group-hover:translate-x-1 transition-transform">→</span>
+
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                    <span className="text-3xl">👥</span>
                   </div>
+
+                  <h4 className="font-bold text-slate-900 mb-3 text-lg group-hover:text-purple-700 transition-colors relative z-10">Influencer Research</h4>
+                  <p className="text-slate-600 mb-4 leading-relaxed relative z-10">Discover perfect influencers for your niche and budget with detailed analytics.</p>
+
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl font-bold text-green-600">$0.30</span>
+                      <span className="text-sm text-slate-500">per influencer</span>
+                    </div>
+                    <div className="flex items-center space-x-1 text-purple-600 font-semibold group-hover:translate-x-2 transition-transform">
+                      <span>Find Now</span>
+                      <span className="text-xl">→</span>
+                    </div>
+                  </div>
+
+                  {/* Hover effect overlay */}
+                  <div className="absolute inset-0 border-2 border-purple-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </button>
 
                 <button
                   onClick={() => { setActiveService('review'); setFormData({}) }}
-                  className="group p-6 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
+                  className="group relative p-8 bg-gradient-to-br from-orange-50 via-orange-100 to-red-150 border-2 border-orange-200 rounded-2xl hover:shadow-2xl hover:shadow-orange-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
                 >
-                  <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
-                    <span className="text-xl">⭐</span>
+                  {/* Animated background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-400/10 to-red-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  {/* Premium badge */}
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    💎 PREMIUM
                   </div>
-                  <h4 className="font-semibold text-slate-900 mb-2">Product Reviews</h4>
-                  <p className="text-sm text-slate-600 mb-3">Generate authentic reviews for app stores and marketplaces.</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-orange-600">$1.00 each</span>
-                    <span className="text-orange-500 group-hover:translate-x-1 transition-transform">→</span>
+
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                    <span className="text-3xl">⭐</span>
                   </div>
+
+                  <h4 className="font-bold text-slate-900 mb-3 text-lg group-hover:text-orange-700 transition-colors relative z-10">Product Reviews</h4>
+                  <p className="text-slate-600 mb-4 leading-relaxed relative z-10">Generate authentic reviews for app stores, Amazon, and marketplaces.</p>
+
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl font-bold text-green-600">$1.00</span>
+                      <span className="text-sm text-slate-500">per review</span>
+                    </div>
+                    <div className="flex items-center space-x-1 text-orange-600 font-semibold group-hover:translate-x-2 transition-transform">
+                      <span>Get Reviews</span>
+                      <span className="text-xl">→</span>
+                    </div>
+                  </div>
+
+                  {/* Hover effect overlay */}
+                  <div className="absolute inset-0 border-2 border-orange-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </button>
 
                 <button
                   onClick={() => { setActiveService('humanization'); setFormData({}) }}
-                  className="group p-6 bg-gradient-to-br from-pink-50 to-pink-100 border border-pink-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
+                  className="group relative p-8 bg-gradient-to-br from-pink-50 via-pink-100 to-rose-150 border-2 border-pink-200 rounded-2xl hover:shadow-2xl hover:shadow-pink-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden md:col-span-2 lg:col-span-3"
                 >
-                  <div className="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
-                    <span className="text-xl">✨</span>
+                  {/* Animated background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-pink-400/10 to-rose-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                  {/* New badge */}
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-pink-500 to-rose-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    ✨ NEW
                   </div>
-                  <h4 className="font-semibold text-slate-900 mb-2">AI Humanization</h4>
-                  <p className="text-sm text-slate-600 mb-3">Transform AI content into natural, human-sounding text.</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-pink-600">$0.015/word</span>
-                    <span className="text-pink-500 group-hover:translate-x-1 transition-transform">→</span>
+
+                  <div className="flex items-center justify-center mb-6">
+                    <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-rose-600 rounded-3xl flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                      <span className="text-4xl">✨</span>
+                    </div>
                   </div>
+
+                  <div className="text-center">
+                    <h4 className="font-bold text-slate-900 mb-3 text-xl group-hover:text-pink-700 transition-colors relative z-10">AI Content Humanization</h4>
+                    <p className="text-slate-600 mb-6 leading-relaxed max-w-2xl mx-auto relative z-10">Transform robotic AI-generated content into natural, engaging, human-sounding text that resonates with readers.</p>
+
+                    <div className="flex items-center justify-center space-x-8 relative z-10">
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-green-600">$0.015</div>
+                        <div className="text-sm text-slate-500">per word</div>
+                      </div>
+                      <div className="w-px h-12 bg-slate-300"></div>
+                      <div className="text-center">
+                        <div className="text-lg font-semibold text-slate-900">Unlimited Projects</div>
+                        <div className="text-sm text-slate-500">No monthly limits</div>
+                      </div>
+                      <div className="w-px h-12 bg-slate-300"></div>
+                      <div className="flex items-center space-x-1 text-pink-600 font-semibold group-hover:translate-x-2 transition-transform cursor-pointer">
+                        <span className="text-lg">Humanize Now</span>
+                        <span className="text-2xl">→</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Hover effect overlay */}
+                  <div className="absolute inset-0 border-2 border-pink-300 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </button>
               </div>
             </div>
