@@ -52,6 +52,16 @@ interface ServiceFormData {
   influencerSize?: string
   contentFocus?: string
   reviewFocus?: string
+  contentText?: string
+}
+
+const PLATFORMS = ["Twitter", "Reddit", "LinkedIn", "Instagram", "Facebook", "TikTok", "Quora"]
+const TONNES = ["Friendly", "Professional", "Enthusiastic"]
+const REVIEW_PLATFORMS = ["Amazon", "App Store", "Google Play", "Product Hunt", "Trustpilot", "Other"]
+const RATING_OPTIONS = ["4 stars", "4.5 stars", "5 stars"]
+
+const countWords = (text?: string) => {
+  return text?.trim().split(/\s+/).filter(Boolean).length || 0
 }
 
 export default function DashboardPage() {
@@ -238,7 +248,8 @@ export default function DashboardPage() {
       case 'review':
         return 1.00
       case 'humanization':
-        return (data.wordCount || 0) * 0.015
+        const words = data.wordCount || countWords(data.contentText)
+        return words * 0.015
       default:
         return 0
     }
@@ -272,8 +283,12 @@ export default function DashboardPage() {
         }
         break
       case 'humanization':
-        if (!formData.file || !formData.wordCount) {
-          toast.error('Please upload a file and specify word count')
+        if (!formData.contentText?.trim()) {
+          toast.error('Please enter the text you want to humanize')
+          return
+        }
+        if (!formData.wordCount && countWords(formData.contentText) === 0) {
+          toast.error('Please enter a valid word count')
           return
         }
         break
@@ -641,7 +656,7 @@ export default function DashboardPage() {
               <h3 className="text-2xl font-bold text-slate-900 mb-6">Choose Your Service</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <button
-                  onClick={() => setActiveService('comment')}
+                  onClick={() => { setActiveService('comment'); setFormData({}) }}
                   className="group p-6 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
                   <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
@@ -656,7 +671,7 @@ export default function DashboardPage() {
                 </button>
 
                 <button
-                  onClick={() => setActiveService('search')}
+                  onClick={() => { setActiveService('search'); setFormData({}) }}
                   className="group p-6 bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
                   <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
@@ -671,7 +686,7 @@ export default function DashboardPage() {
                 </button>
 
                 <button
-                  onClick={() => setActiveService('influencer')}
+                  onClick={() => { setActiveService('influencer'); setFormData({}) }}
                   className="group p-6 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
                   <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
@@ -686,7 +701,7 @@ export default function DashboardPage() {
                 </button>
 
                 <button
-                  onClick={() => setActiveService('review')}
+                  onClick={() => { setActiveService('review'); setFormData({}) }}
                   className="group p-6 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
                   <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
@@ -701,7 +716,7 @@ export default function DashboardPage() {
                 </button>
 
                 <button
-                  onClick={() => setActiveService('humanization')}
+                  onClick={() => { setActiveService('humanization'); setFormData({}) }}
                   className="group p-6 bg-gradient-to-br from-pink-50 to-pink-100 border border-pink-200 rounded-xl hover:shadow-lg transition-all duration-200 text-left"
                 >
                   <div className="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
@@ -814,8 +829,289 @@ export default function DashboardPage() {
 
 
 
-      {/* Service Request Modal disabled while fixing syntax */}
-      {/* Modal content temporarily removed to preserve build stability */}
+            {activeService && (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.3em] text-slate-500 mb-2">Place order</p>
+                    <h3 className="text-2xl font-bold text-slate-900">{getServiceName(activeService)}</h3>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Complete the details below to submit your order and continue to payment.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { setActiveService(null); setFormData({}) }}
+                    className="text-sm text-slate-600 hover:text-slate-900"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {activeService === 'comment' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Product/Service Name</label>
+                        <input
+                          value={formData.productName || ''}
+                          onChange={(e) => updateFormData('productName', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          placeholder="Enter your product or service name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Product Link (optional)</label>
+                        <input
+                          type="url"
+                          value={formData.productLink || ''}
+                          onChange={(e) => updateFormData('productLink', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          placeholder="https://your-product-link.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Target Platforms</label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {PLATFORMS.map(platform => (
+                            <button
+                              key={platform}
+                              type="button"
+                              onClick={() => {
+                                const currentPlatforms = formData.platforms || []
+                                const nextPlatforms = currentPlatforms.includes(platform)
+                                  ? currentPlatforms.filter((item) => item !== platform)
+                                  : [...currentPlatforms, platform]
+                                updateFormData('platforms', nextPlatforms)
+                              }}
+                              className={`rounded-xl border px-3 py-2 text-sm ${
+                                (formData.platforms || []).includes(platform)
+                                  ? 'bg-blue-600 text-white border-blue-600'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {platform}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Quantity of comments</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={formData.quantity || 1}
+                            onChange={(e) => updateFormData('quantity', parseInt(e.target.value, 10) || 1)}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Tone of voice</label>
+                          <select
+                            value={formData.tone || TONNES[0]}
+                            onChange={(e) => updateFormData('tone', e.target.value)}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          >
+                            {TONNES.map((tone) => (
+                              <option key={tone} value={tone}>{tone}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Special instructions</label>
+                        <textarea
+                          value={formData.specialInstructions || ''}
+                          onChange={(e) => updateFormData('specialInstructions', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          rows={4}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeService === 'search' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Product Name</label>
+                        <input
+                          value={formData.productName || ''}
+                          onChange={(e) => updateFormData('productName', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          placeholder="Enter the product you want researched"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Target keywords / search terms</label>
+                        <textarea
+                          value={formData.targetKeywords || ''}
+                          onChange={(e) => updateFormData('targetKeywords', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          rows={3}
+                          placeholder="Enter topics, keywords, or categories to search for"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Deadline (optional)</label>
+                        <input
+                          type="date"
+                          value={formData.deadline || ''}
+                          onChange={(e) => updateFormData('deadline', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeService === 'influencer' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Niche / audience</label>
+                        <input
+                          value={formData.niche || ''}
+                          onChange={(e) => updateFormData('niche', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          placeholder="Enter the niche or audience for influencer outreach"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Number of influencers</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={formData.numInfluencers || 1}
+                            onChange={(e) => updateFormData('numInfluencers', parseInt(e.target.value, 10) || 1)}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Target platform</label>
+                          <input
+                            value={formData.platformPreference || ''}
+                            onChange={(e) => updateFormData('platformPreference', e.target.value)}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                            placeholder="Instagram, TikTok, LinkedIn, etc."
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Budget range (optional)</label>
+                        <input
+                          value={formData.budgetRange || ''}
+                          onChange={(e) => updateFormData('budgetRange', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          placeholder="e.g. $100 - $300"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeService === 'review' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Product Name</label>
+                        <input
+                          value={formData.productName || ''}
+                          onChange={(e) => updateFormData('productName', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          placeholder="Enter the product or service name"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Platform</label>
+                          <select
+                            value={formData.platform || REVIEW_PLATFORMS[0]}
+                            onChange={(e) => updateFormData('platform', e.target.value)}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          >
+                            {REVIEW_PLATFORMS.map((platform) => (
+                              <option key={platform} value={platform}>{platform}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Rating preference</label>
+                          <select
+                            value={formData.ratingPreference || RATING_OPTIONS[2]}
+                            onChange={(e) => updateFormData('ratingPreference', e.target.value)}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          >
+                            {RATING_OPTIONS.map((rating) => (
+                              <option key={rating} value={rating}>{rating}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Review focus</label>
+                        <textarea
+                          value={formData.reviewFocus || ''}
+                          onChange={(e) => updateFormData('reviewFocus', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          rows={4}
+                          placeholder="Mention the main points you'd like the review to cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeService === 'humanization' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Text to humanize</label>
+                        <textarea
+                          value={formData.contentText || ''}
+                          onChange={(e) => updateFormData('contentText', e.target.value)}
+                          className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          rows={6}
+                          placeholder="Paste the AI generated draft you want rewritten to sound natural"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Word count</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={formData.wordCount || countWords(formData.contentText)}
+                            onChange={(e) => updateFormData('wordCount', parseInt(e.target.value, 10) || 0)}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Content focus</label>
+                          <input
+                            value={formData.contentFocus || ''}
+                            onChange={(e) => updateFormData('contentFocus', e.target.value)}
+                            className="w-full rounded-xl border border-slate-200 px-4 py-3"
+                            placeholder="Tone, audience, or outcome"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 mt-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <p className="text-sm text-slate-600">Estimated cost</p>
+                    <p className="text-xl font-semibold text-slate-900">${calculateCost(activeService, formData).toFixed(2)}</p>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-2">You will continue to payment after submitting this order.</p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(activeService)}
+                  className="mt-6 w-full rounded-xl bg-orange-600 px-6 py-3 text-white text-sm font-semibold hover:bg-orange-700 transition-all duration-200"
+                >
+                  Continue to Payment
+                </button>
+              </div>
+            )}
     </div>
     </div>
   )
