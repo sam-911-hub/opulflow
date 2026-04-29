@@ -615,12 +615,12 @@ export default function DashboardPage() {
                   <h3 className="text-xl font-semibold text-gray-900">{getServiceName(activeService)}</h3>
                   <p className="text-gray-600 mt-1">Complete the details below to place your order</p>
                 </div>
-                <button
-                  onClick={() => router.push('/dashboard/place-order?service=humanization')}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200 md:col-span-2 lg:col-span-1"
-                >
-                  ✕
-                </button>
+                 <button
+                   onClick={() => { setActiveService(null); setFormData({}) }}
+                   className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200 md:col-span-2 lg:col-span-1"
+                 >
+                   ✕
+                 </button>
               </div>
 
               <div className="space-y-6">
@@ -874,12 +874,12 @@ export default function DashboardPage() {
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-                  <button
-                    onClick={() => handleSubmit(activeService)}
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                  >
-                    Submit Order →
-                  </button>
+                   <button
+                     onClick={() => handleSubmit(activeService)}
+                     className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                   >
+                     Continue to Payment →
+                   </button>
                   <button
                     type="button"
                     onClick={() => { setActiveService(null); setFormData({}) }}
