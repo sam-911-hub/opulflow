@@ -159,14 +159,20 @@ export default function DashboardPage() {
         }
 
         // Safety fallback: Check if user document exists, create if missing
-        // Do this in background
+        // Do this in background with better error handling
         setTimeout(async () => {
           try {
             console.log('Dashboard: Checking Firestore user document')
             const db = getFirebaseDb()
             const userDocRef = doc(db, 'users', userInfo.uid)
 
-            const userDocSnap = await getDoc(userDocRef)
+            // Add timeout to Firestore operations
+            const firestorePromise = getDoc(userDocRef)
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Firestore timeout')), 5000)
+            )
+
+            const userDocSnap = await Promise.race([firestorePromise, timeoutPromise])
 
             if (!userDocSnap.exists()) {
               console.log('User document missing, creating with defaults...')
@@ -174,23 +180,32 @@ export default function DashboardPage() {
                 uid: userInfo.uid,
                 email: userInfo.email,
                 displayName: userInfo.email?.split('@')[0] || '',
+                credits: 20,
+                freeCreditsGiven: true,
                 accountType: 'free',
                 createdAt: new Date().toISOString(),
               }
 
-              await setDoc(userDocRef, defaultUserData)
+              const createPromise = setDoc(userDocRef, defaultUserData)
+              const createTimeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Create timeout')), 5000)
+              )
+
+              await Promise.race([createPromise, createTimeout])
               console.log('✅ User document created successfully in dashboard')
             } else {
               // Update user info with actual data from Firestore
               const firestoreData = userDocSnap.data()
-              setUser(prev => prev ? {
+              setUser(prev => ({
                 ...prev,
+                credits: firestoreData?.credits || 20,
                 accountType: firestoreData?.accountType || 'free'
-              } : null)
+              }))
               console.log('Dashboard: User document exists, updated data')
             }
           } catch (firestoreError) {
-            console.warn('Firestore check failed:', firestoreError)
+            console.warn('Firestore operation failed (this is normal for offline/network issues):', firestoreError.message)
+            // Don't update user data - keep the API data
           }
         }, 200)
 
@@ -208,17 +223,25 @@ export default function DashboardPage() {
           return
         }
 
-        // Load orders in background
+        // Load orders in background with timeout
         setTimeout(async () => {
           try {
-            const ordersRes = await fetch("/api/orders")
+            const ordersPromise = fetch("/api/orders")
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Orders fetch timeout')), 3000)
+            )
+
+            const ordersRes = await Promise.race([ordersPromise, timeoutPromise]) as Response
             if (ordersRes.ok) {
               const odata = await ordersRes.json()
               setOrders(odata.orders || [])
               console.log('Dashboard: Orders loaded')
+            } else {
+              console.warn('Orders API returned error:', ordersRes.status)
+              setOrders([])
             }
           } catch (ordersError) {
-            console.warn('Orders fetch failed:', ordersError)
+            console.warn('Orders fetch failed (normal for offline/network issues):', ordersError.message)
             setOrders([])
           }
         }, 300)
@@ -344,42 +367,31 @@ export default function DashboardPage() {
     localStorage.setItem('pendingOrder', JSON.stringify(orderData))
 
     // Show success message immediately
-    toast.success('Order details saved! Redirecting to payment...', {
-      duration: 3000,
+    toast.success('Order submitted successfully!', {
+      duration: 5000,
     })
 
-    // Try to navigate to payment page with retry logic for offline scenarios
-    const attemptNavigation = async (retries = 3) => {
-      for (let i = 0; i < retries; i++) {
-        try {
-          // Check if we're online before attempting navigation
-          if (!navigator.onLine) {
-            throw new Error('Offline')
-          }
+    // Close the form immediately - user can access order later
+    setActiveService(null)
+    setFormData({})
 
+    // Try to navigate to payment page in background (don't block user)
+    setTimeout(async () => {
+      try {
+        // Only attempt navigation if we're online
+        if (navigator.onLine) {
           await router.push('/dashboard/payment')
-          return // Success, exit the function
-        } catch (error) {
-          console.warn(`Navigation attempt ${i + 1} failed:`, error)
-          if (i < retries - 1) {
-            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))) // Exponential backoff
-          }
+        } else {
+          // Show offline message
+          toast.info('Payment page will be available when connection is restored. Your order is saved.', {
+            duration: 8000,
+          })
         }
+      } catch (error) {
+        console.warn('Navigation to payment failed:', error)
+        // Don't show error to user - order is already saved
       }
-
-      // If all retries failed, show offline message but keep order data
-      toast.success('Order saved offline! Payment will be available when connection is restored.', {
-        duration: 8000,
-      })
-
-      // Close the form after showing the message
-      setTimeout(() => {
-        setActiveService(null)
-        setFormData({})
-      }, 2000)
-    }
-
-    attemptNavigation()
+    }, 100)
   }
 
   const updateFormData = (field: string, value: unknown) => {
@@ -862,20 +874,11 @@ export default function DashboardPage() {
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-                  {!isOnline && (
-                    <div className="w-full bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                      <div className="flex items-center space-x-2 text-yellow-800 text-sm">
-                        <span>⚠️</span>
-                        <span>You're currently offline. Order will be saved locally and you can complete payment when connection is restored.</span>
-                      </div>
-                    </div>
-                  )}
                   <button
                     onClick={() => handleSubmit(activeService)}
-                    disabled={!isOnline && !navigator.onLine}
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
-                    {isOnline ? 'Continue to Payment →' : 'Save Order (Offline)'}
+                    Submit Order →
                   </button>
                   <button
                     type="button"
