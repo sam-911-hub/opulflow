@@ -441,10 +441,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-screen-2xl mx-auto">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-8 max-w-screen-2xl mx-auto">
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
           {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="xl:col-span-1 space-y-6">
             {/* Navigation */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
               <nav className="space-y-2">
@@ -621,13 +621,13 @@ export default function DashboardPage() {
           </div>
 
           {/* Main Content Area */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="xl:col-span-4 space-y-8">
             {/* Welcome Hero */}
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-3xl p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-3xl p-6 lg:p-8 text-white relative overflow-hidden">
               <div className="absolute inset-0 bg-black/10"></div>
               <div className="relative z-10">
-                <h2 className="text-3xl font-bold mb-4">Ready to amplify your online presence?</h2>
-                <p className="text-blue-100 mb-6 max-w-2xl">
+                <h2 className="text-2xl lg:text-3xl font-bold mb-4">Ready to amplify your online presence?</h2>
+                <p className="text-blue-100 mb-6 max-w-2xl text-sm lg:text-base">
                   Choose from our suite of AI-powered services to generate authentic content, find influencers, and boost your brand visibility across platforms.
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -652,7 +652,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Quick Actions - Enhanced Visibility */}
-            <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-3xl shadow-xl border border-blue-200 p-10 relative overflow-hidden">
+            <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-3xl shadow-xl border border-blue-200 p-6 lg:p-10 relative overflow-hidden">
               {/* Background decorative elements */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full -translate-y-16 translate-x-16"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-pink-200/30 to-blue-200/30 rounded-full translate-y-12 -translate-x-12"></div>
@@ -664,30 +664,30 @@ export default function DashboardPage() {
               </div>
 
               {/* CTA Banner */}
-              <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white p-6 rounded-2xl mb-8 relative z-10 shadow-2xl">
-                <div className="flex items-center justify-between">
+              <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white p-4 lg:p-6 rounded-2xl mb-6 lg:mb-8 relative z-10 shadow-2xl">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                   <div>
-                    <h2 className="text-2xl font-bold mb-2">🎯 Ready to Boost Your Online Presence?</h2>
-                    <p className="text-blue-100">Get started with our professional services - results guaranteed!</p>
+                    <h2 className="text-xl lg:text-2xl font-bold mb-2">🎯 Ready to Boost Your Online Presence?</h2>
+                    <p className="text-blue-100 text-sm lg:text-base">Get started with our professional services - results guaranteed!</p>
                   </div>
-                  <div className="hidden md:flex items-center space-x-2">
+                  <div className="flex items-center space-x-2">
                     <div className="flex -space-x-2">
-                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">✓</div>
-                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">✓</div>
-                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-sm font-bold">✓</div>
+                      <div className="w-6 h-6 lg:w-8 lg:h-8 bg-white/20 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">✓</div>
+                      <div className="w-6 h-6 lg:w-8 lg:h-8 bg-white/20 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">✓</div>
+                      <div className="w-6 h-6 lg:w-8 lg:h-8 bg-white/20 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold">✓</div>
                     </div>
-                    <span className="text-sm text-blue-100 ml-2">1000+ satisfied customers</span>
+                    <span className="text-xs lg:text-sm text-blue-100 ml-2">1000+ satisfied customers</span>
                   </div>
                 </div>
               </div>
 
-              <h3 className="text-3xl font-bold text-slate-900 mb-3 relative z-10">🚀 Choose Your Service</h3>
-              <p className="text-slate-600 mb-8 text-lg relative z-10">Select from our premium services to boost your online presence</p>
+              <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-3 relative z-10">🚀 Choose Your Service</h3>
+              <p className="text-slate-600 mb-6 lg:mb-8 text-base lg:text-lg relative z-10">Select from our premium services to boost your online presence</p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 lg:gap-6 relative z-10">
                 <button
                   onClick={() => { setActiveService('comment'); setFormData({}) }}
-                  className="group relative p-8 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-150 border-2 border-blue-200 rounded-2xl hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
+                  className="group relative p-4 lg:p-8 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-150 border-2 border-blue-200 rounded-2xl hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
                 >
                   {/* Animated background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -697,12 +697,12 @@ export default function DashboardPage() {
                     ⭐ TOP
                   </div>
 
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                    <span className="text-2xl">💬</span>
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white mb-4 lg:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                    <span className="text-lg lg:text-2xl">💬</span>
                   </div>
 
-                  <h4 className="font-bold text-slate-900 mb-3 text-lg group-hover:text-blue-700 transition-colors relative z-10">Comment Writing</h4>
-                  <p className="text-slate-600 mb-4 leading-relaxed relative z-10">Generate authentic comments for Reddit, Twitter, and more platforms to boost engagement.</p>
+                  <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-base lg:text-lg group-hover:text-blue-700 transition-colors relative z-10">Comment Writing</h4>
+                  <p className="text-slate-600 mb-3 lg:mb-4 leading-relaxed text-sm lg:text-base relative z-10">Generate authentic comments for Reddit, Twitter, and more platforms to boost engagement.</p>
 
                   <div className="flex items-center justify-between relative z-10">
                     <div className="flex items-center space-x-2">
@@ -721,7 +721,7 @@ export default function DashboardPage() {
 
                 <button
                   onClick={() => { setActiveService('search'); setFormData({}) }}
-                  className="group relative p-8 bg-gradient-to-br from-green-50 via-green-100 to-emerald-150 border-2 border-green-200 rounded-2xl hover:shadow-2xl hover:shadow-green-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
+                  className="group relative p-4 lg:p-8 bg-gradient-to-br from-green-50 via-green-100 to-emerald-150 border-2 border-green-200 rounded-2xl hover:shadow-2xl hover:shadow-green-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
                 >
                   {/* Animated background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-emerald-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -731,12 +731,12 @@ export default function DashboardPage() {
                     🆓 FREE
                   </div>
 
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                    <span className="text-3xl">🔍</span>
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white mb-4 lg:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                    <span className="text-xl lg:text-3xl">🔍</span>
                   </div>
 
-                  <h4 className="font-bold text-slate-900 mb-3 text-lg group-hover:text-green-700 transition-colors relative z-10">Product Search</h4>
-                  <p className="text-slate-600 mb-4 leading-relaxed relative z-10">Find trending discussions and opportunities for your product mentions.</p>
+                  <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-base lg:text-lg group-hover:text-green-700 transition-colors relative z-10">Product Search</h4>
+                  <p className="text-slate-600 mb-3 lg:mb-4 leading-relaxed text-sm lg:text-base relative z-10">Find trending discussions and opportunities for your product mentions.</p>
 
                   <div className="flex items-center justify-between relative z-10">
                     <div className="flex items-center space-x-2">
@@ -755,7 +755,7 @@ export default function DashboardPage() {
 
                 <button
                   onClick={() => { setActiveService('influencer'); setFormData({}) }}
-                  className="group relative p-8 bg-gradient-to-br from-purple-50 via-purple-100 to-violet-150 border-2 border-purple-200 rounded-2xl hover:shadow-2xl hover:shadow-purple-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
+                  className="group relative p-4 lg:p-8 bg-gradient-to-br from-purple-50 via-purple-100 to-violet-150 border-2 border-purple-200 rounded-2xl hover:shadow-2xl hover:shadow-purple-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
                 >
                   {/* Animated background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-400/10 to-violet-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -765,12 +765,12 @@ export default function DashboardPage() {
                     🔥 HOT
                   </div>
 
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                    <span className="text-3xl">👥</span>
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl flex items-center justify-center text-white mb-4 lg:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                    <span className="text-xl lg:text-3xl">👥</span>
                   </div>
 
-                  <h4 className="font-bold text-slate-900 mb-3 text-lg group-hover:text-purple-700 transition-colors relative z-10">Influencer Research</h4>
-                  <p className="text-slate-600 mb-4 leading-relaxed relative z-10">Discover perfect influencers for your niche and budget with detailed analytics.</p>
+                  <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-base lg:text-lg group-hover:text-purple-700 transition-colors relative z-10">Influencer Research</h4>
+                  <p className="text-slate-600 mb-3 lg:mb-4 leading-relaxed text-sm lg:text-base relative z-10">Discover perfect influencers for your niche and budget with detailed analytics.</p>
 
                   <div className="flex items-center justify-between relative z-10">
                     <div className="flex items-center space-x-2">
@@ -789,7 +789,7 @@ export default function DashboardPage() {
 
                 <button
                   onClick={() => { setActiveService('review'); setFormData({}) }}
-                  className="group relative p-8 bg-gradient-to-br from-orange-50 via-orange-100 to-red-150 border-2 border-orange-200 rounded-2xl hover:shadow-2xl hover:shadow-orange-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
+                  className="group relative p-4 lg:p-8 bg-gradient-to-br from-orange-50 via-orange-100 to-red-150 border-2 border-orange-200 rounded-2xl hover:shadow-2xl hover:shadow-orange-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden"
                 >
                   {/* Animated background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-orange-400/10 to-red-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -799,12 +799,12 @@ export default function DashboardPage() {
                     💎 PREMIUM
                   </div>
 
-                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                    <span className="text-3xl">⭐</span>
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center text-white mb-4 lg:mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                    <span className="text-xl lg:text-3xl">⭐</span>
                   </div>
 
-                  <h4 className="font-bold text-slate-900 mb-3 text-lg group-hover:text-orange-700 transition-colors relative z-10">Product Reviews</h4>
-                  <p className="text-slate-600 mb-4 leading-relaxed relative z-10">Generate authentic reviews for app stores, Amazon, and marketplaces.</p>
+                  <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-base lg:text-lg group-hover:text-orange-700 transition-colors relative z-10">Product Reviews</h4>
+                  <p className="text-slate-600 mb-3 lg:mb-4 leading-relaxed text-sm lg:text-base relative z-10">Generate authentic reviews for app stores, Amazon, and marketplaces.</p>
 
                   <div className="flex items-center justify-between relative z-10">
                     <div className="flex items-center space-x-2">
@@ -823,7 +823,7 @@ export default function DashboardPage() {
 
                 <button
                   onClick={() => { setActiveService('humanization'); setFormData({}) }}
-                  className="group relative p-8 bg-gradient-to-br from-pink-50 via-pink-100 to-rose-150 border-2 border-pink-200 rounded-2xl hover:shadow-2xl hover:shadow-pink-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden md:col-span-2 lg:col-span-3"
+                  className="group relative p-6 lg:p-8 bg-gradient-to-br from-pink-50 via-pink-100 to-rose-150 border-2 border-pink-200 rounded-2xl hover:shadow-2xl hover:shadow-pink-200/50 transition-all duration-300 text-left transform hover:-translate-y-2 overflow-hidden sm:col-span-2 xl:col-span-3 2xl:col-span-4"
                 >
                   {/* Animated background */}
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-400/10 to-rose-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -833,30 +833,30 @@ export default function DashboardPage() {
                     ✨ NEW
                   </div>
 
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-rose-600 rounded-3xl flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
-                      <span className="text-4xl">✨</span>
+                  <div className="flex items-center justify-center mb-4 lg:mb-6">
+                    <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-pink-500 to-rose-600 rounded-3xl flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg relative z-10">
+                      <span className="text-2xl lg:text-4xl">✨</span>
                     </div>
                   </div>
 
                   <div className="text-center">
-                    <h4 className="font-bold text-slate-900 mb-3 text-xl group-hover:text-pink-700 transition-colors relative z-10">AI Content Humanization</h4>
-                    <p className="text-slate-600 mb-6 leading-relaxed max-w-2xl mx-auto relative z-10">Transform robotic AI-generated content into natural, engaging, human-sounding text that resonates with readers.</p>
+                    <h4 className="font-bold text-slate-900 mb-2 lg:mb-3 text-lg lg:text-xl group-hover:text-pink-700 transition-colors relative z-10">AI Content Humanization</h4>
+                    <p className="text-slate-600 mb-4 lg:mb-6 leading-relaxed max-w-2xl mx-auto text-sm lg:text-base relative z-10">Transform robotic AI-generated content into natural, engaging, human-sounding text that resonates with readers.</p>
 
-                    <div className="flex items-center justify-center space-x-8 relative z-10">
+                    <div className="flex flex-col lg:flex-row items-center justify-center space-y-4 lg:space-y-0 lg:space-x-6 xl:space-x-8 relative z-10">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-green-600">$0.015</div>
-                        <div className="text-sm text-slate-500">per word</div>
+                        <div className="text-2xl lg:text-3xl font-bold text-green-600">$0.015</div>
+                        <div className="text-xs lg:text-sm text-slate-500">per word</div>
                       </div>
-                      <div className="w-px h-12 bg-slate-300"></div>
+                      <div className="hidden lg:block w-px h-10 lg:h-12 bg-slate-300"></div>
                       <div className="text-center">
-                        <div className="text-lg font-semibold text-slate-900">Unlimited Projects</div>
-                        <div className="text-sm text-slate-500">No monthly limits</div>
+                        <div className="text-base lg:text-lg font-semibold text-slate-900">Unlimited Projects</div>
+                        <div className="text-xs lg:text-sm text-slate-500">No monthly limits</div>
                       </div>
-                      <div className="w-px h-12 bg-slate-300"></div>
+                      <div className="hidden lg:block w-px h-10 lg:h-12 bg-slate-300"></div>
                       <div className="flex items-center space-x-1 text-pink-600 font-semibold group-hover:translate-x-2 transition-transform cursor-pointer">
-                        <span className="text-lg">Humanize Now</span>
-                        <span className="text-2xl">→</span>
+                        <span className="text-base lg:text-lg">Humanize Now</span>
+                        <span className="text-xl lg:text-2xl">→</span>
                       </div>
                     </div>
                   </div>
@@ -866,6 +866,295 @@ export default function DashboardPage() {
                 </button>
               </div>
             </div>
+
+            {/* Service Order Form - Inline Display */}
+            {activeService && (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 lg:p-8 mt-6 lg:mt-8 animate-fade-in">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.3em] text-slate-500 mb-2">Place order</p>
+                    <h3 className="text-xl lg:text-2xl font-bold text-slate-900">{getServiceName(activeService)}</h3>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Complete the details below to submit your order and continue to payment.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { setActiveService(null); setFormData({}) }}
+                    className="text-sm text-slate-600 hover:text-slate-900 transition-colors px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg self-start sm:self-center"
+                  >
+                    ✕ Cancel Order
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {activeService === 'comment' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Product/Service Name *</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          placeholder="Enter your product or service name"
+                          onChange={(e) => updateFormData('productName', e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-3">Platforms *</label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          {[
+                            'Twitter/X', 'Reddit', 'LinkedIn', 'Instagram', 'Facebook',
+                            'TikTok', 'Quora', 'YouTube', 'Discord', 'Telegram'
+                          ].map(platform => (
+                            <label key={platform} className="flex items-center space-x-2 p-3 bg-slate-50 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors">
+                              <input
+                                type="checkbox"
+                                className="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500 focus:ring-2"
+                                onChange={(e) => {
+                                  const current = formData.platforms || []
+                                  if (e.target.checked) {
+                                    updateFormData('platforms', [...current, platform])
+                                  } else {
+                                    updateFormData('platforms', current.filter(p => p !== platform))
+                                  }
+                                }}
+                              />
+                              <span className="text-sm text-slate-700">{platform}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Comment Type</label>
+                          <select
+                            className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            onChange={(e) => updateFormData('commentType', e.target.value)}
+                          >
+                            <option value="">Select type</option>
+                            <option value="question">Question/Help Request</option>
+                            <option value="recommendation">Recommendation Request</option>
+                            <option value="complaint">Complaint/Issue</option>
+                            <option value="praise">Praise/Positive Feedback</option>
+                            <option value="comparison">Comparison Request</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Quantity (1-100) *</label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            onChange={(e) => updateFormData('quantity', parseInt(e.target.value))}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Special Instructions</label>
+                        <textarea
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                          rows={4}
+                          placeholder="Any specific requirements or preferences..."
+                          onChange={(e) => updateFormData('specialInstructions', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeService === 'search' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Product Name *</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          placeholder="Enter your product name"
+                          onChange={(e) => updateFormData('productName', e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Target Keywords (Optional)</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          placeholder="e.g., best, reviews, alternatives"
+                          onChange={(e) => updateFormData('targetKeywords', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeService === 'influencer' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Niche *</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          placeholder="e.g., fitness, SaaS, beauty, gaming"
+                          onChange={(e) => updateFormData('niche', e.target.value)}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Influencer Size</label>
+                          <select
+                            className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            onChange={(e) => updateFormData('influencerSize', e.target.value)}
+                          >
+                            <option value="">Any size</option>
+                            <option value="nano">Nano (1K-10K)</option>
+                            <option value="micro">Micro (10K-100K)</option>
+                            <option value="mid">Mid-tier (100K-500K)</option>
+                            <option value="macro">Macro (500K-1M)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Number of Influencers (1-50) *</label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="50"
+                            className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            onChange={(e) => updateFormData('numInfluencers', parseInt(e.target.value))}
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Budget Range (Optional)</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          placeholder="e.g., $500-$2000 per post"
+                          onChange={(e) => updateFormData('budgetRange', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeService === 'review' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Product Name *</label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                          placeholder="Enter your product name"
+                          onChange={(e) => updateFormData('productName', e.target.value)}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Platform *</label>
+                          <select
+                            className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            onChange={(e) => updateFormData('platform', e.target.value)}
+                          >
+                            <option value="">Select platform</option>
+                            <option value="App Store">App Store</option>
+                            <option value="Google Play">Google Play</option>
+                            <option value="Amazon">Amazon</option>
+                            <option value="Trustpilot">Trustpilot</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Rating Preference *</label>
+                          <select
+                            className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            onChange={(e) => updateFormData('ratingPreference', e.target.value)}
+                          >
+                            <option value="">Select preference</option>
+                            <option value="5-star focused">5-star focused</option>
+                            <option value="4-star positive">4-star positive</option>
+                            <option value="authentic honest">Authentic honest</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Key Points to Mention</label>
+                        <textarea
+                          className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                          rows={4}
+                          placeholder="Specific features or benefits to highlight in the review"
+                          onChange={(e) => updateFormData('keyPoints', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeService === 'humanization' && (
+                    <div className="grid gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Upload AI Content *</label>
+                        <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                          <input
+                            type="file"
+                            accept=".txt,.docx,.pdf"
+                            className="hidden"
+                            id="file-upload"
+                            onChange={(e) => updateFormData('file', e.target.files?.[0])}
+                          />
+                          <label htmlFor="file-upload" className="cursor-pointer">
+                            <div className="text-4xl text-slate-400 mb-2">📄</div>
+                            <p className="text-slate-600">Click to upload or drag and drop</p>
+                            <p className="text-sm text-slate-500 mt-1">Supported formats: .txt, .docx, .pdf</p>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Word Count *</label>
+                          <input
+                            type="number"
+                            className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            placeholder="Enter word count"
+                            onChange={(e) => updateFormData('wordCount', parseInt(e.target.value))}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Deadline</label>
+                          <input
+                            type="datetime-local"
+                            className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            onChange={(e) => updateFormData('deadline', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-200">
+                    <button
+                      onClick={() => handleSubmit(activeService)}
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    >
+                      Continue to Payment →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setActiveService(null); setFormData({}) }}
+                      className="px-6 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
