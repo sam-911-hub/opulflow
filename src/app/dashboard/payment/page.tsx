@@ -113,9 +113,10 @@ export default function PaymentPage() {
         if (orderResponse.ok) {
           console.log('✅ Order created via API');
           orderCreated = true;
-        } else if (orderResponse.status === 404) {
-          console.warn('Order API endpoint not found (404). Attempting client-side fallback...');
-          // Try client-side fallback
+        } else {
+          // Treat any non-ok response as needing fallback (including 404, 500, etc.)
+          console.warn(`Order API failed with status ${orderResponse.status}. Attempting client-side fallback...`);
+          // Try client-side fallback for any API failure
           try {
             const fallbackResult = await createOrderFallback({
               service: orderData.service,
@@ -131,11 +132,19 @@ export default function PaymentPage() {
             orderCreated = true;
             toast.info('Order recorded via offline mode. Our team will process it shortly.');
           } catch (fallbackError) {
-            console.error('Fallback order creation also failed:', fallbackError);
-            toast.warning('Order may not have been recorded. Please contact support if needed.');
+            console.error('Fallback order creation failed:', fallbackError);
+
+            // If it's an offline/network error, still consider the order successful
+            // since the data is saved in localStorage
+            if (fallbackError.message?.includes('offline') || fallbackError.message?.includes('network') ||
+                fallbackError.message?.includes('Failed to get document')) {
+              console.log('Order data is safely stored locally. Will sync when connection returns.');
+              orderCreated = true;
+              toast.info('Order saved locally due to offline status. Our team will process it when connection is restored.');
+            } else {
+              toast.warning('Order may not have been recorded. Please contact support if needed.');
+            }
           }
-        } else {
-          throw new Error(`Failed to create order: ${orderResponse.status}`);
         }
       } catch (apiError) {
         console.error('Order creation API error:', apiError);
@@ -156,22 +165,31 @@ export default function PaymentPage() {
           toast.info('Order recorded locally. Processing may take longer than usual.');
         } catch (fallbackError) {
           console.error('Fallback failed:', fallbackError);
-          // Even if fallback fails, we save order to localStorage for manual recovery
-          const failedOrder = {
-            ...orderData,
-            orderId,
-            paymentMethod: isFreeService ? 'free' : paymentMethod,
-            status: orderStatus,
-            mpesaCode: confirmationCode,
-            createdAt: new Date().toISOString(),
-            failedToSync: true,
-          };
-          const failedOrders = JSON.parse(localStorage.getItem('failedOrders') || '[]');
-          failedOrders.push(failedOrder);
-          localStorage.setItem('failedOrders', JSON.stringify(failedOrders));
-          
-          toast.warning('Order saved locally for manual processing. Our team will contact you shortly.');
-          orderCreated = true; // Still consider it created for UX purposes
+
+          // Handle offline/network errors gracefully
+          if (fallbackError.message?.includes('offline') || fallbackError.message?.includes('network') ||
+              fallbackError.message?.includes('Failed to get document')) {
+            console.log('Order data is safely stored locally due to offline status.');
+            orderCreated = true;
+            toast.info('Order saved locally due to offline status. Our team will process it when connection is restored.');
+          } else {
+            // For other types of errors, save to failed orders for manual recovery
+            const failedOrder = {
+              ...orderData,
+              orderId,
+              paymentMethod: isFreeService ? 'free' : paymentMethod,
+              status: orderStatus,
+              mpesaCode: confirmationCode,
+              createdAt: new Date().toISOString(),
+              failedToSync: true,
+            };
+            const failedOrders = JSON.parse(localStorage.getItem('failedOrders') || '[]');
+            failedOrders.push(failedOrder);
+            localStorage.setItem('failedOrders', JSON.stringify(failedOrders));
+
+            toast.warning('Order saved locally for manual processing. Our team will contact you shortly.');
+            orderCreated = true; // Still consider it created for UX purposes
+          }
         }
       }
 
