@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
 import Header from "@/components/Header";
+import CookieConsent from "@/components/CookieConsent";
 // import OfflineStatus from "@/components/OfflineStatus";
 import "@/lib/consoleUtils"; // Initialize console utilities
 
@@ -62,6 +63,7 @@ export default function RootLayout({
         </ErrorBoundary>
         <Footer />
         <Toaster />
+        <CookieConsent />
         {/* <OfflineStatus /> */}
       </body>
     </html>

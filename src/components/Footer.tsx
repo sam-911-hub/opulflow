@@ -1,7 +1,22 @@
+"use client"
+
 import Link from "next/link"
+import { useState, useEffect } from "react"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const [showNewsletter, setShowNewsletter] = useState(true)
+  const [showTrustBadges, setShowTrustBadges] = useState(true)
+  const [showStatus, setShowStatus] = useState(true)
+
+  useEffect(() => {
+    const newsletter = localStorage.getItem('footerNewsletter') !== 'false'
+    const trust = localStorage.getItem('footerTrustBadges') !== 'false'
+    const status = localStorage.getItem('footerStatus') !== 'false'
+    setShowNewsletter(newsletter)
+    setShowTrustBadges(trust)
+    setShowStatus(status)
+  }, [])
 
   const coreValues = [
     "Human-Powered",
@@ -25,14 +40,31 @@ export default function Footer() {
     <footer className="bg-[#161b22] border-t border-[#30363d] text-[#848d97]">
       <div className="max-w-6xl mx-auto px-4 py-8 md:px-6 md:py-8">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Column 1: Copyright */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          {/* Column 1: Copyright & Navigation */}
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-[#e6edf3] mb-2">OpulFlow</h3>
               <p className="text-xs text-[#848d97]">
                 © {currentYear} OpulFlow. All rights reserved.
               </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-[#e6edf3] mb-2">Navigation</h3>
+              <div className="space-y-1 text-xs">
+                <Link
+                  href="/dashboard"
+                  className="block text-[#848d97] hover:text-[#2f81f7] transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/orders"
+                  className="block text-[#848d97] hover:text-[#2f81f7] transition-colors"
+                >
+                  Orders
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -84,6 +116,12 @@ export default function Footer() {
                   className="block text-[#848d97] hover:text-[#2f81f7] transition-colors"
                 >
                   Refund Policy
+                </Link>
+                <Link
+                  href="/accessibility"
+                  className="block text-[#848d97] hover:text-[#2f81f7] transition-colors"
+                >
+                  Accessibility Statement
                 </Link>
               </div>
             </div>
@@ -142,6 +180,53 @@ export default function Footer() {
             </div>
           </div>
         </div>
+
+        {showNewsletter && (
+          <div className="mt-8 pt-8 border-t border-[#30363d]">
+            <div className="max-w-md mx-auto text-center">
+              <h3 className="text-sm font-medium text-[#e6edf3] mb-2">Stay Updated</h3>
+              <p className="text-xs text-[#848d97] mb-4">Subscribe to our newsletter for tips and updates</p>
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="flex-1 px-3 py-2 text-xs bg-[#21262d] border border-[#30363d] rounded text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:border-[#2f81f7]"
+                  onChange={(e) => {
+                    // Basic validation
+                    const email = e.target.value;
+                    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                    e.target.style.borderColor = isValid || !email ? '#30363d' : '#f85149';
+                  }}
+                />
+                <button className="px-4 py-2 text-xs bg-[#2f81f7] hover:bg-[#1f77f0] text-white rounded transition-colors">
+                  Subscribe
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {(showTrustBadges || showStatus) && (
+          <div className="mt-8 pt-8 border-t border-[#30363d]">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              {showTrustBadges && (
+                <div className="flex gap-4">
+                  <span className="text-xs text-[#848d97] bg-[#21262d] px-3 py-1 rounded border border-[#30363d]">
+                    Secure 🔒
+                  </span>
+                  <span className="text-xs text-[#848d97] bg-[#21262d] px-3 py-1 rounded border border-[#30363d]">
+                    GDPR Compliant
+                  </span>
+                </div>
+              )}
+              {showStatus && (
+                <div className="text-xs text-[#848d97]">
+                  Status: <span className="text-green-400">All systems operational</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Bottom Baruch Hashem Adonai - Optional duplicate */}
         <div className="text-center mt-8 pt-8 border-t border-[#30363d]">

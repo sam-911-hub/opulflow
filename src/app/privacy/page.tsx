@@ -29,6 +29,15 @@ export default function PrivacyPage() {
                   social media engagement services. This includes your email address for account creation
                   and service communication.
                 </p>
+                <div className="mt-4 p-4 bg-[#21262d] border border-[#30363d] rounded">
+                  <h4 className="text-sm font-medium text-[#e6edf3] mb-2">Data Usage Summary</h4>
+                  <ul className="text-sm text-[#848d97] space-y-1">
+                    <li>• Account data: Email, registration date</li>
+                    <li>• Order data: Service requests, payment details</li>
+                    <li>• Credit data: Balance, transaction history</li>
+                    <li>• Usage analytics: Feature interactions (optional)</li>
+                  </ul>
+                </div>
               </div>
 
               <div>
@@ -42,6 +51,12 @@ export default function PrivacyPage() {
                   <li>Customer support communications</li>
                   <li>Service updates and notifications</li>
                 </ul>
+                <div className="mt-4 p-4 bg-[#21262d] border border-[#30363d] rounded">
+                  <h4 className="text-sm font-medium text-[#e6edf3] mb-2">Third-Party Data Sharing</h4>
+                  <p className="text-sm text-[#848d97]">
+                    We use Firebase for authentication and data storage. Payment data is processed by PayPal and M-Pesa. No personal data is sold to third parties.
+                  </p>
+                </div>
               </div>
 
               <div>
@@ -50,6 +65,12 @@ export default function PrivacyPage() {
                   We implement appropriate security measures to protect your personal information.
                   All payment processing is handled securely through PayPal and M-Pesa.
                 </p>
+                <div className="mt-4 p-4 bg-[#21262d] border border-[#30363d] rounded">
+                  <h4 className="text-sm font-medium text-[#e6edf3] mb-2">Data Retention</h4>
+                  <p className="text-sm text-[#848d97]">
+                    Account data is retained for as long as your account is active. Order data and credits are kept for 90 days after account closure for compliance purposes.
+                  </p>
+                </div>
               </div>
 
               <div>
@@ -60,6 +81,26 @@ export default function PrivacyPage() {
                     opulflow.inc@gmail.com
                   </a>
                 </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-medium text-[#e6edf3] mb-3">Privacy Checklist</h3>
+                <div className="p-4 bg-[#21262d] border border-[#30363d] rounded">
+                  <p className="text-sm text-[#848d97] mb-2">Download our privacy checklist to ensure your data is protected:</p>
+                  <a
+                    href="/privacy-checklist.pdf"
+                    download
+                    className="text-[#2f81f7] hover:text-[#79c0ff] text-sm underline"
+                  >
+                    Download Privacy Checklist (PDF)
+                  </a>
+                  <ul className="mt-4 text-sm text-[#848d97] space-y-1">
+                    <li>✅ Use strong, unique passwords</li>
+                    <li>✅ Enable two-factor authentication</li>
+                    <li>✅ Regularly review account activity</li>
+                    <li>✅ Avoid sharing sensitive data unnecessarily</li>
+                  </ul>
+                </div>
               </div>
 
               <div className="pt-6 border-t border-[#30363d]">
