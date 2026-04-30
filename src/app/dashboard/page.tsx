@@ -155,11 +155,11 @@ export default function DashboardPage() {
     const stats = getStats()
 
     if (stats.totalOrders === 0) {
-      return `Welcome to OpulFlow, ${name}! Ready to boost your online presence? 🚀`
+      return `Welcome to OpulFlow, ${name}! Ready to boost your online presence?`
     } else if (stats.completedOrders > 0) {
       return `Welcome back, ${name}! ${stats.completedOrders} campaigns completed - you're crushing it! 💪`
     } else {
-      return `Hey ${name}, ${stats.pendingOrders} campaigns in progress. Let's make them shine! ✨`
+      return `Hey ${name}, ${stats.pendingOrders} campaigns in progress. Let's make them shine!`
     }
   }
 
@@ -613,7 +613,7 @@ export default function DashboardPage() {
                     <p className="text-xs text-gray-600 mt-1">Total orders placed</p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white text-xl">📊</span>
+                    <span className="text-white text-xl"></span>
                   </div>
                 </div>
               </div>
@@ -625,7 +625,7 @@ export default function DashboardPage() {
                     <p className="text-xs text-gray-600 mt-1">Orders being processed</p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white text-xl">⚡</span>
+                    <span className="text-white text-xl"></span>
                   </div>
                 </div>
               </div>
@@ -637,7 +637,7 @@ export default function DashboardPage() {
                     <p className="text-xs text-gray-600 mt-1">Pay-as-you-go system</p>
                   </div>
                   <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white text-xl">💎</span>
+                    <span className="text-white text-xl"></span>
                   </div>
                 </div>
               </div>
@@ -648,7 +648,7 @@ export default function DashboardPage() {
               <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 p-6 hover:shadow-lg transition-all duration-200">
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-8 h-8 bg-gradient-to-br from-violet-400 to-purple-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm">📈</span>
+                    <span className="text-white text-sm"></span>
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 tracking-tight">Order Status Overview</h3>
                 </div>
@@ -681,7 +681,7 @@ export default function DashboardPage() {
               <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 p-6 hover:shadow-lg transition-all duration-200">
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-8 h-8 bg-gradient-to-br from-rose-400 to-pink-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm">📊</span>
+                    <span className="text-white text-sm"></span>
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 tracking-tight">Monthly Performance</h3>
                 </div>
@@ -803,7 +803,7 @@ export default function DashboardPage() {
                   onClick={() => handleServiceSelect('humanization')}>
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center group-hover:bg-pink-200 transition-colors duration-200">
-                  <span className="text-pink-600 text-lg">✨</span>
+                  <span className="text-pink-600 text-lg"></span>
                 </div>
                 <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">$0.015</span>
               </div>

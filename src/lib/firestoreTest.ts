@@ -15,7 +15,7 @@ export async function testFirestoreConnection() {
     // Try to get documents (this will fail if Firestore is not accessible)
     const querySnapshot = await getDocs(testCollection);
     console.log("✅ Successfully read from Firestore");
-    console.log("📊 Found", querySnapshot.size, "user documents");
+    console.log("Found", querySnapshot.size, "user documents");
 
     // Try to write a test document (will be rejected by rules but shows connectivity)
     try {

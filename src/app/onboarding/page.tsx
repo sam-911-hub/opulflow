@@ -58,7 +58,7 @@ export default function OnboardingPage() {
           </div>
           <div className="bg-blue-50 p-4 rounded-lg">
             <p className="text-blue-800">
-              🚀 <strong>Ready to boost your online presence?</strong> Let's show you how OpulFlow can help you grow your social media engagement and credibility.
+              <strong>Ready to boost your online presence?</strong> Let's show you how OpulFlow can help you grow your social media engagement and credibility.
             </p>
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function OnboardingPage() {
       )
     },
     {
-      title: "🚀 Let's Get Started!",
+      title: "Let's Get Started!",
       subtitle: "Your first order is just a few clicks away",
       content: (
         <div className="text-center space-y-6">
