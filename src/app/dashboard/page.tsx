@@ -512,6 +512,14 @@ export default function DashboardPage() {
                   <span>{isOnline ? 'Online' : 'Offline'}</span>
                 </div>
               </div>
+              {user?.email === 'opulflow.inc@gmail.com' && (
+                <Link
+                  href="/admin/verify-payments"
+                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
+                >
+                  Admin
+                </Link>
+              )}
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm cursor-pointer hover:shadow-lg transition-shadow">
                 {getUserInitials(user?.email || '')}
               </div>
