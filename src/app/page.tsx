@@ -1,31 +1,6 @@
 import Link from "next/link";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "OpulFlow - Buy Social Media Comments, Influencer Research & Product Reviews",
-  description: "Professional social media marketing services: buy authentic comments, find influencers, write product reviews, and humanize AI content. Human-powered engagement for real results.",
-  keywords: "buy social media comments, influencer marketing, product reviews, AI content humanization, social media marketing, online reputation management, comment writing service",
-  openGraph: {
-    title: "OpulFlow - Professional Social Media Marketing Services",
-    description: "Boost your online presence with expert comment writing, influencer outreach, product reviews, and AI content humanization.",
-    url: "https://opulflow.top",
-    siteName: "OpulFlow",
-    images: [
-      {
-        url: "/og-image.svg",
-        width: 1200,
-        height: 630,
-        alt: "OpulFlow - Social Media Marketing Platform",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "OpulFlow - Buy Social Media Comments & Influencer Services",
-    description: "Professional social media marketing: comments, influencers, reviews, AI humanization. Genuine engagement for real growth.",
-    images: ["/og-image.svg"],
-  },
-};
+export const dynamic = 'force-dynamic';
 
 export default function Home() {
   return (

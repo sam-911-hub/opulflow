@@ -7,6 +7,8 @@ import Link from "next/link"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { toast } from "@/components/ui/toast"
 import { getFirebaseDb } from "@/lib/firebaseClient"
+
+export const dynamic = 'force-dynamic'
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 // Typing animation removed to prevent errors
