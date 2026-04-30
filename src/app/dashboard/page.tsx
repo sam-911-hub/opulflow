@@ -77,6 +77,7 @@ export default function DashboardPage() {
   const [notificationsExpanded, setNotificationsExpanded] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
   const [fileProcessing, setFileProcessing] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
 
   // Monitor online status
