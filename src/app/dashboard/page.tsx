@@ -535,17 +535,20 @@ export default function DashboardPage() {
   // const chartData = getChartData()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Trello-style Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50">
+      {/* Custom Header */}
+      <header className="bg-white/80 backdrop-blur-sm shadow-sm border-b border-gray-200/50">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo and Title */}
             <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">O</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-lg">O</span>
               </div>
-              <h1 className="text-xl font-semibold text-gray-900">OpulFlow</h1>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">OpulFlow</h1>
+                <p className="text-xs text-gray-500 -mt-1">Human-Powered Marketing</p>
+              </div>
             </div>
 
             {/* User Menu */}
@@ -581,49 +584,60 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Main Content - Trello Board Style */}
+      {/* Main Content - Custom Dashboard Style */}
       <main className="flex-1 p-6">
         <div className="max-w-full">
           {/* Welcome Section */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">{greeting}</h2>
-            <p className="text-gray-600">Manage your marketing campaigns and track progress</p>
+          <div className="mb-8 bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-sm">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-xl">👋</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">{greeting}</h2>
+                <p className="text-gray-600 text-sm">Ready to boost your social presence?</p>
+              </div>
+            </div>
+            <p className="text-gray-700 leading-relaxed">Manage your authentic marketing campaigns, track real human engagement, and grow your brand organically.</p>
           </div>
 
           {/* Quick Stats & Charts */}
           <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Stats Cards */}
             <div className="lg:col-span-1 space-y-4">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/30 p-6 hover:shadow-md transition-all duration-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
+                    <p className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Campaigns</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-1">{stats.totalOrders}</p>
+                    <p className="text-xs text-gray-500 mt-1">Total orders placed</p>
                   </div>
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 text-lg">📊</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-xl">🚀</span>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/30 p-6 hover:shadow-md transition-all duration-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Pending Orders</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.pendingOrders}</p>
+                    <p className="text-sm font-semibold text-gray-700 uppercase tracking-wide">In Progress</p>
+                    <p className="text-3xl font-bold text-amber-600 mt-1">{stats.pendingOrders}</p>
+                    <p className="text-xs text-gray-500 mt-1">Orders being processed</p>
                   </div>
-                  <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                    <span className="text-yellow-600 text-lg">⏳</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-xl">⚡</span>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/30 p-6 hover:shadow-md transition-all duration-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Credits Remaining</p>
-                    <p className="text-2xl font-bold text-gray-900">∞</p>
+                    <p className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Credits</p>
+                    <p className="text-3xl font-bold text-emerald-600 mt-1">∞</p>
+                    <p className="text-xs text-gray-500 mt-1">Pay-as-you-go system</p>
                   </div>
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-green-600 text-lg">💰</span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-xl">💎</span>
                   </div>
                 </div>
               </div>
@@ -631,36 +645,79 @@ export default function DashboardPage() {
 
             {/* Charts */}
             <div className="lg:col-span-2 space-y-4">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status Distribution</h3>
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/30 p-6 hover:shadow-md transition-all duration-200">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-violet-400 to-purple-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-sm">📈</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 tracking-tight">Order Status Overview</h3>
+                </div>
                 <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
                       data={pieData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={40}
-                      outerRadius={80}
-                      paddingAngle={5}
+                      innerRadius={35}
+                      outerRadius={75}
+                      paddingAngle={3}
                       dataKey="value"
                     >
                       {pieData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.fill} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        border: 'none',
+                        borderRadius: '12px',
+                        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Orders</h3>
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/30 p-6 hover:shadow-md transition-all duration-200">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-rose-400 to-pink-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-sm">📊</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 tracking-tight">Monthly Performance</h3>
+                </div>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={monthlyData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="orders" fill="#3b82f6" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis
+                      dataKey="month"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#6b7280', fontSize: 12 }}
+                    />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#6b7280', fontSize: 12 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        border: 'none',
+                        borderRadius: '12px',
+                        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
+                      }}
+                    />
+                    <Bar
+                      dataKey="orders"
+                      fill="url(#gradientBar)"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <defs>
+                      <linearGradient id="gradientBar" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#ec4899" stopOpacity={0.8}/>
+                      </linearGradient>
+                    </defs>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -668,36 +725,44 @@ export default function DashboardPage() {
           </div>
 
           {/* Service Boards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {/* Comment Writing Board */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200"
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-5 hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300 cursor-pointer group transform hover:-translate-y-2 hover:rotate-1"
                   onClick={() => handleServiceSelect('comment')}>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-200">
-                  <span className="text-blue-600 text-lg">💬</span>
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <span className="text-white text-2xl">💬</span>
                 </div>
-                <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">$0.30</span>
+                <div className="text-right">
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">$0.30</span>
+                  <p className="text-xs text-gray-500 mt-1">per comment</p>
+                </div>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors duration-200">Comment Writing</h3>
-              <p className="text-sm text-gray-600 mb-3">Generate authentic comments for Reddit, Twitter, and platforms</p>
-              <div className="flex items-center text-xs text-gray-500">
-                <span className="bg-gray-100 px-2 py-1 rounded">Marketing</span>
+              <h3 className="font-bold text-gray-900 mb-3 group-hover:text-blue-700 transition-colors duration-200 text-lg">Comment Writing</h3>
+              <p className="text-sm text-gray-600 mb-4 leading-relaxed">Spark authentic conversations on Reddit, Twitter, and beyond with human-crafted responses.</p>
+              <div className="flex items-center justify-between">
+                <span className="bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium border border-blue-200">Engagement</span>
+                <span className="text-xs text-gray-400 group-hover:text-blue-500 transition-colors">→ Start</span>
               </div>
             </div>
 
             {/* Product Search Board */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200"
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/30 p-5 hover:shadow-xl hover:shadow-emerald-100/50 transition-all duration-300 cursor-pointer group transform hover:-translate-y-2 hover:-rotate-1"
                   onClick={() => handleServiceSelect('search')}>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors duration-200">
-                  <span className="text-green-600 text-lg">🔍</span>
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-green-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <span className="text-white text-2xl">🔍</span>
                 </div>
-                <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">FREE</span>
+                <div className="text-right">
+                  <span className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-200">FREE</span>
+                  <p className="text-xs text-gray-500 mt-1">unlimited</p>
+                </div>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-green-700 transition-colors duration-200">Product Search</h3>
-              <p className="text-sm text-gray-600 mb-3">Find trending discussions and opportunities</p>
-              <div className="flex items-center text-xs text-gray-500">
-                <span className="bg-gray-100 px-2 py-1 rounded">Research</span>
+              <h3 className="font-bold text-gray-900 mb-3 group-hover:text-emerald-700 transition-colors duration-200 text-lg">Product Research</h3>
+              <p className="text-sm text-gray-600 mb-4 leading-relaxed">Discover trending conversations and market opportunities across social platforms.</p>
+              <div className="flex items-center justify-between">
+                <span className="bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium border border-emerald-200">Discovery</span>
+                <span className="text-xs text-gray-400 group-hover:text-emerald-500 transition-colors">→ Explore</span>
               </div>
             </div>
 
