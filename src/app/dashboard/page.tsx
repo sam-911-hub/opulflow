@@ -78,6 +78,29 @@ export default function DashboardPage() {
   const [isOnline, setIsOnline] = useState(true)
   const [fileProcessing, setFileProcessing] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+
+  // Auto-save form data
+  useEffect(() => {
+    if (activeService && formData && Object.keys(formData).length > 0) {
+      localStorage.setItem(`formDraft_${activeService}`, JSON.stringify(formData))
+    }
+  }, [formData, activeService])
+
+  // Handle service selection with draft loading
+  const handleServiceSelect = (service: string) => {
+    setActiveService(service);
+    const draft = localStorage.getItem(`formDraft_${service}`);
+    if (draft) {
+      try {
+        setFormData(JSON.parse(draft));
+        toast.success('Draft loaded from previous session');
+      } catch {
+        setFormData({});
+      }
+    } else {
+      setFormData({});
+    }
+  }
   const router = useRouter()
 
   // Monitor online status
@@ -548,7 +571,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {/* Comment Writing Board */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200"
-                 onClick={() => { setActiveService('comment'); setFormData({}) }}>
+                  onClick={() => handleServiceSelect('comment')}>
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-200">
                   <span className="text-blue-600 text-lg">💬</span>
@@ -564,7 +587,7 @@ export default function DashboardPage() {
 
             {/* Product Search Board */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200"
-                 onClick={() => { setActiveService('search'); setFormData({}) }}>
+                  onClick={() => handleServiceSelect('search')}>
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors duration-200">
                   <span className="text-green-600 text-lg">🔍</span>
@@ -580,7 +603,7 @@ export default function DashboardPage() {
 
             {/* Influencer Research Board */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200"
-                 onClick={() => { setActiveService('influencer'); setFormData({}) }}>
+                  onClick={() => handleServiceSelect('influencer')}>
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-200">
                   <span className="text-purple-600 text-lg">👥</span>
@@ -596,7 +619,7 @@ export default function DashboardPage() {
 
             {/* Product Reviews Board */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200"
-                 onClick={() => { setActiveService('review'); setFormData({}) }}>
+                  onClick={() => handleServiceSelect('review')}>
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 transition-colors duration-200">
                   <span className="text-orange-600 text-lg">⭐</span>
@@ -612,7 +635,7 @@ export default function DashboardPage() {
 
             {/* AI Humanization Board */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer group transform hover:-translate-y-1 transition-transform duration-200 md:col-span-2 lg:col-span-1"
-                 onClick={() => { setActiveService('humanization'); setFormData({}) }}>
+                  onClick={() => handleServiceSelect('humanization')}>
               <div className="flex items-center justify-between mb-3">
                 <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center group-hover:bg-pink-200 transition-colors duration-200">
                   <span className="text-pink-600 text-lg">✨</span>
@@ -854,13 +877,14 @@ export default function DashboardPage() {
                   <div className="grid gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Upload AI Content *</label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors" title="Upload .txt, .docx, or .pdf files for AI humanization">
                         <input
                           type="file"
                           accept=".txt,.docx,.pdf"
                           className="hidden"
                           id="file-upload"
                           disabled={fileProcessing}
+                          aria-label="Upload document file"
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {

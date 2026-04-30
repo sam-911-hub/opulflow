@@ -62,7 +62,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 3: Legal */}
+          {/* Column 3: Legal & Help */}
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-[#e6edf3] mb-2">Legal</h3>
@@ -84,6 +84,23 @@ export default function Footer() {
                   className="block text-[#848d97] hover:text-[#2f81f7] transition-colors"
                 >
                   Refund Policy
+                </Link>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-[#e6edf3] mb-2">Help</h3>
+              <div className="space-y-1 text-xs">
+                <Link
+                  href="/help"
+                  className="block text-[#848d97] hover:text-[#2f81f7] transition-colors"
+                >
+                  Help Center
+                </Link>
+                <Link
+                  href="mailto:opulflow.inc@gmail.com"
+                  className="block text-[#848d97] hover:text-[#2f81f7] transition-colors"
+                >
+                  Contact Support
                 </Link>
               </div>
             </div>

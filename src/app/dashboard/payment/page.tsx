@@ -310,6 +310,24 @@ export default function PaymentPage() {
       {/* Header */}
       <div className="border-b border-gray-200 bg-white">
         <div className="px-8 py-4">
+          {/* Breadcrumb */}
+          <nav className="mb-4">
+            <ol className="flex items-center space-x-2 text-sm text-gray-500">
+              <li>
+                <Link href="/dashboard" className="hover:text-blue-600">
+                  Dashboard
+                </Link>
+              </li>
+              <li>/</li>
+              <li>
+                <Link href="/dashboard" className="hover:text-blue-600">
+                  Place Order
+                </Link>
+              </li>
+              <li>/</li>
+              <li className="text-gray-900 font-medium">Payment</li>
+            </ol>
+          </nav>
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-semibold text-gray-900">Complete Your Order</h1>
             <Link href="/" className="text-blue-600 hover:text-blue-800 text-sm">
