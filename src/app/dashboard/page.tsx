@@ -7,6 +7,11 @@ import Link from "next/link"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { toast } from "@/components/ui/toast"
 import { getFirebaseDb } from "@/lib/firebaseClient"
+import mammoth from 'mammoth'
+import * as pdfjsLib from 'pdfjs-dist'
+
+// Set PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 // Typing animation removed to prevent errors
@@ -71,6 +76,7 @@ export default function DashboardPage() {
   const [activeNav, setActiveNav] = useState('dashboard')
   const [notificationsExpanded, setNotificationsExpanded] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
+  const [fileProcessing, setFileProcessing] = useState(false)
   const router = useRouter()
 
   // Monitor online status
@@ -853,12 +859,56 @@ export default function DashboardPage() {
                           accept=".txt,.docx,.pdf"
                           className="hidden"
                           id="file-upload"
-                          onChange={(e) => updateFormData('file', e.target.files?.[0])}
+                          disabled={fileProcessing}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setFileProcessing(true);
+                              try {
+                                const ext = file.name.split('.').pop()?.toLowerCase();
+                                let text = '';
+
+                                if (ext === 'txt') {
+                                  text = await file.text();
+                                } else if (ext === 'docx') {
+                                  const arrayBuffer = await file.arrayBuffer();
+                                  const result = await mammoth.extractRawText({ arrayBuffer });
+                                  text = result.value;
+                                } else if (ext === 'pdf') {
+                                  const arrayBuffer = await file.arrayBuffer();
+                                  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                                  for (let i = 1; i <= pdf.numPages; i++) {
+                                    const page = await pdf.getPage(i);
+                                    const textContent = await page.getTextContent();
+                                    text += textContent.items.map((item: any) => item.str).join(' ') + '\n';
+                                  }
+                                } else {
+                                  toast.error('Unsupported file format. Please use .txt, .docx, or .pdf');
+                                  setFileProcessing(false);
+                                  return;
+                                }
+
+                                updateFormData('contentText', text);
+                                updateFormData('fileName', file.name);
+                                toast.success('File uploaded successfully!');
+                              } catch (error) {
+                                console.error('File processing error:', error);
+                                toast.error('Failed to process file. Please try again.');
+                              } finally {
+                                setFileProcessing(false);
+                              }
+                            }
+                          }}
                         />
                         <label htmlFor="file-upload" className="cursor-pointer">
-                          <div className="text-4xl text-gray-400 mb-2">📄</div>
-                          <p className="text-gray-600">Click to upload or drag and drop</p>
+                          <div className="text-4xl text-gray-400 mb-2">{fileProcessing ? '⏳' : '📄'}</div>
+                          <p className="text-gray-600">
+                            {fileProcessing ? 'Processing file...' : 'Click to upload or drag and drop'}
+                          </p>
                           <p className="text-sm text-gray-500 mt-1">Supported formats: .txt, .docx, .pdf</p>
+                          {formData.fileName && (
+                            <p className="text-sm text-green-600 mt-2">Uploaded: {formData.fileName}</p>
+                          )}
                         </label>
                       </div>
                     </div>
@@ -889,9 +939,10 @@ export default function DashboardPage() {
                 <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
                    <button
                      onClick={() => handleSubmit(activeService)}
-                     className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                     disabled={submitting || fileProcessing}
+                     className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
                    >
-                     Continue to Payment →
+                     {fileProcessing ? 'Processing File...' : submitting ? 'Submitting...' : 'Continue to Payment →'}
                    </button>
                   <button
                     type="button"
@@ -905,11 +956,54 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Recent Activity */}
+          {/* Recent Orders */}
           <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Orders</h3>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <p className="text-gray-600 text-sm">Your activity will appear here once you start using our services.</p>
+              {orders.length === 0 ? (
+                <p className="text-gray-600 text-sm">No orders yet. Start by selecting a service above!</p>
+              ) : (
+                <div className="space-y-3">
+                  {orders.slice(0, 5).map((order) => (
+                    <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          <span className="text-blue-600 text-sm font-medium">
+                            {getServiceIcon(order.service)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {getServiceName(order.service)}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Order #{order.orderId} • {new Date(order.date).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-900">
+                          ${order.totalCost?.toFixed(2)}
+                        </p>
+                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                          order.status === 'completed'
+                            ? 'bg-green-100 text-green-800'
+                            : order.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {order.status || 'pending'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {orders.length > 5 && (
+                    <p className="text-sm text-gray-500 text-center mt-4">
+                      Showing 5 most recent orders
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
