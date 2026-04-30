@@ -12,13 +12,13 @@ export default function Footer() {
   ]
 
   const socialLinks = [
-    { name: "Facebook", icon: "📘", href: "https://www.facebook.com/share/1GpPhrtVS9/" },
-    { name: "X (Twitter)", icon: "🐦", href: "https://x.com/opulflow_inc" },
-    { name: "LinkedIn", icon: "💼", href: "https://www.linkedin.com/company/opulflow/" },
-    { name: "Instagram", icon: "📷", href: "https://www.instagram.com/opulflow_inc?igsh=MXZsbmdwOGZuY2Zyeg==" },
-    { name: "TikTok", icon: "🎵", href: "https://www.tiktok.com/@opulflow_inc?_r=1&_t=ZS-95xx7QnSbY8" },
-    { name: "Reddit", icon: "🟠", href: "https://www.reddit.com/u/opulflow_inc/s/cymmxDCfVl" },
-    { name: "Discord", icon: "💬", href: "https://discord.gg/TCWMH3RC8" }
+    { name: "Facebook", href: "https://www.facebook.com/share/1GpPhrtVS9/" },
+    { name: "Twitter", href: "https://x.com/opulflow_inc" },
+    { name: "LinkedIn", href: "https://www.linkedin.com/company/opulflow/" },
+    { name: "Instagram", href: "https://www.instagram.com/opulflow_inc?igsh=MXZsbmdwOGZuY2Zyeg==" },
+    { name: "TikTok", href: "https://www.tiktok.com/@opulflow_inc?_r=1&_t=ZS-95xx7QnSbY8" },
+    { name: "Reddit", href: "https://www.reddit.com/u/opulflow_inc/s/cymmxDCfVl" },
+    { name: "Discord", href: "https://discord.gg/TCWMH3RC8" }
   ]
 
   return (
@@ -106,18 +106,19 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="text-sm font-medium text-[#e6edf3] mb-2">Connect</h3>
-              <div className="flex space-x-3">
+              <h3 className="text-sm font-medium text-[#e6edf3] mb-2">Follow Us</h3>
+              <p className="text-xs text-[#848d97] mb-3">Stay updated and share your feedback</p>
+              <div className="grid grid-cols-2 gap-2">
                 {socialLinks.map((social, index) => (
                   <a
                     key={index}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#848d97] hover:text-[#2f81f7] transition-colors text-lg"
-                    title={social.name}
+                    className="text-[#848d97] hover:text-[#2f81f7] transition-colors text-sm font-medium bg-[#21262d] hover:bg-[#30363d] px-3 py-2 rounded border border-[#30363d] hover:border-[#2f81f7] text-center"
+                    title={`Follow us on ${social.name}`}
                   >
-                    {social.icon}
+                    {social.name}
                   </a>
                 ))}
               </div>
