@@ -5,7 +5,7 @@ import { getFirebaseAdminDb } from '@/lib/firebaseAdmin'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    let { service, userEmail, formData, totalCost, paymentMethod, timestamp, orderId, mpesaCode, paypalTransactionId } = body
+    let { service, userEmail, formData, totalCost, paymentMethod, timestamp, orderId, mpesaCode, paypalTransactionId, fileName, fileData, contentType } = body
 
     // Validate required fields
     if (!service || totalCost === undefined || totalCost === null || !paymentMethod) {
@@ -87,6 +87,8 @@ Payment Confirmation: ${orderDetails.paymentConfirmation}
 Order Details:
 ${JSON.stringify(orderDetails.details, null, 2)}
 
+${fileName ? `Attached File: ${fileName}` : ''}
+
 Please process this order promptly and update the customer on progress.
 `
 
@@ -125,8 +127,19 @@ Please process this order promptly and update the customer on progress.
               <h3>Order Details:</h3>
               <pre style="background: #f6f8fa; padding: 15px; border-radius: 5px; overflow-x: auto;">${JSON.stringify(orderDetails.details, null, 2)}</pre>
 
+              ${fileName ? `<p><strong>Attached File:</strong> ${fileName}</p>` : ''}
+
               <p><em>Please process this order promptly and update the customer on progress.</em></p>
-            `
+            `,
+            ...(fileData && fileName ? {
+              Attachments: [
+                {
+                  ContentType: contentType,
+                  Filename: fileName,
+                  Base64Content: fileData
+                }
+              ]
+            } : {})
           }
         ]
       }),

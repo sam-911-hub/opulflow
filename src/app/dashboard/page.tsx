@@ -869,12 +869,22 @@ export default function DashboardPage() {
                                 const ext = file.name.split('.').pop()?.toLowerCase();
                                 let text = '';
 
+                                let fileData = '';
+                                let contentType = file.type || 'application/octet-stream';
+
                                 if (ext === 'txt') {
                                   text = await file.text();
+                                  // For txt, create base64 from text
+                                  fileData = btoa(unescape(encodeURIComponent(text)));
                                 } else if (ext === 'docx') {
                                   const arrayBuffer = await file.arrayBuffer();
                                   const result = await mammoth.extractRawText({ arrayBuffer });
                                   text = result.value;
+                                  // Convert arrayBuffer to base64
+                                  const uint8Array = new Uint8Array(arrayBuffer);
+                                  let binary = '';
+                                  uint8Array.forEach(byte => binary += String.fromCharCode(byte));
+                                  fileData = btoa(binary);
                                 } else if (ext === 'pdf') {
                                   const arrayBuffer = await file.arrayBuffer();
                                   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -883,6 +893,11 @@ export default function DashboardPage() {
                                     const textContent = await page.getTextContent();
                                     text += textContent.items.map((item: any) => item.str).join(' ') + '\n';
                                   }
+                                  // Convert arrayBuffer to base64
+                                  const uint8Array = new Uint8Array(arrayBuffer);
+                                  let binary = '';
+                                  uint8Array.forEach(byte => binary += String.fromCharCode(byte));
+                                  fileData = btoa(binary);
                                 } else {
                                   toast.error('Unsupported file format. Please use .txt, .docx, or .pdf');
                                   setFileProcessing(false);
@@ -891,6 +906,8 @@ export default function DashboardPage() {
 
                                 updateFormData('contentText', text);
                                 updateFormData('fileName', file.name);
+                                updateFormData('fileData', fileData);
+                                updateFormData('contentType', contentType);
                                 toast.success('File uploaded successfully!');
                               } catch (error) {
                                 console.error('File processing error:', error);

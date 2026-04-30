@@ -80,7 +80,10 @@ export default function PaymentPage() {
             mpesaCode: paymentMethod === 'mpesa' ? confirmationCode : undefined,
             paypalTransactionId: paymentMethod === 'paypal' ? paypalTransactionId : undefined,
             timestamp: orderData.timestamp,
-            orderId: orderId
+            orderId: orderId,
+            fileName: orderData.formData?.fileName,
+            fileData: orderData.formData?.fileData,
+            contentType: orderData.formData?.contentType
           }),
         })
 
