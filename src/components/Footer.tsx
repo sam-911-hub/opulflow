@@ -59,7 +59,7 @@ export default function Footer() {
                   Dashboard
                 </Link>
                 <Link
-                  href="/orders"
+                  href="/dashboard/orders"
                   className="block text-[#848d97] hover:text-[#2f81f7] transition-colors"
                 >
                   Orders
