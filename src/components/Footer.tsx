@@ -12,12 +12,13 @@ export default function Footer() {
   ]
 
   const socialLinks = [
-    { name: "Facebook", icon: "📘", href: "#" },
-    { name: "X (Twitter)", icon: "🐦", href: "#" },
-    { name: "LinkedIn", icon: "💼", href: "#" },
-    { name: "Instagram", icon: "📷", href: "#" },
-    { name: "WhatsApp", icon: "📱", href: "#" },
-    { name: "TikTok", icon: "🎵", href: "#" }
+    { name: "Facebook", icon: "📘", href: "https://www.facebook.com/share/1GpPhrtVS9/" },
+    { name: "X (Twitter)", icon: "🐦", href: "https://x.com/opulflow_inc" },
+    { name: "LinkedIn", icon: "💼", href: "https://www.linkedin.com/company/opulflow/" },
+    { name: "Instagram", icon: "📷", href: "https://www.instagram.com/opulflow_inc?igsh=MXZsbmdwOGZuY2Zyeg==" },
+    { name: "TikTok", icon: "🎵", href: "https://www.tiktok.com/@opulflow_inc?_r=1&_t=ZS-95xx7QnSbY8" },
+    { name: "Reddit", icon: "🟠", href: "https://www.reddit.com/u/opulflow_inc/s/cymmxDCfVl" },
+    { name: "Discord", icon: "💬", href: "https://discord.gg/TCWMH3RC8" }
   ]
 
   return (
