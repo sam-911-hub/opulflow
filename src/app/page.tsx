@@ -67,7 +67,7 @@ export default function Home() {
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-4 py-16 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-[#24292F] mb-6">
-          Professional Social Media Marketing Services
+          We whisper your product in the right ears
         </h1>
         <p className="text-xl text-[#656d76] mb-8 max-w-2xl mx-auto">
           Boost your online presence with expert comment writing, influencer outreach, product reviews, and AI content humanization. Trusted by businesses worldwide for genuine social media engagement.
