@@ -7,11 +7,6 @@ import Link from "next/link"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { toast } from "@/components/ui/toast"
 import { getFirebaseDb } from "@/lib/firebaseClient"
-import mammoth from 'mammoth'
-import * as pdfjsLib from 'pdfjs-dist'
-
-// Set PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 // Typing animation removed to prevent errors
@@ -78,12 +73,45 @@ export default function DashboardPage() {
   const [isOnline, setIsOnline] = useState(true)
   const [fileProcessing, setFileProcessing] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [librariesLoaded, setLibrariesLoaded] = useState(false)
+
+  // Load libraries dynamically
+  useEffect(() => {
+    const loadLibraries = async () => {
+      try {
+        await import('mammoth')
+        const pdfjs = await import('pdfjs-dist')
+        pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
+        setLibrariesLoaded(true)
+      } catch (error) {
+        console.error('Failed to load file processing libraries:', error)
+      }
+    }
+    loadLibraries()
+  }, [])
 
   // Auto-save form data
   useEffect(() => {
     if (activeService && formData && Object.keys(formData).length > 0) {
       localStorage.setItem(`formDraft_${activeService}`, JSON.stringify(formData))
     }
+  }, [formData, activeService])
+
+  // Handle service selection with draft loading
+  const handleServiceSelect = (service: string) => {
+    setActiveService(service);
+    const draft = localStorage.getItem(`formDraft_${service}`);
+    if (draft) {
+      try {
+        setFormData(JSON.parse(draft));
+        toast.success('Draft loaded from previous session');
+      } catch {
+        setFormData({});
+      }
+    } else {
+      setFormData({});
+    }
+  }
   }, [formData, activeService])
 
 
@@ -890,36 +918,39 @@ export default function DashboardPage() {
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
+                              if (!librariesLoaded) {
+                                toast.error('Libraries are still loading. Please try again in a moment.');
+                                return;
+                              }
                               setFileProcessing(true);
                               try {
                                 const ext = file.name.split('.').pop()?.toLowerCase();
                                 let text = '';
-
                                 let fileData = '';
                                 let contentType = file.type || 'application/octet-stream';
 
                                 if (ext === 'txt') {
                                   text = await file.text();
-                                  // For txt, create base64 from text
                                   fileData = btoa(unescape(encodeURIComponent(text)));
                                 } else if (ext === 'docx') {
+                                  const mammothLib = await import('mammoth');
                                   const arrayBuffer = await file.arrayBuffer();
-                                  const result = await mammoth.extractRawText({ arrayBuffer });
+                                  const result = await mammothLib.extractRawText({ arrayBuffer });
                                   text = result.value;
-                                  // Convert arrayBuffer to base64
                                   const uint8Array = new Uint8Array(arrayBuffer);
                                   let binary = '';
                                   uint8Array.forEach(byte => binary += String.fromCharCode(byte));
                                   fileData = btoa(binary);
                                 } else if (ext === 'pdf') {
+                                  const pdfjs = await import('pdfjs-dist');
+                                  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
                                   const arrayBuffer = await file.arrayBuffer();
-                                  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                                  const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
                                   for (let i = 1; i <= pdf.numPages; i++) {
                                     const page = await pdf.getPage(i);
                                     const textContent = await page.getTextContent();
                                     text += textContent.items.map((item: any) => item.str).join(' ') + '\n';
                                   }
-                                  // Convert arrayBuffer to base64
                                   const uint8Array = new Uint8Array(arrayBuffer);
                                   let binary = '';
                                   uint8Array.forEach(byte => binary += String.fromCharCode(byte));
