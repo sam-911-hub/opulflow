@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/toast"
 import { getFirebaseDb } from "@/lib/firebaseClient"
 
 export const dynamic = 'force-dynamic'
-// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 // Typing animation removed to prevent errors
 // import { addPendingUserCreation } from "@/lib/offlinePersistence"
@@ -75,6 +75,32 @@ export default function DashboardPage() {
   const [isOnline, setIsOnline] = useState(true)
   const [fileProcessing, setFileProcessing] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+
+  // Chart data
+  const getChartData = () => {
+    const statusCounts = orders.reduce((acc, order) => {
+      acc[order.status] = (acc[order.status] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+
+    const pieData = Object.entries(statusCounts).map(([status, count]) => ({
+      name: status,
+      value: count,
+      fill: status === 'completed' ? '#10b981' : status === 'pending' ? '#f59e0b' : '#ef4444'
+    }))
+
+    // Monthly orders (simple mock - in real app, aggregate by month)
+    const monthlyData = [
+      { month: 'Jan', orders: 12 },
+      { month: 'Feb', orders: 19 },
+      { month: 'Mar', orders: 15 },
+      { month: 'Apr', orders: 25 }
+    ]
+
+    return { pieData, monthlyData }
+  }
+
+  const { pieData, monthlyData } = getChartData()
 
   // Auto-save form data
   useEffect(() => {
@@ -562,6 +588,83 @@ export default function DashboardPage() {
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">{greeting}</h2>
             <p className="text-gray-600">Manage your marketing campaigns and track progress</p>
+          </div>
+
+          {/* Quick Stats & Charts */}
+          <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Stats Cards */}
+            <div className="lg:col-span-1 space-y-4">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Orders</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
+                  </div>
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <span className="text-blue-600 text-lg">📊</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Pending Orders</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.pendingOrders}</p>
+                  </div>
+                  <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <span className="text-yellow-600 text-lg">⏳</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Credits Remaining</p>
+                    <p className="text-2xl font-bold text-gray-900">∞</p>
+                  </div>
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <span className="text-green-600 text-lg">💰</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Charts */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status Distribution</h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Orders</h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={monthlyData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="orders" fill="#3b82f6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           {/* Service Boards */}
