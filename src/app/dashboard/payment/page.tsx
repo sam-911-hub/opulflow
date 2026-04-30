@@ -283,18 +283,18 @@ export default function PaymentPage() {
   // For free services, show processing message
   if (orderData.totalCost === 0) {
     return (
-      <div className="min-h-screen bg-[#0d1117] text-[#e6edf3] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center">
         <div className="max-w-md mx-auto text-center">
-          <div className="w-16 h-16 bg-[#238636] rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold text-[#e6edf3] mb-4">Processing Free Order</h1>
-          <p className="text-[#848d97] mb-6">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-4">Processing Free Order</h1>
+          <p className="text-gray-600 mb-6">
             Your free product search is being processed. You'll receive the results soon!
           </p>
-          <div className="text-sm text-[#848d97]">
+          <div className="text-sm text-gray-600">
             Redirecting to dashboard...
           </div>
         </div>
@@ -303,13 +303,13 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0d1117] text-[#e6edf3]">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Header */}
-      <div className="border-b border-[#30363d] bg-[#161b22]">
+      <div className="border-b border-gray-200 bg-white">
         <div className="px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-[#e6edf3]">Complete Your Order</h1>
-            <Link href="/" className="text-[#2f81f7] hover:text-[#79c0ff] text-sm">
+            <h1 className="text-xl font-semibold text-gray-900">Complete Your Order</h1>
+            <Link href="/" className="text-blue-600 hover:text-blue-800 text-sm">
               ← Back to Homepage
             </Link>
           </div>
@@ -320,30 +320,30 @@ export default function PaymentPage() {
       <div className="px-8 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Order Summary */}
-          <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6 mb-6">
-            <h2 className="text-lg font-semibold text-[#e6edf3] mb-4">Order Summary</h2>
+          <div className="bg-white border border-gray-200 rounded-md p-6 mb-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
             <div className="space-y-3 mb-4">
               <div className="flex justify-between">
-                <span className="text-[#848d97]">Service:</span>
-                <span className="font-medium text-[#e6edf3]">{getServiceName(orderData.service)}</span>
+                <span className="text-gray-600">Service:</span>
+                <span className="font-medium text-gray-900">{getServiceName(orderData.service)}</span>
               </div>
               <div className="flex justify-between text-lg font-semibold">
-                <span className="text-[#e6edf3]">Total Amount:</span>
-                <span className="text-[#e6edf3]">${orderData.totalCost.toFixed(2)} USD</span>
+                <span className="text-gray-900">Total Amount:</span>
+                <span className="text-gray-900">${orderData.totalCost.toFixed(2)} USD</span>
               </div>
-              <div className="text-sm text-[#848d97]">
+              <div className="text-sm text-gray-600">
                 ≈ KES {kesAmount.toLocaleString()} (exchange rate: ~${usdToKesRate}/USD)
               </div>
             </div>
-            <div className="bg-[#0d1117] border border-[#30363d] rounded-md p-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-sm text-[#848d97]">Order ID</div>
-                  <div className="font-mono text-[#e6edf3] text-lg">{orderId}</div>
+                  <div className="text-sm text-gray-600">Order ID</div>
+                  <div className="font-mono text-gray-900 text-lg">{orderId}</div>
                 </div>
                 <button
                   onClick={() => copyToClipboard(orderId)}
-                  className="px-3 py-1 bg-[#21262d] hover:bg-[#30363d] text-[#e6edf3] rounded-md text-sm transition-colors"
+                  className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md text-sm transition-colors"
                 >
                   Copy
                 </button>
@@ -354,73 +354,73 @@ export default function PaymentPage() {
           {/* Payment Options */}
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             {/* PayPal Option */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
+            <div className="bg-white border border-gray-200 rounded-md p-6 shadow-sm">
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-[#0070ba] rounded mr-3 flex items-center justify-center">
+                <div className="w-8 h-8 bg-blue-600 rounded mr-3 flex items-center justify-center">
                   <span className="text-white font-bold text-sm">P</span>
                 </div>
-                <h3 className="text-lg font-semibold text-[#e6edf3]">PayPal</h3>
+                <h3 className="text-lg font-semibold text-gray-900">PayPal</h3>
               </div>
               <div className="space-y-3 mb-6">
-                <div className="text-sm text-[#848d97]">
-                  Send payment to: <span className="font-mono text-[#e6edf3]">samuelomondi288@gmail.com</span>
-                  <button onClick={() => copyToClipboard('samuelomondi288@gmail.com')} className="ml-2 text-[#2f81f7] hover:text-[#79c0ff] text-xs">Copy</button>
+                <div className="text-sm text-gray-600">
+                  Send payment to: <span className="font-mono text-gray-900">samuelomondi288@gmail.com</span>
+                  <button onClick={() => copyToClipboard('samuelomondi288@gmail.com')} className="ml-2 text-blue-600 hover:text-blue-800 text-xs">Copy</button>
                 </div>
-                <div className="text-sm text-[#848d97]">
+                <div className="text-sm text-gray-600">
                   Please include your Order ID in the payment note field
                 </div>
-                <div className="bg-[#0d1117] border border-[#30363d] rounded p-3">
-                  <div className="text-xs text-[#848d97] mb-1">Order ID for reference:</div>
-                  <div className="font-mono text-[#e6edf3]">{orderId}</div>
+                <div className="bg-gray-50 border border-gray-200 rounded p-3">
+                  <div className="text-xs text-gray-600 mb-1">Order ID for reference:</div>
+                  <div className="font-mono text-gray-900">{orderId}</div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#e6edf3]">PayPal Transaction ID (Optional)</label>
+                  <label className="block text-sm font-medium text-gray-900">PayPal Transaction ID (Optional)</label>
                   <input
                     type="text"
                     placeholder="e.g., 8X123456789012345"
                     value={paypalTransactionId}
                     onChange={(e) => setPaypalTransactionId(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
-                  <div className="text-xs text-[#848d97]">You can find this in your PayPal transaction details</div>
+                  <div className="text-xs text-gray-600">You can find this in your PayPal transaction details</div>
                 </div>
 
-                <div className="text-sm text-[#848d97]">
+                <div className="text-sm text-gray-600">
                   Payments verified within 2 hours during working hours (Mon-Sat, 7AM-5PM EAT)
                 </div>
               </div>
               <button
                 onClick={() => { setModalType('paypal'); setShowModal(true) }}
-                className="w-full bg-[#238636] hover:bg-[#2ea043] text-white py-3 px-4 rounded-md transition-colors font-medium"
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-md transition-colors font-medium"
               >
                 Mark as Paid
               </button>
             </div>
 
             {/* M-PESA Option */}
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
+            <div className="bg-white border border-gray-200 rounded-md p-6 shadow-sm">
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-[#1f7e1f] rounded mr-3 flex items-center justify-center">
+                <div className="w-8 h-8 bg-green-600 rounded mr-3 flex items-center justify-center">
                   <span className="text-white font-bold text-sm">M</span>
                 </div>
-                <h3 className="text-lg font-semibold text-[#e6edf3]">M-Pesa</h3>
+                <h3 className="text-lg font-semibold text-gray-900">M-Pesa</h3>
               </div>
               <div className="space-y-3 mb-6">
-                <div className="text-sm text-[#848d97]">Business: <span className="font-medium text-[#e6edf3]">OpulFlow</span></div>
-                <div className="text-sm text-[#848d97]">Till Number: <span className="font-mono text-[#e6edf3]">coming soon</span></div>
-                <div className="text-sm text-[#848d97]">Amount: <span className="font-medium text-[#e6edf3]">KES {kesAmount.toLocaleString()}</span>
-                  <button onClick={() => copyToClipboard(kesAmount.toString())} className="ml-2 text-[#2f81f7] hover:text-[#79c0ff] text-xs">Copy</button>
+                <div className="text-sm text-gray-600">Business: <span className="font-medium text-gray-900">OpulFlow</span></div>
+                <div className="text-sm text-gray-600">Till Number: <span className="font-mono text-gray-900">coming soon</span></div>
+                <div className="text-sm text-gray-600">Amount: <span className="font-medium text-gray-900">KES {kesAmount.toLocaleString()}</span>
+                  <button onClick={() => copyToClipboard(kesAmount.toString())} className="ml-2 text-blue-600 hover:text-blue-800 text-xs">Copy</button>
                 </div>
-                <div className="text-sm text-[#848d97]">Instructions: Open M-PESA → Lipa Na M-PESA → Buy Goods → Enter Till Number → Enter Amount</div>
+                <div className="text-sm text-gray-600">Instructions: Open M-PESA → Lipa Na M-PESA → Buy Goods → Enter Till Number → Enter Amount</div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#e6edf3]">M-PESA Confirmation Code</label>
+                  <label className="block text-sm font-medium text-gray-900">M-PESA Confirmation Code</label>
                   <input
                     type="text"
                     placeholder="e.g., ABC123XYZ"
                     value={mpesaCode}
                     onChange={(e) => setMpesaCode(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#e6edf3] placeholder-[#848d97] focus:outline-none focus:ring-2 focus:ring-[#2f81f7] focus:border-[#2f81f7]"
+                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>
@@ -434,7 +434,7 @@ export default function PaymentPage() {
                   setShowModal(true)
                 }}
                 disabled={!mpesaCode.trim()}
-                className="w-full bg-[#238636] hover:bg-[#2ea043] disabled:opacity-50 text-white py-3 px-4 rounded-md transition-colors font-medium"
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white py-3 px-4 rounded-md transition-colors font-medium"
               >
                 Confirm Payment
               </button>
@@ -443,46 +443,46 @@ export default function PaymentPage() {
 
           {/* Professional Touches */}
           <div className="grid md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4">
-              <div className="flex items-center text-[#238636] mb-2">
+            <div className="bg-white border border-gray-200 rounded-md p-4 shadow-sm">
+              <div className="flex items-center text-green-600 mb-2">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                 </svg>
                 Payment Guarantee
               </div>
-              <div className="text-sm text-[#848d97]">Manual verification within a few minutes. All payments are secure and tracked.</div>
+              <div className="text-sm text-gray-600">Manual verification within a few minutes. All payments are secure and tracked.</div>
             </div>
-            <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4">
-              <div className="flex items-center text-[#2f81f7] mb-2">
+            <div className="bg-white border border-gray-200 rounded-md p-4 shadow-sm">
+              <div className="flex items-center text-blue-600 mb-2">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                 </svg>
                 Working Hours
               </div>
-              <div className="text-sm text-[#848d97]">Orders placed outside working hours will be processed next business day.</div>
+              <div className="text-sm text-gray-600">Orders placed outside working hours will be processed next business day.</div>
             </div>
           </div>
 
           {/* FAQ */}
-          <div className="bg-[#161b22] border border-[#30363d] rounded-md p-6">
-            <h3 className="text-lg font-semibold text-[#e6edf3] mb-4">Frequently Asked Questions</h3>
+          <div className="bg-white border border-gray-200 rounded-md p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Frequently Asked Questions</h3>
             <div className="space-y-4">
               <details className="group">
-                <summary className="cursor-pointer text-[#e6edf3] font-medium flex items-center">
+                <summary className="cursor-pointer text-gray-900 font-medium flex items-center">
                   <span className="mr-2 group-open:rotate-90 transition-transform">▶</span>
                   How long does payment verification take?
                 </summary>
-                <div className="mt-2 text-sm text-[#848d97] ml-6">
+                <div className="mt-2 text-sm text-gray-600 ml-6">
                   During working hours (Mon-Sat, 7AM-5PM EAT), payments are verified within 2 hours.
                   Outside these hours, verification occurs the next business day.
                 </div>
               </details>
               <details className="group">
-                <summary className="cursor-pointer text-[#e6edf3] font-medium flex items-center">
+                <summary className="cursor-pointer text-gray-900 font-medium flex items-center">
                   <span className="mr-2 group-open:rotate-90 transition-transform">▶</span>
                   What happens after I make payment?
                 </summary>
-                <div className="mt-2 text-sm text-[#848d97] ml-6">
+                <div className="mt-2 text-sm text-gray-600 ml-6">
                   Once verified, you'll receive an email confirmation and your order will be queued for processing.
                   Our team will begin work according to your specified requirements.
                 </div>
@@ -497,37 +497,37 @@ export default function PaymentPage() {
       {/* Payment Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#161b22] border border-[#30363d] rounded-md w-full max-w-md">
+          <div className="bg-white border border-gray-200 rounded-md w-full max-w-md shadow-lg">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-[#e6edf3] mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Confirm {modalType === 'paypal' ? 'PayPal' : 'M-PESA'} Payment
               </h3>
               {modalType === 'paypal' ? (
                 <div className="space-y-4">
-                  <div className="text-[#848d97]">Have you sent the payment to <span className="font-mono text-[#e6edf3]">samuelomondi288@gmail.com</span>?</div>
-                  <div className="bg-[#0d1117] border border-[#30363d] rounded p-3">
-                    <div className="text-xs text-[#848d97] mb-1">Order ID:</div>
-                    <div className="font-mono text-[#e6edf3]">{orderId}</div>
+                  <div className="text-gray-600">Have you sent the payment to <span className="font-mono text-gray-900">samuelomondi288@gmail.com</span>?</div>
+                  <div className="bg-gray-50 border border-gray-200 rounded p-3">
+                    <div className="text-xs text-gray-600 mb-1">Order ID:</div>
+                    <div className="font-mono text-gray-900">{orderId}</div>
                   </div>
-                  <div className="bg-[#0d1117] border border-[#30363d] rounded p-3">
-                    <div className="text-xs text-[#848d97] mb-1">Amount:</div>
-                    <div className="text-[#e6edf3]">${orderData.totalCost.toFixed(2)} USD</div>
+                  <div className="bg-gray-50 border border-gray-200 rounded p-3">
+                    <div className="text-xs text-gray-600 mb-1">Amount:</div>
+                    <div className="text-gray-900">${orderData.totalCost.toFixed(2)} USD</div>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="text-[#848d97]">Please confirm your M-PESA payment details:</div>
-                  <div className="bg-[#0d1117] border border-[#30363d] rounded p-3">
-                    <div className="text-xs text-[#848d97] mb-1">Order ID:</div>
-                    <div className="font-mono text-[#e6edf3]">{orderId}</div>
+                  <div className="text-gray-600">Please confirm your M-PESA payment details:</div>
+                  <div className="bg-gray-50 border border-gray-200 rounded p-3">
+                    <div className="text-xs text-gray-600 mb-1">Order ID:</div>
+                    <div className="font-mono text-gray-900">{orderId}</div>
                   </div>
-                  <div className="bg-[#0d1117] border border-[#30363d] rounded p-3">
-                    <div className="text-xs text-[#848d97] mb-1">Amount:</div>
-                    <div className="text-[#e6edf3]">KES {kesAmount.toLocaleString()}</div>
+                  <div className="bg-gray-50 border border-gray-200 rounded p-3">
+                    <div className="text-xs text-gray-600 mb-1">Amount:</div>
+                    <div className="text-gray-900">KES {kesAmount.toLocaleString()}</div>
                   </div>
-                  <div className="bg-[#0d1117] border border-[#30363d] rounded p-3">
-                    <div className="text-xs text-[#848d97] mb-1">Confirmation Code:</div>
-                    <div className="font-mono text-[#e6edf3]">{mpesaCode}</div>
+                  <div className="bg-gray-50 border border-gray-200 rounded p-3">
+                    <div className="text-xs text-gray-600 mb-1">Confirmation Code:</div>
+                    <div className="font-mono text-gray-900">{mpesaCode}</div>
                   </div>
                 </div>
               )}
@@ -535,11 +535,11 @@ export default function PaymentPage() {
                 <button
                   onClick={() => handlePaymentConfirmation(modalType, modalType === 'mpesa' ? mpesaCode : undefined)}
                   disabled={loading}
-                  className="flex-1 bg-[#238636] hover:bg-[#2ea043] disabled:opacity-50 text-white py-2 px-4 rounded-md transition-colors font-medium"
+                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white py-2 px-4 rounded-md transition-colors font-medium"
                 >
                   {loading ? 'Processing...' : `Yes, I've ${modalType === 'paypal' ? 'Paid' : 'Confirmed'}`}
                 </button>
-                <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-[#21262d] hover:bg-[#30363d] text-[#e6edf3] rounded-md transition-colors">
+                <button onClick={() => setShowModal(false)} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors">
                   Cancel
                 </button>
               </div>
