@@ -1,76 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Homepage -->
   <url>
     <loc>https://opulflow.top/</loc>
-    <lastmod>2026-01-26</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- Authentication Pages -->
+  <url>
+    <loc>https://opulflow.top/services</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://opulflow.top/blog</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://opulflow.top/blog/how-to-buy-social-media-comments-2026</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <url>
     <loc>https://opulflow.top/login</loc>
-    <lastmod>2026-01-26</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
-
   <url>
     <loc>https://opulflow.top/register</loc>
-    <lastmod>2026-01-26</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Legal Pages -->
-  <url>
-    <loc>https://opulflow.top/privacy</loc>
-    <lastmod>2026-01-26</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <url>
-    <loc>https://opulflow.top/terms</loc>
-    <lastmod>2026-01-26</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <url>
-    <loc>https://opulflow.top/refund</loc>
-    <lastmod>2026-01-26</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <!-- Dashboard Pages (marked as noindex in robots.txt) -->
-  <url>
-    <loc>https://opulflow.top/dashboard</loc>
-    <lastmod>2026-01-26</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://opulflow.top/dashboard/orders</loc>
-    <lastmod>2026-01-26</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.4</priority>
-  </url>
-
-  <url>
-    <loc>https://opulflow.top/dashboard/buy-credits</loc>
-    <lastmod>2026-01-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.4</priority>
-  </url>
-
-  <url>
-    <loc>https://opulflow.top/dashboard/payment</loc>
-    <lastmod>2026-01-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.2</priority>
+    <priority>0.6</priority>
   </url>
 </urlset>

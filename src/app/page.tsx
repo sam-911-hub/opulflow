@@ -1,8 +1,42 @@
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "OpulFlow - Buy Social Media Comments, Influencer Research & Product Reviews",
+  description: "Professional social media marketing services: buy authentic comments, find influencers, write product reviews, and humanize AI content. Human-powered engagement for real results.",
+  keywords: "buy social media comments, influencer marketing, product reviews, AI content humanization, social media marketing, online reputation management, comment writing service",
+  openGraph: {
+    title: "OpulFlow - Professional Social Media Marketing Services",
+    description: "Boost your online presence with expert comment writing, influencer outreach, product reviews, and AI content humanization.",
+    url: "https://opulflow.top",
+    siteName: "OpulFlow",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "OpulFlow - Social Media Marketing Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OpulFlow - Buy Social Media Comments & Influencer Services",
+    description: "Professional social media marketing: comments, influencers, reviews, AI humanization. Genuine engagement for real growth.",
+    images: ["/og-image.svg"],
+  },
+};
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#F6F8FA]">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
+      <div className="min-h-screen bg-[#F6F8FA]">
       {/* Navigation Bar */}
       <nav className="bg-white border-b border-[#d1d9e0] px-4 py-3">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -42,10 +76,10 @@ export default function Home() {
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-4 py-16 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-[#24292F] mb-6">
-          We Whisper Your Product In The Right Ears
+          Professional Social Media Marketing Services
         </h1>
         <p className="text-xl text-[#656d76] mb-8 max-w-2xl mx-auto">
-          Human-powered lead discovery platform that connects your product with the perfect audience through personalized outreach and genuine engagement.
+          Boost your online presence with expert comment writing, influencer outreach, product reviews, and AI content humanization. Trusted by businesses worldwide for genuine social media engagement.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
@@ -255,5 +289,6 @@ export default function Home() {
         </div>
       </main>
     </div>
+    </>
   );
 }

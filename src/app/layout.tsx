@@ -11,8 +11,9 @@ import "@/lib/consoleUtils"; // Initialize console utilities
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "OpulFlow - Sales Intelligence Platform",
-  description: "Modern sales intelligence with beautiful onboarding, auth, and analytics.",
+  title: "OpulFlow - Professional Social Media Marketing Services",
+  description: "Boost your online presence with expert comment writing, influencer outreach, product reviews, and AI content humanization. Trusted by businesses worldwide.",
+  keywords: "social media marketing, buy social media comments, influencer research, product reviews, AI content humanization, online reputation management",
   verification: {
     google: "google8c17f0e170a2d62b.html",
   },
@@ -30,8 +31,16 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "OpulFlow",
-    description: "AI-powered business and CRM platform",
+    title: "OpulFlow - Professional Social Media Marketing Services",
+    description: "Boost your online presence with expert comment writing, influencer outreach, product reviews, and AI content humanization.",
+    images: ["/og-image.svg"],
+    url: "https://opulflow.top",
+    siteName: "OpulFlow",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OpulFlow - Professional Social Media Marketing Services",
+    description: "Boost your online presence with expert comment writing, influencer outreach, product reviews, and AI content humanization.",
     images: ["/og-image.svg"],
   },
 };
