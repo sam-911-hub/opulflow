@@ -2,6 +2,22 @@ import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "OpulFlow",
+  "url": "https://opulflow.top",
+  "description": "Professional Social Media Marketing Services",
+  "logo": "https://opulflow.top/favicon.svg",
+  "sameAs": [
+    "https://www.facebook.com/share/1GpPhrtVS9/",
+    "https://x.com/opulflow_inc",
+    "https://www.linkedin.com/company/opulflow/",
+    "https://www.instagram.com/opulflow_inc?igsh=MXZsbmdwOGZuY2Zyeg==",
+    "https://www.tiktok.com/@opulflow_inc?_r=1&_t=ZS-95xx7QnSbY8"
+  ]
+};
+
 export default function Home() {
   return (
     <>
