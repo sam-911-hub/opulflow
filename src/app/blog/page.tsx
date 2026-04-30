@@ -1,11 +1,6 @@
 import Link from "next/link";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "OpulFlow Blog - Social Media Marketing Tips & Strategies",
-  description: "Expert insights on social media marketing, influencer outreach, content creation, and online reputation management. Stay ahead with OpulFlow's latest strategies.",
-  keywords: "social media marketing blog, influencer tips, content marketing, online reputation, SEO strategies",
-};
+export const dynamic = 'force-dynamic';
 
 const blogPosts = [
   {
@@ -65,43 +60,8 @@ const blogPosts = [
 ];
 
 export default function BlogPage() {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Blog",
-    "name": "OpulFlow Blog",
-    "description": "Expert insights on social media marketing, influencer outreach, and online reputation management.",
-    "url": "https://opulflow.top/blog",
-    "publisher": {
-      "@type": "Organization",
-      "name": "OpulFlow",
-      "url": "https://opulflow.top"
-    },
-    "blogPost": blogPosts.map(post => ({
-      "@type": "BlogPosting",
-      "headline": post.title,
-      "description": post.excerpt,
-      "datePublished": post.date,
-      "author": {
-        "@type": "Organization",
-        "name": "OpulFlow Team"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "OpulFlow"
-      },
-      "url": `https://opulflow.top/blog/${post.slug}`,
-      "keywords": post.keywords.join(", ")
-    }))
-  };
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
-        }}
-      />
       <div className="min-h-screen bg-[#F6F8FA]">
         {/* Navigation Bar */}
         <nav className="bg-white border-b border-[#d1d9e0] px-4 py-3">

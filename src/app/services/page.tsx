@@ -1,11 +1,6 @@
 import Link from "next/link";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "OpulFlow Services - Professional Social Media Marketing Solutions",
-  description: "Comprehensive social media marketing services: buy authentic comments, influencer research, product reviews, and AI content humanization. Boost your online presence with OpulFlow.",
-  keywords: "social media services, buy comments, influencer outreach, product reviews, AI humanization, social media marketing",
-};
+export const dynamic = 'force-dynamic';
 
 const services = [
   {
@@ -67,39 +62,8 @@ const services = [
 ];
 
 export default function ServicesPage() {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "provider": {
-      "@type": "Organization",
-      "name": "OpulFlow",
-      "url": "https://opulflow.top"
-    },
-    "serviceType": "Social Media Marketing",
-    "areaServed": "Worldwide",
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "OpulFlow Services",
-      "itemListElement": services.map(service => ({
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": service.title,
-          "description": service.description
-        },
-        "price": service.price
-      }))
-    }
-  };
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
-        }}
-      />
       <div className="min-h-screen bg-[#F6F8FA]">
         {/* Navigation Bar */}
         <nav className="bg-white border-b border-[#d1d9e0] px-4 py-3">

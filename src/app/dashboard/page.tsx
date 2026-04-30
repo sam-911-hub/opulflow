@@ -73,22 +73,6 @@ export default function DashboardPage() {
   const [isOnline, setIsOnline] = useState(true)
   const [fileProcessing, setFileProcessing] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [librariesLoaded, setLibrariesLoaded] = useState(false)
-
-  // Load libraries dynamically
-  useEffect(() => {
-    const loadLibraries = async () => {
-      try {
-        await import('mammoth')
-        const pdfjs = await import('pdfjs-dist')
-        pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
-        setLibrariesLoaded(true)
-      } catch (error) {
-        console.error('Failed to load file processing libraries:', error)
-      }
-    }
-    loadLibraries()
-  }, [])
 
   // Auto-save form data
   useEffect(() => {
@@ -96,25 +80,6 @@ export default function DashboardPage() {
       localStorage.setItem(`formDraft_${activeService}`, JSON.stringify(formData))
     }
   }, [formData, activeService])
-
-  // Handle service selection with draft loading
-  const handleServiceSelect = (service: string) => {
-    setActiveService(service);
-    const draft = localStorage.getItem(`formDraft_${service}`);
-    if (draft) {
-      try {
-        setFormData(JSON.parse(draft));
-        toast.success('Draft loaded from previous session');
-      } catch {
-        setFormData({});
-      }
-    } else {
-      setFormData({});
-    }
-  }
-  }, [formData, activeService])
-
-
 
   // Handle service selection with draft loading
   const handleServiceSelect = (service: string) => {
@@ -910,7 +875,7 @@ export default function DashboardPage() {
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors" title="Upload .txt, .docx, or .pdf files for AI humanization">
                         <input
                           type="file"
-                          accept=".txt,.docx,.pdf"
+                          accept=".txt"
                           className="hidden"
                           id="file-upload"
                           disabled={fileProcessing}
@@ -918,10 +883,6 @@ export default function DashboardPage() {
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (file) {
-                              if (!librariesLoaded) {
-                                toast.error('Libraries are still loading. Please try again in a moment.');
-                                return;
-                              }
                               setFileProcessing(true);
                               try {
                                 const ext = file.name.split('.').pop()?.toLowerCase();
@@ -932,31 +893,8 @@ export default function DashboardPage() {
                                 if (ext === 'txt') {
                                   text = await file.text();
                                   fileData = btoa(unescape(encodeURIComponent(text)));
-                                } else if (ext === 'docx') {
-                                  const mammothLib = await import('mammoth');
-                                  const arrayBuffer = await file.arrayBuffer();
-                                  const result = await mammothLib.extractRawText({ arrayBuffer });
-                                  text = result.value;
-                                  const uint8Array = new Uint8Array(arrayBuffer);
-                                  let binary = '';
-                                  uint8Array.forEach(byte => binary += String.fromCharCode(byte));
-                                  fileData = btoa(binary);
-                                } else if (ext === 'pdf') {
-                                  const pdfjs = await import('pdfjs-dist');
-                                  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-                                  const arrayBuffer = await file.arrayBuffer();
-                                  const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
-                                  for (let i = 1; i <= pdf.numPages; i++) {
-                                    const page = await pdf.getPage(i);
-                                    const textContent = await page.getTextContent();
-                                    text += textContent.items.map((item: any) => item.str).join(' ') + '\n';
-                                  }
-                                  const uint8Array = new Uint8Array(arrayBuffer);
-                                  let binary = '';
-                                  uint8Array.forEach(byte => binary += String.fromCharCode(byte));
-                                  fileData = btoa(binary);
                                 } else {
-                                  toast.error('Unsupported file format. Please use .txt, .docx, or .pdf');
+                                  toast.error('Currently only .txt files are supported. Other formats coming soon.');
                                   setFileProcessing(false);
                                   return;
                                 }
@@ -980,7 +918,7 @@ export default function DashboardPage() {
                           <p className="text-gray-600">
                             {fileProcessing ? 'Processing file...' : 'Click to upload or drag and drop'}
                           </p>
-                          <p className="text-sm text-gray-500 mt-1">Supported formats: .txt, .docx, .pdf</p>
+                          <p className="text-sm text-gray-500 mt-1">Supported formats: .txt</p>
                           {formData.fileName && (
                             <p className="text-sm text-green-600 mt-2">Uploaded: {formData.fileName}</p>
                           )}

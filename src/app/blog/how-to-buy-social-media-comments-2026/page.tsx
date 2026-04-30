@@ -1,17 +1,6 @@
 import Link from "next/link";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "How to Buy Social Media Comments Effectively in 2026 - OpulFlow Blog",
-  description: "Learn the best practices for purchasing authentic social media comments that boost engagement and credibility. Expert tips from OpulFlow.",
-  keywords: "buy social media comments, authentic engagement, social media growth, comment strategy",
-  openGraph: {
-    title: "How to Buy Social Media Comments Effectively in 2026",
-    description: "Master the art of buying authentic social media comments to boost your online presence and engagement.",
-    url: "https://opulflow.top/blog/how-to-buy-social-media-comments-2026",
-    type: "article",
-  },
-};
+export const dynamic = 'force-dynamic';
 
 export default function BlogPost() {
   const structuredData = {
