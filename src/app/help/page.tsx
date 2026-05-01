@@ -2,10 +2,29 @@
 
 import { useState } from "react"
 import Link from "next/link"
+// import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 
 export default function HelpPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedGuides, setExpandedGuides] = useState<string[]>([])
+
+  // Keyboard shortcuts - commented out due to path issues
+  // useKeyboardShortcuts([
+  //   {
+  //     key: 'f',
+  //     ctrl: true,
+  //     action: () => {
+  //       const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement
+  //       searchInput?.focus()
+  //     },
+  //     description: 'Focus search input'
+  //   },
+  //   {
+  //     key: 'Escape',
+  //     action: () => setSearchTerm(''),
+  //     description: 'Clear search'
+  //   }
+  // ])
 
   const faqs = [
     {

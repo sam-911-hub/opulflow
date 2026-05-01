@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { toast } from "@/components/ui/toast"
+import { CardSkeleton, ChartSkeleton, ServiceCardSkeleton } from "@/components/LoadingSkeleton"
+// import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts"
 import { getFirebaseDb } from "@/lib/firebaseClient"
 
 export const dynamic = 'force-dynamic'
@@ -75,6 +77,7 @@ export default function DashboardPage() {
   const [isOnline, setIsOnline] = useState(true)
   const [fileProcessing, setFileProcessing] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
 
   // Chart data
   const getChartData = () => {
@@ -425,31 +428,40 @@ export default function DashboardPage() {
     localStorage.setItem('pendingOrder', JSON.stringify(orderData))
 
     // Show success message immediately
-    toast.success('Order submitted successfully!', {
-      duration: 5000,
+    toast.success('Order submitted successfully! Redirecting to payment...', {
+      duration: 3000,
     })
 
     // Close the form immediately - user can access order later
     setActiveService(null)
     setFormData({})
 
-    // Try to navigate to payment page in background (don't block user)
-    setTimeout(async () => {
+    // Try to navigate to payment page with retry logic
+    const attemptNavigation = async (attempts = 0) => {
       try {
-        // Only attempt navigation if we're online
-        if (navigator.onLine) {
-          await router.push('/dashboard/payment')
-        } else {
-          // Show offline message
-          toast.info('Payment page will be available when connection is restored. Your order is saved.', {
+        if (!navigator.onLine) {
+          toast.info('You appear to be offline. Your order is saved and will be processed when you\'re back online.', {
             duration: 8000,
           })
+          return
         }
+
+        await router.push('/dashboard/payment')
       } catch (error) {
-        console.warn('Navigation to payment failed:', error)
-        // Don't show error to user - order is already saved
+        console.warn(`Navigation attempt ${attempts + 1} failed:`, error)
+
+        if (attempts < 2) {
+          // Retry after 2 seconds
+          setTimeout(() => attemptNavigation(attempts + 1), 2000)
+        } else {
+          toast.error('Unable to load payment page. Please refresh and try again.', {
+            duration: 5000,
+          })
+        }
       }
-    }, 100)
+    }
+
+    setTimeout(() => attemptNavigation(), 500)
   }
 
   const updateFormData = (field: string, value: unknown) => {
@@ -481,6 +493,27 @@ export default function DashboardPage() {
   const getUserInitials = (email: string) => {
     return email.split('@')[0].substring(0, 2).toUpperCase()
   }
+
+  // Keyboard shortcuts - commented out due to path issues
+  // useKeyboardShortcuts([
+  //   {
+  //     key: 'h',
+  //     ctrl: true,
+  //     action: () => router.push('/help'),
+  //     description: 'Open help center'
+  //   },
+  //   {
+  //     key: 's',
+  //     ctrl: true,
+  //     action: () => router.push('/dashboard/settings'),
+  //     description: 'Open settings'
+  //   },
+  //   {
+  //     key: 'Escape',
+  //     action: () => setActiveService(null),
+  //     description: 'Close service form'
+  //   }
+  // ])
 
   // const getChartData = () => { ... } // Temporarily removed
 
@@ -597,38 +630,82 @@ export default function DashboardPage() {
           <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Stats Cards */}
             <div className="lg:col-span-1 space-y-4">
-              <div className="bg-white border border-gray-200 p-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
-                </div>
-              </div>
-              <div className="bg-white border border-gray-200 p-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Pending Orders</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.pendingOrders}</p>
-                </div>
-              </div>
-              <div className="bg-white border border-gray-200 p-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Credits</p>
-                  <p className="text-2xl font-bold text-gray-900">∞</p>
-                </div>
-              </div>
-            </div>
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 p-6 hover:shadow-lg transition-all duration-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800 uppercase tracking-wide">Credits</p>
-                    <p className="text-3xl font-bold text-emerald-600 mt-1">∞</p>
-                    <p className="text-xs text-gray-600 mt-1">Pay-as-you-go system</p>
+              {loading ? (
+                <>
+                  <CardSkeleton />
+                  <CardSkeleton />
+                  <CardSkeleton />
+                </>
+              ) : (
+                <>
+                  <div className="bg-white border border-gray-200 p-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Total Orders</p>
+                      <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
+                    </div>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
-                    <span className="text-white text-xl"></span>
+                  <div className="bg-white border border-gray-200 p-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Pending Orders</p>
+                      <p className="text-2xl font-bold text-gray-900">{stats.pendingOrders}</p>
+                    </div>
                   </div>
-                </div>
-              </div>
+                  <div className="bg-white border border-gray-200 p-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Credits</p>
+                      <p className="text-2xl font-bold text-gray-900">∞</p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
+
+            {/* Charts */}
+            <div className="lg:col-span-2 space-y-4">
+              {loading ? (
+                <>
+                  <ChartSkeleton />
+                  <ChartSkeleton />
+                </>
+              ) : (
+                <>
+                  <div className="bg-white border border-gray-200 p-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <PieChart>
+                        <Pie
+                          data={pieData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={35}
+                          outerRadius={75}
+                          paddingAngle={3}
+                          dataKey="value"
+                        >
+                          {pieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="bg-white border border-gray-200 p-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Orders</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <BarChart data={monthlyData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="orders" fill="#3b82f6" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
 
             {/* Charts */}
             <div className="lg:col-span-2 space-y-4">
@@ -669,7 +746,17 @@ export default function DashboardPage() {
 
           {/* Service Boards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {/* Comment Writing Board */}
+            {loading ? (
+              <>
+                <ServiceCardSkeleton />
+                <ServiceCardSkeleton />
+                <ServiceCardSkeleton />
+                <ServiceCardSkeleton />
+                <ServiceCardSkeleton />
+              </>
+            ) : (
+              <>
+                {/* Comment Writing Board */}
             <div className="bg-white border border-gray-200 p-4 cursor-pointer hover:bg-gray-50"
                   onClick={() => handleServiceSelect('comment')}>
               <div className="flex items-start justify-between mb-3">
@@ -723,6 +810,8 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-600 mb-3">Make AI content sound more human</p>
               <button className="text-sm text-blue-600 hover:text-blue-800">Humanize Content →</button>
             </div>
+              </>
+            )}
           </div>
 
           {/* Service Order Form - Appears when service is selected */}

@@ -26,6 +26,29 @@ export default function CustomerServiceButton() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Client-side validation
+    if (!formData.name.trim()) {
+      toast.error('Please enter your name')
+      return
+    }
+    if (!formData.email.trim()) {
+      toast.error('Please enter your email')
+      return
+    }
+    if (!formData.type) {
+      toast.error('Please select an inquiry type')
+      return
+    }
+    if (!formData.subject.trim()) {
+      toast.error('Please enter a subject')
+      return
+    }
+    if (!formData.message.trim()) {
+      toast.error('Please enter your message')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -38,15 +61,16 @@ export default function CustomerServiceButton() {
       })
 
       if (response.ok) {
-        toast.success('Your message has been sent successfully!')
+        toast.success('Your message has been sent successfully! We\'ll get back to you soon.')
         setFormData({ name: '', email: '', type: '', subject: '', message: '' })
         setOpen(false)
       } else {
-        toast.error('Failed to send message. Please try again.')
+        const errorData = await response.json()
+        toast.error(errorData.error || 'Failed to send message. Please try again.')
       }
     } catch (error) {
       console.error('Contact form error:', error)
-      toast.error('An error occurred. Please try again later.')
+      toast.error('Network error. Please check your connection and try again.')
     } finally {
       setLoading(false)
     }
