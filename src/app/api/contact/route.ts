@@ -21,12 +21,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check Mailjet configuration
+    if (!process.env.MAILJET_API_KEY || !process.env.MAILJET_SECRET_KEY) {
+      console.error('Contact API: Mailjet API keys not configured')
+      return NextResponse.json({ error: 'Email service not configured' }, { status: 500 })
+    }
+
+    // Get inquiry type name
+    const getInquiryTypeName = (type: string) => {
+      switch (type) {
+        case 'inquiry': return 'General Inquiry'
+        case 'complaint': return 'Complaint'
+        case 'suggestion': return 'Suggestion'
+        case 'technical': return 'Technical Support'
+        case 'billing': return 'Billing Question'
+        default: return type
+      }
+    }
+
     // Prepare email content
     const emailContent = `
 New Customer Service Inquiry
 
 From: ${name} <${email}>
-Type: ${type}
+Type: ${getInquiryTypeName(type)}
 Subject: ${subject}
 
 Message:
@@ -37,35 +55,53 @@ Sent via OpulFlow Customer Service Form
 Timestamp: ${new Date().toISOString()}
     `.trim()
 
-    // Here you would integrate with an email service
-    // For now, we'll log it and return success
-    console.log('Customer Service Email:', {
-      to: 'opulflow.inc@gmail.com',
-      subject: `[${type.toUpperCase()}] ${subject}`,
-      content: emailContent
-    })
-
-    // In production, you would send the actual email
-    // Example with a service like SendGrid, Mailgun, or similar:
-    /*
-    const response = await fetch('your-email-service-endpoint', {
+    // Send email using Mailjet
+    const mailjetResponse = await fetch('https://api.mailjet.com/v3.1/send', {
       method: 'POST',
       headers: {
+        'Authorization': `Basic ${Buffer.from(`${process.env.MAILJET_API_KEY}:${process.env.MAILJET_SECRET_KEY}`).toString('base64')}`,
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.EMAIL_API_KEY}`
       },
       body: JSON.stringify({
-        to: 'opulflow.inc@gmail.com',
-        subject: `[${type.toUpperCase()}] ${subject}`,
-        text: emailContent,
-        from: email
-      })
+        Messages: [
+          {
+            From: {
+              Email: process.env.FROM_EMAIL || 'opulflow.inc@gmail.com',
+              Name: 'OpulFlow'
+            },
+            To: [
+              {
+                Email: 'opulflow.inc@gmail.com',
+                Name: 'OpulFlow Support'
+              }
+            ],
+            Subject: `[${type.toUpperCase()}] ${subject}`,
+            TextPart: emailContent,
+            HTMLPart: `
+              <h2>New Customer Service Inquiry</h2>
+              <p><strong>From:</strong> ${name} &lt;${email}&gt;</p>
+              <p><strong>Type:</strong> ${getInquiryTypeName(type)}</p>
+              <p><strong>Subject:</strong> ${subject}</p>
+
+              <h3>Message:</h3>
+              <div style="background: #f6f8fa; padding: 15px; border-radius: 5px; white-space: pre-wrap;">${message}</div>
+
+              <hr style="margin: 20px 0;">
+              <p style="color: #6b7280; font-size: 12px;">Sent via OpulFlow Customer Service Form<br>Timestamp: ${new Date().toISOString()}</p>
+            `
+          }
+        ]
+      }),
     })
 
-    if (!response.ok) {
-      throw new Error('Failed to send email')
+    if (!mailjetResponse.ok) {
+      const errorData = await mailjetResponse.text()
+      console.error('Mailjet contact error:', errorData)
+      return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
     }
-    */
+
+    const mailjetData = await mailjetResponse.json()
+    console.log('Contact email sent successfully:', mailjetData)
 
     return NextResponse.json(
       { message: 'Message sent successfully' },

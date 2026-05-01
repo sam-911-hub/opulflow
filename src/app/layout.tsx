@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { Toaster } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/sonner";
 import Header from "@/components/Header";
 import CookieConsent from "@/components/CookieConsent";
 import CustomerServiceButton from "@/components/CustomerServiceButton";
