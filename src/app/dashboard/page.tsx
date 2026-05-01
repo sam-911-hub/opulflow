@@ -427,41 +427,49 @@ export default function DashboardPage() {
 
     localStorage.setItem('pendingOrder', JSON.stringify(orderData))
 
-    // Show success message immediately
-    toast.success('Order submitted successfully! Redirecting to payment...', {
-      duration: 3000,
-    })
-
     // Close the form immediately - user can access order later
     setActiveService(null)
     setFormData({})
 
-    // Try to navigate to payment page with retry logic
-    const attemptNavigation = async (attempts = 0) => {
-      try {
-        if (!navigator.onLine) {
-          toast.info('You appear to be offline. Your order is saved and will be processed when you\'re back online.', {
-            duration: 8000,
-          })
-          return
-        }
+    // Handle free vs paid services differently
+    if (cost === 0) {
+      // Free service - show success and don't redirect to payment
+      toast.success('Your free research request has been submitted! We\'ll process it shortly.', {
+        duration: 5000,
+      })
+    } else {
+      // Paid service - redirect to payment
+      toast.success('Order submitted successfully! Redirecting to payment...', {
+        duration: 3000,
+      })
 
-        await router.push('/dashboard/payment')
-      } catch (error) {
-        console.warn(`Navigation attempt ${attempts + 1} failed:`, error)
+      // Try to navigate to payment page with retry logic
+      const attemptNavigation = async (attempts = 0) => {
+        try {
+          if (!navigator.onLine) {
+            toast.info('You appear to be offline. Your order is saved and will be processed when you\'re back online.', {
+              duration: 8000,
+            })
+            return
+          }
 
-        if (attempts < 2) {
-          // Retry after 2 seconds
-          setTimeout(() => attemptNavigation(attempts + 1), 2000)
-        } else {
-          toast.error('Unable to load payment page. Please refresh and try again.', {
-            duration: 5000,
-          })
+          await router.push('/dashboard/payment')
+        } catch (error) {
+          console.warn(`Navigation attempt ${attempts + 1} failed:`, error)
+
+          if (attempts < 2) {
+            // Retry after 2 seconds
+            setTimeout(() => attemptNavigation(attempts + 1), 2000)
+          } else {
+            toast.error('Unable to load payment page. Please refresh and try again.', {
+              duration: 5000,
+            })
+          }
         }
       }
-    }
 
-    setTimeout(() => attemptNavigation(), 500)
+      setTimeout(() => attemptNavigation(), 500)
+    }
   }
 
   const updateFormData = (field: string, value: unknown) => {
@@ -1119,13 +1127,13 @@ export default function DashboardPage() {
                 )}
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-                   <button
-                     onClick={() => handleSubmit(activeService)}
-                     disabled={submitting || fileProcessing}
-                     className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                   >
-                     {fileProcessing ? 'Processing File...' : submitting ? 'Submitting...' : 'Continue to Payment →'}
-                   </button>
+                    <button
+                      onClick={() => handleSubmit(activeService)}
+                      disabled={submitting || fileProcessing}
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    >
+                      {fileProcessing ? 'Processing File...' : submitting ? 'Submitting...' : calculateCost(activeService, formData) === 0 ? 'Submit Free Request →' : 'Continue to Payment →'}
+                    </button>
                   <button
                     type="button"
                     onClick={() => { setActiveService(null); setFormData({}) }}
