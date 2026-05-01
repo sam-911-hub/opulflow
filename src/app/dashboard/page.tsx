@@ -1132,7 +1132,7 @@ export default function DashboardPage() {
                       disabled={submitting || fileProcessing}
                       className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
                     >
-                      {fileProcessing ? 'Processing File...' : submitting ? 'Submitting...' : calculateCost(activeService, formData) === 0 ? 'Submit Free Request →' : 'Continue to Payment →'}
+                      {fileProcessing ? 'Processing File...' : submitting ? 'Submitting...' : activeService === 'search' ? 'Submit Free Request →' : 'Continue to Payment →'}
                     </button>
                   <button
                     type="button"
