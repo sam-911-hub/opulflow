@@ -114,6 +114,7 @@ export default function DashboardPage() {
 
   // Handle service selection with draft loading
   const handleServiceSelect = (service: string) => {
+    console.log('handleServiceSelect called with:', service) // Debug log
     setActiveService(service);
     const draft = localStorage.getItem(`formDraft_${service}`);
     if (draft) {
@@ -580,6 +581,8 @@ export default function DashboardPage() {
 
   const stats = getStats()
   // const chartData = getChartData()
+
+  console.log('Dashboard render - activeService:', activeService) // Debug log
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200">
