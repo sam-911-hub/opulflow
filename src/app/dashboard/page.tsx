@@ -373,6 +373,8 @@ export default function DashboardPage() {
   }
 
   const handleSubmit = async (service: string) => {
+    console.log('handleSubmit called with service:', service) // Debug log
+
     // Service-specific validation
     switch (service) {
       case 'comment':
@@ -432,12 +434,16 @@ export default function DashboardPage() {
     setFormData({})
 
     // Handle free vs paid services differently
+    console.log('Checking service for payment logic:', service) // Debug log
+
     if (service === 'search') {
+      console.log('Taking FREE path') // Debug log
       // Free service - show success and don't redirect to payment
       toast.success('Your free research request has been submitted! We\'ll process it shortly.', {
         duration: 5000,
       })
     } else {
+      console.log('Taking PAID path') // Debug log
       // Paid service - redirect to payment
       toast.success('Order submitted successfully! Redirecting to payment...', {
         duration: 3000,
