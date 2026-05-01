@@ -432,7 +432,7 @@ export default function DashboardPage() {
     setFormData({})
 
     // Handle free vs paid services differently
-    if (cost === 0) {
+    if (service === 'search') {
       // Free service - show success and don't redirect to payment
       toast.success('Your free research request has been submitted! We\'ll process it shortly.', {
         duration: 5000,
