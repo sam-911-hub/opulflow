@@ -283,54 +283,43 @@ export default function Home() {
         <div className="mt-20 mb-16">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-[#24292F] mb-4">
-              Trusted by Innovative Companies
+              Success Stories
             </h2>
             <p className="text-lg text-[#656d76] max-w-2xl mx-auto">
-              We've helped leading companies amplify their online presence through authentic social media engagement.
+              Real results from our social media engagement services
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-lg shadow-sm border border-[#d1d9e0] p-8 hover:shadow-md transition-shadow">
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                {/* Company Logo Placeholder */}
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-xl">IT</span>
-                  </div>
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="text-center">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">IT</span>
                 </div>
+                <h3 className="text-2xl font-bold text-[#24292F]">
+                  Immersive Translate
+                </h3>
+              </div>
 
-                {/* Content */}
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-xl font-semibold text-[#24292F] mb-2">
-                    Immersive Translate
-                  </h3>
-                  <p className="text-[#656d76] mb-4">
-                    We provided comprehensive social media commenting services across Quora, TikTok, YouTube, and Reddit, creating authentic conversations that drove a significant increase in app users.
-                  </p>
+              <p className="text-lg text-[#656d76] mb-6 max-w-3xl mx-auto leading-relaxed">
+                We delivered comprehensive social media commenting services across Quora, TikTok, YouTube, and Reddit,
+                creating authentic conversations that drove a significant increase in app users.
+              </p>
 
-                  {/* Services & Results */}
-                  <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
-                    <span className="inline-block bg-[#f6f8fa] text-[#24292F] text-sm px-3 py-1 rounded-full">
-                      Quora Comments
-                    </span>
-                    <span className="inline-block bg-[#f6f8fa] text-[#24292F] text-sm px-3 py-1 rounded-full">
-                      TikTok Engagement
-                    </span>
-                    <span className="inline-block bg-[#f6f8fa] text-[#24292F] text-sm px-3 py-1 rounded-full">
-                      YouTube Comments
-                    </span>
-                    <span className="inline-block bg-[#f6f8fa] text-[#24292F] text-sm px-3 py-1 rounded-full">
-                      Reddit Discussions
-                    </span>
-                  </div>
+              <div className="flex flex-wrap justify-center gap-3 mb-8">
+                <span className="text-[#656d76] text-sm">Quora Comments</span>
+                <span className="text-[#656d76] text-sm">•</span>
+                <span className="text-[#656d76] text-sm">TikTok Engagement</span>
+                <span className="text-[#656d76] text-sm">•</span>
+                <span className="text-[#656d76] text-sm">YouTube Comments</span>
+                <span className="text-[#656d76] text-sm">•</span>
+                <span className="text-[#656d76] text-sm">Reddit Discussions</span>
+              </div>
 
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <p className="text-green-800 font-medium">
-                      Result: Significant user acquisition spike through organic social engagement
-                    </p>
-                  </div>
-                </div>
+              <div className="inline-block">
+                <p className="text-green-700 font-semibold text-lg">
+                  Result: Significant user acquisition spike through organic social engagement
+                </p>
               </div>
             </div>
           </div>
