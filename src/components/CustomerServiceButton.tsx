@@ -65,46 +65,49 @@ export default function CustomerServiceButton() {
           </svg>
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Contact Customer Service</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl font-semibold text-gray-900">Contact Customer Service</DialogTitle>
+          <DialogDescription className="text-gray-600">
             Have a question, complaint, or suggestion? We're here to help!
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
               <Input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Your name"
+                placeholder="Enter your full name"
+                className="w-full"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
               <Input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 placeholder="your@email.com"
+                className="w-full"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Inquiry Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Type of Inquiry *</label>
             <select
               required
               value={formData.type}
               onChange={(e) => handleInputChange('type', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
             >
-              <option value="">Select type</option>
+              <option value="">Select the type of your inquiry</option>
               <option value="inquiry">General Inquiry</option>
               <option value="complaint">Complaint</option>
               <option value="suggestion">Suggestion</option>
@@ -114,34 +117,54 @@ export default function CustomerServiceButton() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
             <Input
               type="text"
               required
               value={formData.subject}
               onChange={(e) => handleInputChange('subject', e.target.value)}
-              placeholder="Brief subject line"
+              placeholder="Brief description of your inquiry"
+              className="w-full"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
             <textarea
               required
               value={formData.message}
               onChange={(e) => handleInputChange('message', e.target.value)}
-              placeholder="Please describe your inquiry, complaint, or suggestion in detail..."
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              placeholder="Please provide detailed information about your inquiry, complaint, or suggestion. The more details you provide, the better we can assist you."
+              rows={5}
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
             />
           </div>
 
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 space-y-3 space-y-reverse sm:space-y-0 pt-6 border-t border-gray-200">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              className="w-full sm:w-auto px-6 py-2.5"
+            >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Sending...' : 'Send Message'}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <span className="flex items-center space-x-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Sending...</span>
+                </span>
+              ) : (
+                'Send Message'
+              )}
             </Button>
           </div>
         </form>
